@@ -5,7 +5,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   initNavbar();
-  renderStats();
+
   renderActivities();
   initTracksSection();
   renderEvents();
@@ -97,22 +97,6 @@ function initNavbar() {
 }
 
 /* -------------------------------------------------------------------------
- * Stats Bar
- * ------------------------------------------------------------------------- */
-function renderStats() {
-  const container = document.getElementById('stats-container');
-  if (!container || !GDG_DATA.stats) return;
-
-  container.innerHTML = GDG_DATA.stats.map(item => `
-    <div class="stat-item">
-      <div class="stat-number">${item.number}</div>
-      <div class="stat-label">${item.label}</div>
-      <div class="stat-sub">${item.sub}</div>
-    </div>
-  `).join('');
-}
-
-/* -------------------------------------------------------------------------
  * Activities (Aktivitas Kami)
  * ------------------------------------------------------------------------- */
 function renderActivities() {
@@ -121,9 +105,6 @@ function renderActivities() {
 
   container.innerHTML = GDG_DATA.activities.map(act => `
     <div class="activity-card ${act.color}">
-      <div class="activity-top">
-        <span class="activity-badge badge-${act.color}">${act.badge}</span>
-      </div>
       <h3>${act.title}</h3>
       <p>${act.desc}</p>
       <div class="activity-tags">
@@ -379,9 +360,6 @@ function renderEvents() {
 
   container.innerHTML = GDG_DATA.events.map(ev => `
     <div class="event-card ${ev.color}">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <span class="activity-badge badge-${ev.color}">${ev.badge}</span>
-      </div>
       <h3>${ev.title}</h3>
       <p>${ev.desc}</p>
       <div class="event-features-list">
@@ -444,26 +422,7 @@ function renderTeam() {
   }
   teamWrap.innerHTML = '';
 
-  // Division Filter Bar
-  const divisions = GDG_DATA.teamDivisions || ['All Divisions'];
-  const filterBar = document.createElement('div');
-  filterBar.className = 'team-filter-bar';
-  filterBar.id = 'team-filter-bar';
-  filterBar.innerHTML = divisions.map(div => {
-    const count = div === 'All Divisions'
-      ? GDG_DATA.team.length
-      : GDG_DATA.team.filter(m => m.division === div).length;
-    const color = DIVISION_COLORS[div] || 'blue';
-    const isActive = div === activeTeamDivision;
-    return `
-      <button class="team-filter-btn ${isActive ? 'active ' + color : ''}"
-              data-div="${div}" data-color="${color}">
-        <span class="team-filter-dot"></span>
-        ${div}
-        <span class="team-filter-count">${count}</span>
-      </button>`;
-  }).join('');
-  teamWrap.appendChild(filterBar);
+
 
   // Carousel Shell
   teamWrap.insertAdjacentHTML('beforeend', `
@@ -481,18 +440,7 @@ function renderTeam() {
     <div class="team-carousel-dots" id="team-carousel-dots"></div>
   `);
 
-  // Filter clicks
-  filterBar.querySelectorAll('.team-filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      activeTeamDivision = btn.getAttribute('data-div');
-      filterBar.querySelectorAll('.team-filter-btn').forEach(b => {
-        const col = b.getAttribute('data-color');
-        b.className = 'team-filter-btn';
-        if (b.getAttribute('data-div') === activeTeamDivision) b.classList.add('active', col);
-      });
-      buildCarousel();
-    });
-  });
+
 
   // Arrow buttons
   document.getElementById('team-prev-btn').addEventListener('click', () => _teamManualJump(-1));
@@ -652,11 +600,15 @@ function moveTeamCarousel(dir) { _teamManualJump(dir); }
 
 
 /* -------------------------------------------------------------------------
- * Gallery
+ * Gallery — Infinite Auto-Scroll Carousel (viewport + track pattern)
  * ------------------------------------------------------------------------- */
+let galleryRafId = null;
+let galleryScrollPos = 0;
+let galleryScrollPaused = false;
+
 function renderGallery() {
-  const container = document.getElementById('gallery-grid');
-  if (!container || !GDG_DATA.gallery) return;
+  const viewport = document.getElementById('gallery-grid');
+  if (!viewport || !GDG_DATA.gallery) return;
 
   const colorMap = {
     blue: '#4285F4',
@@ -665,47 +617,88 @@ function renderGallery() {
     red: '#EA4335'
   };
 
-  container.innerHTML = GDG_DATA.gallery.map(item => {
+  const makeCard = (item) => {
     const col = colorMap[item.color] || '#4285F4';
-    
-    // Smart media: try custom photo first, fallback to futuristic illustration
-    const mediaHtml = `
-      <div class="gallery-media" style="position:relative; overflow:hidden;">
-        ${item.image ? `
-          <img src="${item.image}" alt="${item.title}" class="gallery-media-img"
-               onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-               style="width:100%; height:100%; object-fit:cover;">
-        ` : ''}
-        <div class="gallery-fallback-graphic" style="${item.image ? 'display:none;' : ''} width:100%; height:100%;">
-          <svg class="gallery-media-svg" viewBox="0 0 400 240" fill="none" width="100%" height="100%">
-            <rect width="400" height="240" fill="#141722"/>
-            <line x1="0" y1="60" x2="400" y2="60" stroke="#1d2232" stroke-width="1"/>
-            <line x1="0" y1="120" x2="400" y2="120" stroke="#1d2232" stroke-width="1"/>
-            <line x1="0" y1="180" x2="400" y2="180" stroke="#1d2232" stroke-width="1"/>
-            <circle cx="200" cy="120" r="60" fill="${col}" fill-opacity="0.12"/>
-            <circle cx="200" cy="120" r="42" stroke="${col}" stroke-width="1.5" stroke-dasharray="4 4"/>
-            <rect x="165" y="90" width="70" height="60" rx="8" fill="#1a1e2d" stroke="${col}" stroke-width="1.2"/>
-            <circle cx="178" cy="102" r="3" fill="#EA4335"/>
-            <circle cx="188" cy="102" r="3" fill="#FBBC04"/>
-            <circle cx="198" cy="102" r="3" fill="#34A853"/>
-            <line x1="176" y1="118" x2="220" y2="118" stroke="#4285F4" stroke-width="2" stroke-linecap="round"/>
-            <line x1="176" y1="128" x2="210" y2="128" stroke="#bdc1c6" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <span class="gallery-tag-pill">${item.category}</span>
-      </div>
-    `;
-
     return `
       <div class="gallery-card">
-        ${mediaHtml}
-        <div class="gallery-body">
-          <h4>${item.title}</h4>
-          <p>${item.desc}</p>
+        <div class="gallery-media">
+          ${item.image ? `
+            <img src="${item.image}" alt="${item.title}" class="gallery-media-img"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                 style="width:100%; height:100%; object-fit:cover;">
+          ` : ''}
+          <div class="gallery-fallback-graphic" style="${item.image ? 'display:none;' : ''} width:100%; height:100%;">
+            <svg class="gallery-media-svg" viewBox="0 0 400 260" fill="none" width="100%" height="100%">
+              <rect width="400" height="260" fill="#141722"/>
+              <line x1="0" y1="65" x2="400" y2="65" stroke="#1d2232" stroke-width="1"/>
+              <line x1="0" y1="130" x2="400" y2="130" stroke="#1d2232" stroke-width="1"/>
+              <line x1="0" y1="195" x2="400" y2="195" stroke="#1d2232" stroke-width="1"/>
+              <circle cx="200" cy="130" r="65" fill="${col}" fill-opacity="0.12"/>
+              <circle cx="200" cy="130" r="46" stroke="${col}" stroke-width="1.5" stroke-dasharray="4 4"/>
+              <rect x="165" y="100" width="70" height="60" rx="8" fill="#1a1e2d" stroke="${col}" stroke-width="1.2"/>
+              <circle cx="178" cy="112" r="3" fill="#EA4335"/>
+              <circle cx="188" cy="112" r="3" fill="#FBBC04"/>
+              <circle cx="198" cy="112" r="3" fill="#34A853"/>
+              <line x1="176" y1="130" x2="220" y2="130" stroke="#4285F4" stroke-width="2" stroke-linecap="round"/>
+              <line x1="176" y1="142" x2="210" y2="142" stroke="#bdc1c6" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
         </div>
       </div>
     `;
-  }).join('');
+  };
+
+  // Build track inside viewport
+  const allCards = GDG_DATA.gallery.map(makeCard).join('');
+  viewport.innerHTML = `<div class="gallery-track" id="gallery-track">${allCards}${allCards}</div>`;
+
+  const track = document.getElementById('gallery-track');
+
+  // Pause on hover / touch
+  viewport.addEventListener('mouseenter', () => { galleryScrollPaused = true; });
+  viewport.addEventListener('mouseleave', () => { galleryScrollPaused = false; });
+  let touchStartX = 0;
+  viewport.addEventListener('touchstart', e => {
+    galleryScrollPaused = true;
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+  viewport.addEventListener('touchend', e => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 30) galleryScrollPos += diff;
+    setTimeout(() => { galleryScrollPaused = false; }, 50);
+  }, { passive: true });
+
+  // Reset
+  galleryScrollPos = 0;
+  track.style.transform = 'translateX(0)';
+  if (galleryRafId) { cancelAnimationFrame(galleryRafId); galleryRafId = null; }
+
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    _startGalleryRaf(track, GDG_DATA.gallery.length);
+  }));
+}
+
+function _startGalleryRaf(track, originalCount) {
+  if (galleryRafId) cancelAnimationFrame(galleryRafId);
+  let last = null;
+  function step(ts) {
+    if (!last) last = ts;
+    const dt = ts - last;
+    last = ts;
+    if (!galleryScrollPaused) {
+      const cards = track.querySelectorAll('.gallery-card');
+      if (cards.length) {
+        const gap = 24;
+        const unitW = cards[0].offsetWidth + gap;
+        const halfW = originalCount * unitW;
+        galleryScrollPos += 0.030 * dt;
+        if (galleryScrollPos >= halfW) galleryScrollPos -= halfW;
+        track.style.transform = `translateX(-${galleryScrollPos}px)`;
+      }
+    }
+    galleryRafId = requestAnimationFrame(step);
+  }
+  galleryRafId = requestAnimationFrame(step);
 }
 
 /* -------------------------------------------------------------------------

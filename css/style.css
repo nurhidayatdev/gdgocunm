@@ -586,9 +586,16 @@ a {
 .hero-cta-group {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 14px;
+  flex-wrap: nowrap;
+  gap: 10px;
   margin-top: 10px;
+  max-width: 100%;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hero-cta-group::-webkit-scrollbar {
+  display: none;
 }
 
 /* Multi-colored Rainbow Connect Pill (from Posters 1, 2, 3) */
@@ -601,10 +608,17 @@ a {
   border-radius: var(--radius-pill);
   display: inline-flex;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hero-quick-connect::-webkit-scrollbar {
+  display: none;
 }
 
 .connect-item {
@@ -1400,9 +1414,15 @@ a {
    Gallery Section
    ========================================================================== */
 .gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 22px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.gallery-track {
+  display: flex;
+  gap: 24px;
+  will-change: transform;
 }
 
 .gallery-card {
@@ -1410,9 +1430,12 @@ a {
   border: 1px solid var(--border-card);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  transition: all var(--transition-normal);
+  transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
   display: flex;
   flex-direction: column;
+  flex: 0 0 auto;
+  width: 400px;
+  max-width: 85vw;
 }
 
 .gallery-card:hover {
@@ -1422,7 +1445,7 @@ a {
 }
 
 .gallery-media {
-  height: 180px;
+  height: 260px;
   position: relative;
   background: #171a24;
   display: flex;
@@ -1667,6 +1690,21 @@ a {
   line-height: 1.6;
 }
 
+.cta-btn-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 12px;
+  justify-content: center;
+  max-width: 100%;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.cta-btn-group::-webkit-scrollbar {
+  display: none;
+}
+
 /* ==========================================================================
    Footer
    ========================================================================== */
@@ -1679,9 +1717,10 @@ a {
 }
 
 .footer-top {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 40px;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 15%;
   margin-bottom: 50px;
 }
 
@@ -1732,6 +1771,13 @@ a {
   justify-content: space-between;
   margin-bottom: 30px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  max-width: 100%;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.footer-rainbow-pill::-webkit-scrollbar {
+  display: none;
 }
 
 .footer-bottom {
@@ -2150,9 +2196,9 @@ a {
   .track-card { flex: 0 0 calc((100% - 20px) / 2); }
   /* Team Carousel: 2 visible cards */
   .team-card { flex: 0 0 calc((100% - 20px) / 2); }
-  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  /* Gallery is now a flex carousel, no grid override needed */
   .testimonials-grid { grid-template-columns: 1fr; }
-  .footer-top { grid-template-columns: 1fr 1fr; }
+  .footer-top { flex-direction: row; }
 }
 
 @media (max-width: 768px) {
@@ -2168,9 +2214,10 @@ a {
   /* Team Carousel: 1 visible card on mobile, hide side arrows */
   .team-card { flex: 0 0 calc(100% - 0px); }
   .team-carousel-arrow { display: none; }
-  .gallery-grid { grid-template-columns: 1fr; }
-  .footer-rainbow-pill { flex-direction: column; gap: 12px; border-radius: var(--radius-lg); text-align: center; }
-  .footer-top { grid-template-columns: 1fr; }
+  /* Gallery carousel uses full-width cards on mobile */
+  .gallery-card { width: 85vw; }
+  .footer-rainbow-pill { flex-direction: row; flex-wrap: nowrap; gap: 8px; padding: 6px 12px; border-radius: var(--radius-pill); text-align: left; }
+  .footer-top { flex-direction: column; align-items: center; text-align: center; gap: 40px; }
   .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
 }
 
@@ -2190,18 +2237,42 @@ a {
   .hero-title {
     font-size: 2rem;
   }
+  .hero-cta-group {
+    gap: 6px;
+  }
+  .hero-cta-group .btn-primary,
+  .hero-cta-group .btn-secondary {
+    font-size: 0.72rem;
+    padding: 7px 12px;
+    gap: 5px;
+  }
+  .hero-cta-group .btn-primary svg,
+  .hero-cta-group .btn-secondary svg {
+    width: 12px;
+    height: 12px;
+  }
   .slogan-highlight-pill {
     font-size: 0.72rem;
     gap: 8px;
     padding: 6px 12px;
   }
   .hero-quick-connect {
-    flex-direction: column;
+    flex-direction: row;
     gap: 8px;
-    border-radius: var(--radius-lg);
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+  }
+  .connect-item {
+    font-size: 0.65rem;
+    gap: 4px;
+  }
+  .connect-item svg {
+    width: 12px;
+    height: 12px;
   }
   .connect-divider {
-    display: none;
+    display: block;
+    height: 12px;
   }
   .stats-card {
     grid-template-columns: 1fr;

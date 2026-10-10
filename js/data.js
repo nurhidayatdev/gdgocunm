@@ -22,12 +22,6 @@ const GDG_DATA = {
     campus: "Parangtambung & Gunungsari Campus, Universitas Negeri Makassar"
   },
 
-  stats: [
-    { number: "500+", label: "Community Members", sub: "Active UNM Students" },
-    { number: "7", label: "Learning Paths", sub: "From Web to Robotics" },
-    { number: "25+", label: "Workshops & Sessions", sub: "Hands-on & Tech Talks" },
-    { number: "100%", label: "Free & Open", sub: "All Faculties Welcome" }
-  ],
 
   // About Section directly from gdgoc-unm.vercel.app
   about: {
@@ -37,22 +31,22 @@ const GDG_DATA = {
     paragraph2: "Headquartered across both Parangtambung and Gunungsari campuses, we empower students to bridge the gap between academic theory and real-world tech industry practices.",
     pillars: [
       {
-        title: "Connect",
+        title: "Learn",
         color: "blue",
-        icon: "users",
-        desc: "Meet fellow students with a passion for tech, connect with industry mentors, and network with Google Developer Experts worldwide."
+        icon: "book",
+        desc: "Learn a range of technical topics and gain new skills through hands-on workshops, training sessions, and Weekly Classes."
       },
       {
-        title: "Learn",
+        title: "Build",
         color: "green",
-        icon: "book",
-        desc: "Learn new technical skills through structured hands-on workshops, weekly specialization classes, and Google Cloud study jams."
+        icon: "code",
+        desc: "Apply your knowledge to build real-world projects, create digital solutions, and collaborate with other student developers."
       },
       {
         title: "Grow",
         color: "yellow",
         icon: "trending-up",
-        desc: "Apply your knowledge to solve real community challenges, participate in the Google Solution Challenge, and boost your career."
+        desc: "Showcase your work in the Google Solution Challenge, expand your professional network, and advance your career."
       }
     ]
   },
@@ -63,7 +57,6 @@ const GDG_DATA = {
     {
       id: "workshop",
       title: "Hands-on Workshop",
-      badge: "Hands-on Practice",
       color: "blue",
       desc: "Learn directly and build real technological solutions with guidance from experienced mentors and engineers.",
       tags: ["Live Coding", "Mini Projects", "Mentoring"]
@@ -71,7 +64,6 @@ const GDG_DATA = {
     {
       id: "tech-talks",
       title: "Tech Talks",
-      badge: "Insights & Inspiration",
       color: "red",
       desc: "Gain deep industry insights and inspiration from technology experts and Google Developer Experts (GDE).",
       tags: ["Industry Trends", "Career Roadmap", "GDE Speakers"]
@@ -79,7 +71,6 @@ const GDG_DATA = {
     {
       id: "project-showcase",
       title: "Project Showcase",
-      badge: "Innovation Stage",
       color: "yellow",
       desc: "Display your projects, prototypes, and digital creations to the public and prepare for global hackathons.",
       tags: ["Portfolio", "Demo Day", "Solution Challenge"]
@@ -87,7 +78,6 @@ const GDG_DATA = {
     {
       id: "learning-path",
       title: "Learning Path",
-      badge: "Intensive Curriculum",
       color: "green",
       desc: "Learn and grow together every single week with structured curricula across 8 specialized learning tracks.",
       tags: ["Curriculum", "Peer-to-Peer", "Study Group"]
@@ -211,7 +201,6 @@ const GDG_DATA = {
     {
       id: "juaragcp",
       title: "JuaraGCP",
-      badge: "Cloud Program",
       color: "blue",
       desc: "JuaraGCP is a cloud computing learning program for Indonesian developers through Qwiklabs / Google Cloud Skills Boost. Take the training, master cloud technology, and get ready to earn GCP certifications to advance your career in the digital world.",
       link: "https://cloud.google.com/innovators/juaragcp",
@@ -221,7 +210,6 @@ const GDG_DATA = {
     {
       id: "solution-challenge",
       title: "Google Solution Challenge",
-      badge: "Global Hackathon",
       color: "green",
       desc: "Annual worldwide competition inviting university students to build solutions for one or more of the 17 United Nations Sustainable Development Goals using Google technologies.",
       link: "https://developers.google.com/community/gdsc-solution-challenge",
@@ -231,7 +219,6 @@ const GDG_DATA = {
     {
       id: "build-with-ai",
       title: "Build with AI & Gemini",
-      badge: "GenAI Workshop",
       color: "yellow",
       desc: "Hands-on workshops focused on integrating modern Generative AI capabilities—including Gemini 2.5, Gemma open models, and Google AI Studio—into student applications.",
       link: "https://developers.google.com/events",
@@ -241,7 +228,6 @@ const GDG_DATA = {
     {
       id: "devfest",
       title: "DevFest Makassar",
-      badge: "Annual Conference",
       color: "red",
       desc: "The largest annual developer conference in Eastern Indonesia hosted by Google Developer Groups, featuring keynote speakers, community showcases, and developer networking.",
       link: "https://gdg.community.dev/events/",
