@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GDGoC UNM • Google Developer Groups On Campus Universitas Negeri Makassar</title>
+  
+  <!-- SEO & Social Meta Tags -->
+  <meta name="description" content="Official community of Google Developer Groups On Campus Universitas Negeri Makassar. A community for learners, developers, and innovators at UNM.">
+  <meta name="keywords" content="GDGoC UNM, GDSC UNM, Google Developer Groups, Universitas Negeri Makassar, AI Studio, Gemini, JuaraGCP, Solution Challenge">
+  <meta name="author" content="GDGoC UNM Core Team">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://gdgoc-unm.vercel.app/">
+  <meta property="og:title" content="GDGoC UNM • Google Developer Groups On Campus UNM">
+  <meta property="og:description" content="A community for learners, developers, and innovators at Universitas Negeri Makassar. Learn • Build • Grow Together.">
+  <meta property="og:image" content="assets/svg/gdg-logo.svg">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/svg/gdg-logo.svg">
+
+  <!-- Google Fonts: Outfit & JetBrains Mono (Google AI Studio aesthetic) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+
+  <!-- Ambient Light Vignettes & Tech Grid Overlay -->
+  <div class="ambient-glow" aria-hidden="true"></div>
+  <div class="ambient-bottom-glow" aria-hidden="true"></div>
+  <div class="tech-grid-overlay" aria-hidden="true"></div>
+
+  <!-- ========================================================================
+       Header Navigation (Floating Dark Frosted Glass Pill)
+       ======================================================================== -->
+  <header class="site-header" id="main-header">
+    <div class="container">
+      <nav class="nav-inner" aria-label="Main Navigation">
+        <!-- Logo Branding -->
+        <a href="#hero" class="nav-brand">
+          <div class="nav-logo-icon">
+            <img src="assets/svg/gdg-logo.svg" alt="GDGoC Logo" width="32" height="22">
+          </div>
+          <div class="nav-brand-text">
+            <span class="nav-brand-title">
+              GDGoC <span class="campus-tag">UNM</span>
+            </span>
+            <span class="nav-brand-sub">Universitas Negeri Makassar</span>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation Links directly matching gdgoc-unm.vercel.app -->
+        <ul class="nav-links">
+          <li><a href="#about" class="nav-link">About</a></li>
+          <li><a href="#activities" class="nav-link">Our Activities</a></li>
+          <li><a href="#learning-path" class="nav-link">Learning Path</a></li>
+          <li><a href="#google-events" class="nav-link">Google Events</a></li>
+          <li><a href="#team" class="nav-link">Team</a></li>
+          <li><a href="#gallery" class="nav-link">Gallery</a></li>
+          <li><a href="#faq" class="nav-link">FAQ</a></li>
+        </ul>
+
+        <!-- Action Buttons -->
+        <div class="nav-actions">
+          <a href="https://gdg.community.dev/gdg-on-campus-universitas-negeri-makassar-makassar-indonesia/" target="_blank" rel="noopener noreferrer" class="btn-primary" id="btn-nav-join">
+            <span>Register Member</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+          <!-- Animated Mobile Hamburger Toggle Button -->
+          <button class="mobile-toggle" id="mobile-toggle-btn" aria-label="Toggle navigation menu" aria-expanded="false">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Mobile Nav Backdrop Overlay -->
+  <div class="mobile-nav-backdrop" id="mobile-nav-backdrop" aria-hidden="true"></div>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="mobile-nav-drawer" id="mobile-nav-drawer" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
+    <div class="mobile-nav-menu-list">
+      <a href="#about" class="nav-link">
+        <span>About</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+      <a href="#activities" class="nav-link">
+        <span>Our Activities</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+      <a href="#learning-path" class="nav-link">
+        <span>Learning Path</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+      <a href="#google-events" class="nav-link">
+        <span>Google Events</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+      <a href="#team" class="nav-link">
+        <span>Team</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+      <a href="#gallery" class="nav-link">
+        <span>Gallery</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+      <a href="#faq" class="nav-link">
+        <span>FAQ</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+    </div>
+
+    <div class="mobile-drawer-cta-box">
+      <a href="https://gdg.community.dev/gdg-on-campus-universitas-negeri-makassar-makassar-indonesia/" target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-align:center; justify-content:center; padding:12px 20px;">
+        <span>Register Member</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <main>
+    <!-- ======================================================================
+         1. Hero Section (Design Posters + gdgoc-unm Content)
+         ====================================================================== -->
+    <section class="hero-section" id="hero">
+      <div class="container">
+        <div class="hero-grid">
+          <!-- Left Column: Headlines & Badges -->
+          <div class="hero-content">
+            <!-- Badges from Poster 1 & 2 -->
+            <div class="chapter-badge-wrapper">
+              <div class="chapter-pill">
+                <div class="mini-logo-dots">
+                  <span class="dot-red"></span>
+                  <span class="dot-blue"></span>
+                  <span class="dot-green"></span>
+                  <span class="dot-yellow"></span>
+                </div>
+                <span>Google Developer Group <strong style="color:var(--blue-light);">On Campus</strong> • Universitas Negeri Makassar</span>
+              </div>
+              <div style="display:inline-flex; gap:8px;">
+                <span class="sub-pill active">Community</span>
+                <span class="sub-pill">Core Team</span>
+              </div>
+            </div>
+
+            <!-- Headline from User Poster 2 -->
+            <h1 class="hero-title">
+              A new Journey begins here<span class="blue-dot">.</span>
+            </h1>
+
+            <!-- Slogan Pill from User Poster 2 & 3 -->
+            <div class="slogan-highlight-pill">
+              <span class="l-word">LEARN</span> • 
+              <span class="b-word">BUILD</span> • 
+              <span class="g-word">GROW</span>
+              <span class="t-pill">TOGETHER</span>
+            </div>
+
+            <!-- Description from gdgoc-unm.vercel.app -->
+            <p class="hero-description">
+              A community for learners, developers, and innovators at <strong>Universitas Negeri Makassar</strong>. Learn Google technologies, collaborate on impactful real-world projects, and grow together.
+            </p>
+
+            <!-- CTA Buttons -->
+            <div class="hero-cta-group">
+              <a href="https://gdg.community.dev/gdg-on-campus-universitas-negeri-makassar-makassar-indonesia/" target="_blank" rel="noopener noreferrer" class="btn-primary" id="btn-hero-join">
+                <span>Join Now</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </a>
+              <a href="#learning-path" class="btn-secondary">
+                <span>Explore Learning Paths</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 9l-7 7-7-7"/>
+                </svg>
+              </a>
+              <a href="#about" class="btn-secondary">
+                About Us
+              </a>
+            </div>
+
+            <!-- Rainbow Outline Connect Bar from Posters 1, 2, 3 -->
+            <div class="hero-quick-connect">
+              <a href="https://instagram.com/gdgoc.unm" target="_blank" rel="noopener noreferrer" class="connect-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                </svg>
+                <span>gdgoc.unm</span>
+              </a>
+              <span class="connect-divider"></span>
+              <a href="https://s.id/gdgoc-unm" target="_blank" rel="noopener noreferrer" class="connect-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                  <polyline points="16 18 22 12 16 6"/>
+                  <polyline points="8 6 2 12 8 18"/>
+                </svg>
+                <span>s.id/gdgoc-unm</span>
+              </a>
+              <span class="connect-divider"></span>
+              <a href="https://linkedin.com/company/gdgoc-unm" target="_blank" rel="noopener noreferrer" class="connect-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/>
+                  <circle cx="4" cy="4" r="2"/>
+                </svg>
+                <span>GDGoC - Universitas Negeri Makassar</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Right Column: 3D GDG Visual + Menara Pinisi UNM Silhouette -->
+          <div class="hero-visual">
+            <div class="orbital-container">
+              <div class="radar-scanner-beam"></div>
+              <div class="orbital-ring-mid"></div>
+              <div class="orbital-ring-inner"></div>
+            </div>
+
+            <!-- Menara Pinisi UNM Graphic (Poster 3 tribute) -->
+            <div class="pinisi-tower-backdrop">
+              <img src="assets/svg/pinisi-tower.svg" alt="Menara Pinisi UNM Architecture" width="380" height="480">
+            </div>
+
+            <!-- 3D GDG Logo (Poster 1 & 2 tribute) -->
+            <div class="hero-gdg-logo">
+              <img src="assets/svg/gdg-logo.svg" alt="Google Developer Group 3D Logo" width="320" height="240">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         Stats Bar Section
+         ====================================================================== -->
+    <section class="stats-section">
+      <div class="container">
+        <div class="stats-card" id="stats-container">
+          <!-- Populated from data.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         2. About Section (Tentang) from gdgoc-unm.vercel.app
+         ====================================================================== -->
+    <section class="section" id="about">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Community Overview</span>
+          <h2 class="section-title">About GDGoC UNM</h2>
+          <p class="section-subtitle">
+            Google Developer Group On Campus (GDSC / GDGoC) Universitas Negeri Makassar is a student community focusing on Google technologies.
+          </p>
+        </div>
+
+        <div class="about-grid">
+          <!-- Main Narrative Card -->
+          <div class="about-card-main">
+            <h3>Empowering Student Builders at UNM</h3>
+            <p>
+              We are open to all students across all levels who want to learn, collaborate, and grow as developers. Through peer-to-peer learning, GDSC UNM members have the opportunity to build practical skills, develop real-world projects, and become part of Google's global developer community.
+            </p>
+            <p>
+              By bridging academic theory with industry practices, we enable students from all faculties to create digital solutions with real local and global impact.
+            </p>
+            <div style="display:flex; gap:10px; margin-top:20px;">
+              <span class="sub-pill active">Universitas Negeri Makassar</span>
+              <span class="sub-pill">Campus Chapter</span>
+              <span class="sub-pill">Global Ecosystem</span>
+            </div>
+          </div>
+
+          <!-- 3 Pillars: Connect, Learn, Grow -->
+          <div class="about-pillars">
+            <div class="pillar-item">
+              <div class="pillar-icon-box pillar-blue">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+              </div>
+              <div class="pillar-content">
+                <h4>Connect</h4>
+                <p>Meet students interested in developer technologies across campus, connect with alumni, and build industry relationships.</p>
+              </div>
+            </div>
+
+            <div class="pillar-item">
+              <div class="pillar-icon-box pillar-green">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                </svg>
+              </div>
+              <div class="pillar-content">
+                <h4>Learn</h4>
+                <p>Learn a range of technical topics and gain new skills through hands-on workshops, training sessions, and Weekly Classes.</p>
+              </div>
+            </div>
+
+            <div class="pillar-item">
+              <div class="pillar-icon-box pillar-yellow">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                  <polyline points="17 6 23 6 23 12"/>
+                </svg>
+              </div>
+              <div class="pillar-content">
+                <h4>Grow</h4>
+                <p>Apply new learnings to build real solutions for local problems, showcase your work in the Google Solution Challenge, and advance your career.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         3. Our Activities (Aktivitas Kami) from gdgoc-unm.vercel.app
+         ====================================================================== -->
+    <section class="section" id="activities">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Programs & Formats</span>
+          <h2 class="section-title">Our Activities</h2>
+          <p class="section-subtitle">
+            Regular activities bringing together core teams, Google Developer Academy students, and the community to learn, share, and grow together. Here, we explore the latest innovations and tech trends to always stay one step ahead.
+          </p>
+        </div>
+
+        <div class="activities-grid" id="activities-grid">
+          <!-- Dynamically populated from data.js: Hands-on Workshop, Tech Talks, Project Showcase, Weekly Class -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         4. Learning Path Section from gdgoc-unm.vercel.app
+         ====================================================================== -->
+    <section class="section" id="learning-path">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Intensive Curriculum</span>
+          <h2 class="section-title">Learning Path</h2>
+          <p class="section-subtitle">
+            Explore 7 specialized career learning paths. Gain real-world software engineering, design, hardware, and AI skills guided by GDGoC UNM core tech leads.
+          </p>
+        </div>
+
+        <!-- 1-Row Carousel for Learning Path -->
+        <div class="tracks-carousel-wrapper">
+          <button class="tracks-carousel-arrow tracks-carousel-arrow-prev" id="tracks-prev-btn" aria-label="Previous learning path" disabled>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+
+          <div class="tracks-carousel-viewport" id="tracks-viewport">
+            <div class="tracks-carousel-track" id="tracks-carousel-track">
+              <!-- Dynamically populated by JS from GDG_DATA.tracks -->
+            </div>
+          </div>
+
+          <button class="tracks-carousel-arrow tracks-carousel-arrow-next" id="tracks-next-btn" aria-label="Next learning path">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Carousel Dot Indicators & Counter -->
+        <div class="tracks-carousel-footer">
+          <div class="tracks-carousel-dots" id="tracks-carousel-dots">
+            <!-- Dynamically populated by JS -->
+          </div>
+          <div class="tracks-carousel-counter" id="tracks-carousel-counter">
+            <span id="tracks-current-idx">1</span> / <span id="tracks-total-count">8</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         5. Google Events from gdgoc-unm.vercel.app
+         ====================================================================== -->
+    <section class="section" id="google-events">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Official Google Programs</span>
+          <h2 class="section-title">Google Events</h2>
+          <p class="section-subtitle">
+            Discover various events and competitions from Google that you can join to hone your skills, gain experience, and continue growing in the tech world.
+          </p>
+        </div>
+
+        <div class="events-grid" id="events-grid">
+          <!-- Dynamically populated from data.js: JuaraGCP, Solution Challenge, Build with AI, DevFest -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         6. Team (Tim) from gdgoc-unm.vercel.app
+         ====================================================================== -->
+    <section class="section" id="team">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Leadership & Core Team</span>
+          <h2 class="section-title">Team</h2>
+          <p class="section-subtitle">
+            Meet the dedicated <strong>2026/2027 Core Team</strong> of GDGoC UNM — 29 members across 5 divisions driving collaboration, innovation, and developer community empowerment at Universitas Negeri Makassar.
+          </p>
+        </div>
+
+        <!-- Carousel (filter tabs + prev/next + track + dots) injected here by renderTeam() in main.js -->
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         7. Gallery (Galeri) from gdgoc-unm.vercel.app
+         ====================================================================== -->
+    <section class="section" id="gallery">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Moments & Highlights</span>
+          <h2 class="section-title">Gallery</h2>
+          <p class="section-subtitle">
+            A glimpse into our journey from team collaboration to inspirational activities. This gallery showcases precious moments of the core team and GDGoC UNM members learning, sharing, and growing together in the spirit of technology and innovation.
+          </p>
+        </div>
+
+        <div class="gallery-grid" id="gallery-grid">
+          <!-- Dynamically populated from data.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         8. Member Stories (Cerita Para Member) from gdgoc-unm.vercel.app
+         ====================================================================== -->
+    <section class="section" id="testimonials">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Community Voices</span>
+          <h2 class="section-title">Member Stories</h2>
+          <p class="section-subtitle">
+            Hear directly from students whose learning journey and career aspirations have transformed through GDGoC Universitas Negeri Makassar.
+          </p>
+        </div>
+
+        <div class="testimonials-grid" id="testimonials-grid">
+          <!-- Dynamically populated from data.js: Citra Nuraiyani (JTIK UNM), etc. -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         9. FAQ from gdgoc-unm.vercel.app
+         ====================================================================== -->
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Got Questions?</span>
+          <h2 class="section-title">Frequently Asked Questions</h2>
+          <p class="section-subtitle">
+            Frequently asked questions about GDGoC UNM. Find the answers to your curiosity here.
+          </p>
+        </div>
+
+        <div class="faq-container" id="faq-container">
+          <!-- Dynamically populated from data.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         10. Come Join GDGoC UNM! (Ayo Join GDGoC UNM!) from gdgoc-unm.vercel.app
+         ====================================================================== -->
+    <section class="cta-section">
+      <div class="container">
+        <div class="cta-box">
+          <div class="cta-box-content">
+            <span class="sub-pill active">Membership Open</span>
+            <h2>Come Join GDGoC UNM!</h2>
+            <p>
+              Join GDGoC UNM and grow together with an inspiring tech community. Click “Join Now” to become part of an endless journey of collaboration and learning, open to all students who want to thrive in the world of technology.
+            </p>
+            <div style="display:flex; align-items:center; gap:14px; margin-top:10px; flex-wrap:wrap; justify-content:center;">
+              <a href="https://gdg.community.dev/gdg-on-campus-universitas-negeri-makassar-makassar-indonesia/" target="_blank" rel="noopener noreferrer" class="btn-primary" style="padding:12px 28px; font-size:1rem;">
+                <span>Join Now</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </a>
+              <a href="https://instagram.com/gdgoc.unm" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="padding:12px 22px; font-size:1rem;">
+                Follow Instagram @gdgoc.unm
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================================
+       Footer directly matching gdgoc-unm.vercel.app
+       ======================================================================== -->
+  <footer class="site-footer">
+    <div class="container">
+      <!-- Rainbow Connect Bar from Posters 1, 2, 3 -->
+      <div class="footer-rainbow-pill">
+        <a href="https://instagram.com/gdgoc.unm" target="_blank" rel="noopener noreferrer" class="connect-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+          </svg>
+          <strong>@gdgoc.unm</strong>
+        </a>
+        <a href="https://s.id/gdgoc-unm" target="_blank" rel="noopener noreferrer" class="connect-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+            <polyline points="16 18 22 12 16 6"/>
+            <polyline points="8 6 2 12 8 18"/>
+          </svg>
+          <strong>s.id/gdgoc-unm</strong>
+        </a>
+        <a href="https://linkedin.com/company/gdgoc-unm" target="_blank" rel="noopener noreferrer" class="connect-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/>
+            <circle cx="4" cy="4" r="2"/>
+          </svg>
+          <strong>GDGoC - Universitas Negeri Makassar</strong>
+        </a>
+      </div>
+
+      <!-- Links Grid -->
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <img src="assets/svg/gdg-logo.svg" alt="GDGoC Logo" width="34" height="24">
+            <strong style="color:#fff; font-size:1.05rem;">GDGoC UNM</strong>
+          </div>
+          <p>
+            Google Developer Group On Campus Universitas Negeri Makassar. An independent student community fostering tech innovation, peer learning, and collaborative digital solutions.
+          </p>
+          <div style="font-size:0.8rem; color:var(--text-muted);">
+            Parangtambung & Gunungsari Campus, Universitas Negeri Makassar.
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#activities">Our Activities</a></li>
+            <li><a href="#learning-path">Learning Path</a></li>
+            <li><a href="#google-events">Google Events</a></li>
+            <li><a href="#team">Team</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Learning Paths</h4>
+          <ul class="footer-links">
+            <li><a href="#learning-path">UI/UX Design</a></li>
+            <li><a href="#learning-path">Front-End Web</a></li>
+            <li><a href="#learning-path">Back-End Web</a></li>
+            <li><a href="#learning-path">Robotics</a></li>
+            <li><a href="#learning-path">AI / Machine Learning</a></li>
+            <li><a href="#learning-path">Data Science</a></li>
+            <li><a href="#learning-path">Cyber Security</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Google Programs</h4>
+          <ul class="footer-links">
+            <li><a href="https://cloud.google.com/innovators/juaragcp" target="_blank" rel="noopener noreferrer">JuaraGCP</a></li>
+            <li><a href="https://developers.google.com/community/gdsc-solution-challenge" target="_blank" rel="noopener noreferrer">Solution Challenge</a></li>
+            <li><a href="https://aistudio.google.com" target="_blank" rel="noopener noreferrer">Google AI Studio</a></li>
+            <li><a href="https://developers.google.com/events" target="_blank" rel="noopener noreferrer">More Google Events</a></li>
+            <li><a href="https://unm.ac.id" target="_blank" rel="noopener noreferrer">Universitas Negeri Makassar</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Copyright Bottom Bar -->
+      <div class="footer-bottom">
+        <div>
+          © 2026 <strong>GDGoC UNM</strong>. All Rights Reserved
+        </div>
+        <div class="footer-bottom-meta">
+          <span>Google Developer Groups On Campus</span>
+          <span class="footer-dot-sep">•</span>
+          <span>Universitas Negeri Makassar</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Track Detail Modal -->
+  <div class="modal-overlay" id="track-modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <button class="modal-close-btn" id="modal-close-btn" aria-label="Close modal">✕</button>
+      <div id="modal-body-content">
+        <!-- Injected dynamically by openTrackModal(id) -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

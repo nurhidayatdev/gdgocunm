@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 480" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="wireframeBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8ab4f8"/>
+      <stop offset="100%" stop-color="#4285f4"/>
+    </linearGradient>
+    <linearGradient id="pinisiNeon" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#4285f4" stop-opacity="0.3"/>
+      <stop offset="60%" stop-color="#34a853" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#fbbc04" stop-opacity="0.7"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Left: Authentic Wireframe Globe (from gdg.community.dev screenshot 1) -->
+  <g transform="translate(60, 240)" stroke="#4285f4" stroke-width="2.5" opacity="0.85">
+    <!-- Globe Circle -->
+    <circle cx="0" cy="0" r="160"/>
+    <!-- Equator -->
+    <line x1="-160" y1="0" x2="160" y2="0"/>
+    <!-- Latitudes -->
+    <ellipse cx="0" cy="0" rx="160" ry="80"/>
+    <!-- Longitudes -->
+    <ellipse cx="0" cy="0" rx="80" ry="160"/>
+    <line x1="0" y1="-160" x2="0" y2="160"/>
+  </g>
+
+  <!-- Center Framing Wireframe Outline (the iconic gdg.community.dev hero border) -->
+  <path d="M 180 340 
+           L 180 380 
+           A 24 24 0 0 0 204 404 
+           L 240 404 
+           M 204 404 
+           L 160 404
+           M 180 340
+           L 180 160
+           A 28 28 0 0 1 208 132
+           L 960 132
+           A 28 28 0 0 1 988 160
+           L 988 380
+           A 28 28 0 0 1 960 408
+           L 280 408
+           A 24 24 0 0 1 256 384
+           L 256 340" 
+        stroke="url(#wireframeBlue)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Stepped connection branch left (as seen in screenshot 1) -->
+  <path d="M 180 340 L 40 340 A 20 20 0 0 1 20 320 L 20 280" stroke="#4285f4" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M 40 340 L 48 332 M 40 340 L 48 348" stroke="#4285f4" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Right: Location Pin Wireframe (as seen in screenshot 1) -->
+  <g transform="translate(1080, 220)" stroke="#4285f4" stroke-width="2.5" opacity="0.85">
+    <path d="M 0 -70 C -45 -70 -70 -35 -70 10 C -70 55 0 120 0 120 C 0 120 70 55 70 10 C 70 -35 45 -70 0 -70 Z"/>
+    <circle cx="0" cy="5" r="24"/>
+  </g>
+
+  <!-- Right: Menara Pinisi UNM subtle architectural wireframe silhouette blending in -->
+  <g transform="translate(860, 260) scale(0.32)" stroke="url(#pinisiNeon)" stroke-width="3" opacity="0.45">
+    <!-- Pinisi Sail Curve -->
+    <path d="M 160 720 Q 140 450 290 230" stroke-linecap="round"/>
+    <path d="M 440 720 Q 480 380 310 140" stroke-linecap="round"/>
+    <!-- Louvers -->
+    <line x1="180" y1="640" x2="440" y2="640"/>
+    <line x1="205" y1="520" x2="450" y2="520"/>
+    <line x1="245" y1="400" x2="420" y2="400"/>
+    <line x1="285" y1="280" x2="355" y2="280"/>
+    <!-- Spire -->
+    <line x1="300" y1="230" x2="300" y2="110"/>
+    <circle cx="300" cy="85" r="8" fill="#fbbc04"/>
+  </g>
+
+  <!-- Authentic GDG Brackets on Top Right of Hero Container (from screenshot 1) -->
+  <g transform="translate(930, 160) scale(0.48)">
+    <!-- Left Bracket < -->
+    <g transform="translate(-30, 0) rotate(-40)">
+      <rect x="-35" y="-12" width="70" height="24" rx="12" fill="#ea4335"/>
+    </g>
+    <g transform="translate(-30, 32) rotate(40)">
+      <rect x="-35" y="-12" width="70" height="24" rx="12" fill="#4285f4"/>
+    </g>
+    <!-- Right Bracket > -->
+    <g transform="translate(30, 0) rotate(40)">
+      <rect x="-35" y="-12" width="70" height="24" rx="12" fill="#34a853"/>
+    </g>
+    <g transform="translate(30, 32) rotate(-40)">
+      <rect x="-35" y="-12" width="70" height="24" rx="12" fill="#fbbc04"/>
+    </g>
+  </g>
+</svg>
