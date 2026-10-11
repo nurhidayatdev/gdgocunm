@@ -626,49 +626,6 @@ a {
   display: none;
 }
 
-/* Multi-colored Rainbow Connect Pill (from Posters 1, 2, 3) */
-.hero-quick-connect {
-  margin-top: 24px;
-  padding: 8px 18px;
-  background: linear-gradient(#111319, #111319) padding-box,
-              linear-gradient(90deg, #4285F4, #EA4335, #FBBC04, #34A853) border-box;
-  border: 1.5px solid transparent;
-  border-radius: var(--radius-pill);
-  display: inline-flex;
-  align-items: center;
-  flex-wrap: nowrap;
-  gap: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-  width: fit-content;
-  max-width: 100%;
-  overflow-x: auto;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.hero-quick-connect::-webkit-scrollbar {
-  display: none;
-}
-
-.connect-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #e2e8f0;
-  transition: color var(--transition-fast);
-}
-
-.connect-item:hover {
-  color: var(--blue-light);
-}
-
-.connect-divider {
-  width: 1px;
-  height: 14px;
-  background: rgba(255, 255, 255, 0.15);
-}
-
 /* Hero Visual (Right Side) */
 .hero-visual {
   position: relative;
@@ -1758,26 +1715,6 @@ a {
   color: #fff;
 }
 
-.footer-rainbow-pill {
-  padding: 12px 24px;
-  background: linear-gradient(#111319, #111319) padding-box,
-              linear-gradient(90deg, #4285F4, #EA4335, #FBBC04, #34A853) border-box;
-  border: 1.5px solid transparent;
-  border-radius: var(--radius-pill);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-  max-width: 100%;
-  overflow-x: auto;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.footer-rainbow-pill::-webkit-scrollbar {
-  display: none;
-}
-
 .footer-bottom {
   display: flex;
   align-items: center;
@@ -2190,7 +2127,7 @@ a {
   .hero-content { align-items: center; }
   .hero-visual { display: none; }
   .hero-title { font-size: 2.8rem; }
-  .hero-cta-group, .hero-quick-connect { justify-content: center; }
+  .hero-cta-group { justify-content: center; }
   /* Tracks Carousel: 2 visible cards */
   .track-card { flex: 0 0 calc((100% - 20px) / 2); }
   /* Team Carousel: 2 visible cards */
@@ -2218,7 +2155,6 @@ a {
   .team-carousel-arrow { display: none; }
   /* Gallery carousel uses full-width cards on mobile */
   .gallery-card { width: 85vw; }
-  .footer-rainbow-pill { flex-direction: row; flex-wrap: nowrap; gap: 8px; padding: 6px 12px; border-radius: var(--radius-pill); text-align: left; }
   .footer-top { flex-direction: column; align-items: center; text-align: center; gap: 40px; }
   .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
 }
@@ -2257,24 +2193,6 @@ a {
     font-size: 0.72rem;
     gap: 8px;
     padding: 6px 12px;
-  }
-  .hero-quick-connect {
-    flex-direction: row;
-    gap: 8px;
-    padding: 6px 12px;
-    border-radius: var(--radius-pill);
-  }
-  .connect-item {
-    font-size: 0.65rem;
-    gap: 4px;
-  }
-  .connect-item svg {
-    width: 12px;
-    height: 12px;
-  }
-  .connect-divider {
-    display: block;
-    height: 12px;
   }
   .stats-card {
     grid-template-columns: 1fr;
