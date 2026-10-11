@@ -217,6 +217,8 @@ a {
 .nav-logo-icon img {
   width: 100%;
   height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .nav-brand-title {
@@ -489,8 +491,10 @@ a {
 .chapter-badge-wrapper {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 10px;
+  width: fit-content;
+  max-width: 100%;
 }
 
 .chapter-pill {
@@ -501,10 +505,34 @@ a {
   background: rgba(22, 26, 36, 0.9);
   border: 1px solid var(--border-card);
   border-radius: var(--radius-pill);
-  font-size: 0.82rem;
+  font-size: clamp(0.75rem, 1.3vw, 1rem);
   font-weight: 500;
   color: var(--text-primary);
   box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.chapter-pill > span {
+  white-space: nowrap;
+}
+
+.hero-brand-visual {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.hero-webp-image {
+  width: min(100%, 820px);
+  max-height: 180px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.38));
 }
 
 .mini-logo-dots {
@@ -650,61 +678,31 @@ a {
   min-height: 480px;
 }
 
-.orbital-container {
-  position: absolute;
-  width: 440px;
-  height: 440px;
-  border-radius: 50%;
-  border: 1px dashed rgba(255, 255, 255, 0.08);
-  pointer-events: none;
-  animation: rotateSlow 80s linear infinite;
-}
-
-.orbital-ring-mid {
-  position: absolute;
-  inset: 40px;
-  border-radius: 50%;
-  border: 1px solid rgba(66, 133, 244, 0.15);
-  pointer-events: none;
-}
-
-.orbital-ring-inner {
-  position: absolute;
-  inset: 90px;
-  border-radius: 50%;
-  border: 1px dashed rgba(52, 168, 83, 0.15);
-  pointer-events: none;
-}
 
 .pinisi-tower-backdrop {
   position: absolute;
-  right: -10px;
-  bottom: -20px;
-  width: 380px;
-  height: 480px;
-  opacity: 0.42;
+  right: -120px;
+  bottom: -120px;
+  width: 700px;
+  height: 820px;
+  opacity: 0.58;
   pointer-events: none;
   mask-image: radial-gradient(circle at 60% 60%, #000 60%, transparent 95%);
   transition: opacity var(--transition-normal);
+}
+
+.pinisi-tower-backdrop img,
+.hero-gdg-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .hero-visual:hover .pinisi-tower-backdrop {
   opacity: 0.58;
 }
 
-.hero-gdg-logo {
-  position: relative;
-  z-index: 3;
-  width: 320px;
-  height: 240px;
-  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.85));
-  animation: floatLevitate 5s ease-in-out infinite;
-  transition: transform var(--transition-normal);
-}
-
-.hero-gdg-logo:hover {
-  transform: scale(1.05) rotate(1deg);
-}
 
 /* ==========================================================================
    Stats Bar Section
@@ -2190,6 +2188,7 @@ a {
 @media (max-width: 1024px) {
   .hero-grid { grid-template-columns: 1fr; text-align: center; }
   .hero-content { align-items: center; }
+  .hero-visual { display: none; }
   .hero-title { font-size: 2.8rem; }
   .hero-cta-group, .hero-quick-connect { justify-content: center; }
   /* Tracks Carousel: 2 visible cards */
@@ -2202,6 +2201,9 @@ a {
 }
 
 @media (max-width: 768px) {
+  .pinisi-tower-backdrop {
+    display: none;
+  }
   .hero-title { font-size: 2.2rem; }
   .stats-card { grid-template-columns: repeat(2, 1fr); padding: 20px; }
   .stat-item:not(:last-child)::after { display: none; }
