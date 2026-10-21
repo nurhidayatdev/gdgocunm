@@ -86,6 +86,12 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+#netlify-badge,
+iframe[src*="netlify"],
+.netlify-badge {
+  display: none !important;
+}
+
 /* Ambient Radial Glows (Google AI Studio Aesthetic) */
 .ambient-glow {
     position: fixed;
