@@ -324,7 +324,7 @@ const GDG_DATA = {
     teamDivisions: [
         "All Divisions",
         "Organizer",
-        "Research & Development (R&D)",
+        "Research & Development",
         "Relation & Communication",
         "Event Management",
         "Branding & Design",
@@ -336,7 +336,7 @@ const GDG_DATA = {
             role: "Lead",
             division: "Organizer",
             subRole: "Lead Organizer",
-            color: "blue",
+            color: "white",
             image: "assets/images/team/lead-nur-hidayat.png",
             socials: {
                 linkedin: "#",
@@ -349,7 +349,7 @@ const GDG_DATA = {
             role: "Co-Lead",
             division: "Organizer",
             subRole: "Co-Lead Organizer",
-            color: "blue",
+            color: "white",
             image: "assets/images/team/colead-annisa-nur-imani.png",
             socials: {
                 linkedin: "#",
@@ -358,11 +358,11 @@ const GDG_DATA = {
             },
         },
 
-        // 2. Research & Development (R&D)
+        // 2. Research & Development
         {
             name: "Muhammad Ghazi Saputra",
             role: "Front End Web Development",
-            division: "Research & Development (R&D)",
+            division: "Research & Development",
             subRole: "Track Lead",
             color: "green",
             image: "assets/images/team/rd-ghazi.png",
@@ -375,7 +375,7 @@ const GDG_DATA = {
         {
             name: "Muh Raihan Nur Taufiq",
             role: "Back End Web Development",
-            division: "Research & Development (R&D)",
+            division: "Research & Development",
             subRole: "Track Lead",
             color: "green",
             image: "assets/images/team/rd-raihan.png",
@@ -388,7 +388,7 @@ const GDG_DATA = {
         {
             name: "Shaquille Rashaun Sahl Tamrin",
             role: "Cybersecurity",
-            division: "Research & Development (R&D)",
+            division: "Research & Development",
             subRole: "Track Lead",
             color: "green",
             image: "assets/images/team/rd-shaquille.png",
@@ -401,7 +401,7 @@ const GDG_DATA = {
         {
             name: "Raynato Lienardy",
             role: "AI/ML",
-            division: "Research & Development (R&D)",
+            division: "Research & Development",
             subRole: "Track Lead",
             color: "green",
             image: "assets/images/team/rd-raynato.png",
@@ -414,7 +414,7 @@ const GDG_DATA = {
         {
             name: "Andi Muh. Yusran Haris",
             role: "UI/UX",
-            division: "Research & Development (R&D)",
+            division: "Research & Development",
             subRole: "Track Lead",
             color: "green",
             image: "assets/images/team/rd-yusran.png",
@@ -427,7 +427,7 @@ const GDG_DATA = {
         {
             name: "Namira Sarip",
             role: "Data Science",
-            division: "Research & Development (R&D)",
+            division: "Research & Development",
             subRole: "Track Lead",
             color: "green",
             image: "assets/images/team/rd-namira.png",
@@ -440,7 +440,7 @@ const GDG_DATA = {
         {
             name: "Alfira Resky Pratiwi",
             role: "Robotic",
-            division: "Research & Development (R&D)",
+            division: "Research & Development",
             subRole: "Track Lead",
             color: "green",
             image: "assets/images/team/rd-alfira.png",

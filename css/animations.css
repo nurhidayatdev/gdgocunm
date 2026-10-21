@@ -30,16 +30,7 @@
   }
 }
 
-@keyframes pulseGlow {
-  0%, 100% {
-    opacity: 0.4;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.05);
-  }
-}
+
 
 @keyframes gradientShift {
   0% {
@@ -101,24 +92,3 @@
 .delay-2 { transition-delay: 0.2s; }
 .delay-3 { transition-delay: 0.3s; }
 .delay-4 { transition-delay: 0.4s; }
-
-/* Interactive Cursor / Hover glow for cards */
-.glow-card-interactive {
-  position: relative;
-}
-
-.glow-card-interactive::after {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  background: radial-gradient(400px circle at var(--mouse-x, -999px) var(--mouse-y, -999px), rgba(66, 133, 244, 0.18), transparent 40%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.glow-card-interactive:hover::after {
-  opacity: 1;
-}

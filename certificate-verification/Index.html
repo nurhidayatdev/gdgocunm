@@ -39,7 +39,7 @@
       --green-light: #81c995;
 
       /* Dark Theme Palette */
-      --bg-primary: #0a0b0e;
+      --bg-primary: #171b21;
       --bg-secondary: #111319;
       --bg-tertiary: #161822;
       --bg-card: rgba(20, 23, 32, 0.85);
@@ -85,11 +85,13 @@
     html {
       scroll-behavior: smooth;
       color-scheme: dark;
+      background-color: #171b21;
     }
 
     body {
       font-family: var(--font-sans);
-      background-color: var(--bg-primary);
+      background: linear-gradient(180deg, #181818 0%, #171b21 100%) no-repeat fixed;
+      background-color: #171b21;
       color: var(--text-primary);
       line-height: 1.6;
       min-height: 100vh;
@@ -101,51 +103,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Ambient Glows & Tech Grid (Exact replica from main site style.css) */
-    .ambient-glow {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
 
-    .ambient-glow::before {
-      content: "";
-      position: absolute;
-      top: -10%;
-      left: 15%;
-      width: 650px;
-      height: 650px;
-      background: radial-gradient(circle, rgba(66, 133, 244, 0.14) 0%, transparent 70%);
-      filter: blur(80px);
-    }
-
-    .ambient-glow::after {
-      content: "";
-      position: absolute;
-      top: 35%;
-      right: -5%;
-      width: 700px;
-      height: 700px;
-      background: radial-gradient(circle, rgba(52, 168, 83, 0.1) 0%, rgba(251, 188, 4, 0.06) 40%, transparent 70%);
-      filter: blur(90px);
-    }
-
-    .ambient-bottom-glow {
-      position: fixed;
-      bottom: -20%;
-      left: 20%;
-      width: 800px;
-      height: 800px;
-      background: radial-gradient(circle, rgba(234, 67, 53, 0.08) 0%, rgba(66, 133, 244, 0.06) 50%, transparent 70%);
-      filter: blur(100px);
-      pointer-events: none;
-      z-index: 0;
-    }
 
     .tech-grid-overlay {
       position: fixed;
@@ -192,19 +150,20 @@
       align-items: center;
       justify-content: space-between;
       padding: 10px 20px;
-      background: var(--bg-glass);
+      border-radius: var(--radius-pill);
+      border: 1.8px solid transparent;
+      background:
+        linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%) padding-box,
+        linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%) border-box;
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--border-card);
-      border-radius: var(--radius-pill);
-      box-shadow: var(--shadow-md);
-      transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.35);
+      transition: box-shadow var(--transition-normal);
       animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
     .nav-pill:hover {
-      border-color: rgba(66, 133, 244, 0.35);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.65), 0 0 20px rgba(66, 133, 244, 0.15);
+      box-shadow: 0 12px 38px rgba(0, 0, 0, 0.7), 0 0 20px rgba(66, 133, 244, 0.2);
     }
 
     @keyframes slideDown {
@@ -423,22 +382,23 @@
     }
 
     .search-card {
-      background: var(--bg-card);
+      background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--border-card);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: var(--radius-md);
-      padding: 16px 20px;
-      box-shadow: var(--shadow-md);
+      padding: 18px 22px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       transition: all var(--transition-normal);
     }
 
     .search-card:hover, .search-card:focus-within {
-      border-color: var(--border-card-hover);
-      box-shadow: var(--shadow-lg), 0 0 24px rgba(66, 133, 244, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+      background: linear-gradient(55deg, #262626 0%, #262626 68%, #464646 100%);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
     }
 
     .search-label-group {
@@ -492,8 +452,8 @@
     .search-input {
       width: 100%;
       height: 44px;
-      background: var(--bg-secondary);
-      border: 1.5px solid var(--border-card);
+      background: #141414;
+      border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: var(--radius-pill);
       padding: 0 16px 0 40px;
       color: var(--text-primary);
@@ -511,13 +471,13 @@
     }
 
     .search-input:focus {
-      border-color: var(--google-blue);
-      box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.22);
-      background: var(--bg-tertiary);
+      border-color: rgba(255, 255, 255, 0.35);
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+      background: #181818;
     }
 
     .search-input:focus + .search-icon {
-      color: var(--google-blue);
+      color: #ffffff;
     }
 
     /* Primary Button */
@@ -532,11 +492,11 @@
       font-size: 0.88rem;
       font-weight: 600;
       font-family: var(--font-sans);
-      background: var(--google-blue);
-      color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: linear-gradient(180deg, #ffffff 0%, #a4a4a4 100%);
+      color: #111111;
+      border: 1px solid rgba(255, 255, 255, 0.5);
       cursor: pointer;
-      box-shadow: 0 4px 14px rgba(66, 133, 244, 0.35);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
       transition: all var(--transition-normal);
       white-space: nowrap;
       flex-shrink: 0;
@@ -549,13 +509,13 @@
     }
 
     .btn-verify:hover:not(:disabled) {
-      background: #3367d6;
-      transform: translateY(-1.5px);
-      box-shadow: 0 6px 22px rgba(66, 133, 244, 0.5);
+      background: linear-gradient(180deg, #ffffff 0%, #b8b8b8 100%);
+      color: #000000;
+      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2), 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
     .btn-verify:active:not(:disabled) {
-      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
     }
 
     .btn-verify:disabled {
@@ -611,29 +571,31 @@
 
     /* Loading State */
     .state-loading {
-      background: var(--bg-card);
+      background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--border-card);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: var(--radius-md);
-      padding: 18px 20px;
+      padding: 18px 24px;
       text-align: center;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      box-shadow: var(--shadow-md);
+      gap: 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
       animation: fadeIn 0.3s ease-out;
     }
 
     .spinner-ring {
       width: 22px;
       height: 22px;
-      border: 2.5px solid rgba(66, 133, 244, 0.15);
-      border-top-color: var(--google-blue);
-      border-right-color: var(--google-green);
+      border: 2.5px solid rgba(255, 255, 255, 0.15);
+      border-top-color: #4285f4;
+      border-right-color: #34a853;
+      border-bottom-color: #fbbc04;
+      border-left-color: #ea4335;
       border-radius: 50%;
-      animation: spin 0.9s linear infinite;
+      animation: spin 0.85s linear infinite;
       flex-shrink: 0;
     }
 
@@ -642,20 +604,21 @@
     }
 
     .loading-text {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.9);
       font-weight: 500;
+      letter-spacing: -0.01em;
     }
 
     /* Valid Card (Certificate Details) */
     .state-valid {
-      background: var(--bg-card);
+      background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(52, 168, 83, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       border-radius: var(--radius-md);
       overflow: hidden;
-      box-shadow: var(--shadow-md), 0 0 24px rgba(52, 168, 83, 0.12);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
       animation: popUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
@@ -666,15 +629,7 @@
 
     .valid-top-strip {
       height: 3px;
-      background: linear-gradient(90deg, var(--google-blue), var(--google-green), var(--google-yellow), var(--google-blue));
-      background-size: 300% 100%;
-      animation: gradientShift 6s ease infinite;
-    }
-
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+      background: linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%);
     }
 
     .valid-content {
@@ -696,14 +651,14 @@
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-card);
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: var(--radius-md);
       overflow: hidden;
     }
 
     .cert-table tr {
-      border-bottom: 1px solid var(--border-subtle);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
       transition: background var(--transition-fast);
     }
 
@@ -712,24 +667,24 @@
     }
 
     .cert-table tr:hover {
-      background: rgba(255, 255, 255, 0.02);
+      background: rgba(255, 255, 255, 0.03);
     }
 
     .cert-table th {
       width: 35%;
-      padding: 9px 14px;
+      padding: 10px 14px;
       text-align: left;
       font-size: 0.78rem;
       font-weight: 500;
-      color: var(--text-secondary);
-      background: rgba(255, 255, 255, 0.015);
-      border-right: 1px solid var(--border-subtle);
+      color: rgba(255, 255, 255, 0.65);
+      background: rgba(255, 255, 255, 0.02);
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     .cert-table td {
-      padding: 9px 14px;
-      font-size: 0.84rem;
-      color: var(--text-primary);
+      padding: 10px 14px;
+      font-size: 0.86rem;
+      color: #ffffff;
     }
 
     @media (max-width: 520px) {
@@ -747,35 +702,33 @@
     .role-badge {
       display: inline-flex;
       align-items: center;
-      padding: 2px 10px;
+      padding: 3px 12px;
       border-radius: var(--radius-pill);
       font-size: 0.74rem;
       font-weight: 700;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.04em;
+      background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
     }
 
     .role-PARTICIPANT {
-      background: rgba(66, 133, 244, 0.14);
-      color: var(--blue-light);
-      border: 1px solid rgba(66, 133, 244, 0.3);
+      border: 1px solid rgba(66, 133, 244, 0.45);
+      color: #8ab4f8;
     }
 
     .role-SPEAKER {
-      background: rgba(234, 67, 53, 0.14);
-      color: var(--red-light);
-      border: 1px solid rgba(234, 67, 53, 0.3);
+      border: 1px solid rgba(234, 67, 53, 0.45);
+      color: #f28b82;
     }
 
     .role-MODERATOR {
-      background: rgba(251, 188, 4, 0.14);
-      color: var(--yellow-light);
-      border: 1px solid rgba(251, 188, 4, 0.3);
+      border: 1px solid rgba(251, 188, 4, 0.45);
+      color: #fdd663;
     }
 
     .role-CORETEAM {
-      background: rgba(52, 168, 83, 0.14);
-      color: var(--green-light);
-      border: 1px solid rgba(52, 168, 83, 0.3);
+      border: 1px solid rgba(52, 168, 83, 0.45);
+      color: #81c995;
     }
 
     .cert-code-chip {
@@ -783,45 +736,49 @@
       font-family: monospace;
       font-size: 0.82rem;
       font-weight: 600;
-      color: var(--blue-light);
-      background: rgba(66, 133, 244, 0.08);
-      padding: 2px 7px;
-      border-radius: 5px;
-      border: 1px solid rgba(66, 133, 244, 0.2);
+      color: #ffffff;
+      background: linear-gradient(55deg, #181818 0%, #202020 100%);
+      padding: 3px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      letter-spacing: 0.02em;
     }
 
     .status-valid-chip {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      color: var(--green-light);
+      gap: 6px;
+      color: #81c995;
       font-weight: 700;
-      font-size: 0.76rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.03em;
     }
 
     .status-valid-chip::before {
       content: "";
-      width: 6px;
-      height: 6px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
-      background: var(--google-green);
-      box-shadow: 0 0 5px var(--google-green);
+      background: #34a853;
+      box-shadow: 0 0 8px #34a853;
     }
 
     /* ==========================================================================
        Official Signatory Box (Nur Hidayat - Lead GDGoC UNM)
        ========================================================================== */
     .signatory-box {
-      background: rgba(14, 17, 25, 0.9);
-      border: 1px solid var(--border-card);
+      background: linear-gradient(55deg, #1c1c1c 0%, #1c1c1c 68%, #363636 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: var(--radius-md);
-      padding: 10px 14px;
+      padding: 12px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
     }
 
     .signatory-box::before {
@@ -830,8 +787,8 @@
       left: 0;
       top: 0;
       bottom: 0;
-      width: 3px;
-      background: linear-gradient(to bottom, var(--google-blue), var(--google-green));
+      width: 3.5px;
+      background: linear-gradient(to bottom, #ea4335, #fbbc04, #34a853, #4285f4);
     }
 
     .signatory-left {
@@ -844,13 +801,14 @@
       width: 36px;
       height: 36px;
       border-radius: 50%;
-      background: rgba(66, 133, 244, 0.12);
-      border: 1px solid rgba(66, 133, 244, 0.35);
+      background: linear-gradient(180deg, #ffffff 0%, #a4a4a4 100%);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      padding: 5px;
+      padding: 6px;
       overflow: hidden;
     }
 
@@ -864,21 +822,38 @@
     .signatory-details {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 3px;
     }
 
     .signatory-name {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       font-weight: 700;
-      color: var(--text-primary);
+      color: #ffffff;
       letter-spacing: -0.01em;
       line-height: 1.25;
     }
 
+    .signatory-role {
+      font-size: 0.78rem;
+      color: var(--blue-light);
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .signatory-org {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.65);
+      font-weight: 400;
+      line-height: 1.35;
+    }
+
     .signatory-title {
       font-size: 0.72rem;
-      color: var(--blue-light);
-      font-weight: 500;
+      color: rgba(255, 255, 255, 0.65);
+      font-weight: 400;
       line-height: 1.35;
     }
 
@@ -893,16 +868,17 @@
     .signatory-stamp {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      padding: 3px 8px;
+      gap: 5px;
+      padding: 4px 10px;
       border-radius: var(--radius-pill);
-      background: rgba(52, 168, 83, 0.1);
-      border: 1px solid rgba(52, 168, 83, 0.3);
-      color: var(--green-light);
-      font-size: 0.66rem;
-      font-weight: 600;
+      background: linear-gradient(55deg, #1c1c1c 0%, #1c1c1c 68%, #323232 100%);
+      border: 1px solid rgba(52, 168, 83, 0.45);
+      color: #81c995;
+      font-size: 0.68rem;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.05em;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
     }
 
     .signatory-stamp-sub {
@@ -914,13 +890,38 @@
     @media (max-width: 600px) {
       .signatory-box {
         flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 12px 14px;
+      }
+      .signatory-left {
         align-items: flex-start;
-        gap: 8px;
+        gap: 12px;
+      }
+      .signatory-avatar-badge {
+        margin-top: 2px;
       }
       .signatory-seal {
-        align-items: flex-start;
+        width: 100%;
+        padding-top: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        margin-left: 0;
         text-align: left;
-        margin-left: 44px;
+      }
+      .signatory-stamp-sub {
+        margin-top: 0;
+        font-size: 0.64rem;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .signatory-seal {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
       }
     }
 
@@ -945,22 +946,28 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 7px 16px;
+      padding: 8px 18px;
       border-radius: var(--radius-pill);
       font-size: 0.8rem;
       font-weight: 600;
       font-family: var(--font-sans);
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text-primary);
-      border: 1px solid var(--border-subtle);
+      background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.16);
       cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       transition: all var(--transition-normal);
+      transform: none;
     }
 
     .btn-secondary-action:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.15);
+      background:
+        linear-gradient(55deg, #282828 0%, #282828 68%, #484848 100%) padding-box,
+        linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%) border-box;
+      border: 1px solid transparent;
       color: #fff;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), 0 0 12px rgba(66, 133, 244, 0.2);
+      transform: none;
     }
 
     .verified-timestamp {
@@ -974,13 +981,13 @@
 
     /* Invalid State Card */
     .state-invalid {
-      background: var(--bg-card);
+      background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(234, 67, 53, 0.35);
+      border: 1px solid rgba(234, 67, 53, 0.4);
       border-radius: var(--radius-md);
       overflow: hidden;
-      box-shadow: var(--shadow-md), 0 0 24px rgba(234, 67, 53, 0.12);
+      box-shadow: var(--shadow-md), 0 0 24px rgba(234, 67, 53, 0.15);
       animation: popUp 0.35s ease-out both, shakeCard 0.45s 0.1s ease-in-out;
     }
 
@@ -1051,8 +1058,8 @@
       width: 100%;
       max-width: 520px;
       text-align: left;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-card);
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: var(--radius-md);
       padding: 12px 16px;
     }
@@ -1158,39 +1165,28 @@
     }
 
     /* ==========================================================================
-       Footer (Compact & Sleek)
+       Footer (Aligned with Main Landing Page footer-bottom)
        ========================================================================== */
     .site-footer {
       margin-top: auto;
-      padding-top: 14px;
-      padding-bottom: 6px;
-      border-top: 1px solid var(--border-subtle);
+      width: 100%;
+    }
+
+    .footer-bottom {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
       text-align: center;
-    }
-
-    .footer-google-dots {
-      display: flex;
-      gap: 6px;
-    }
-
-    .footer-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-    }
-
-    .footer-text {
-      font-size: 0.72rem;
+      padding-top: 16px;
+      padding-bottom: 8px;
+      border-top: 1px solid var(--border-subtle);
+      font-size: 0.78rem;
       color: var(--text-muted);
-      line-height: 1.4;
+      width: 100%;
     }
 
-    .footer-text strong {
-      color: var(--text-secondary);
+    .footer-bottom strong {
+      color: var(--text-primary);
     }
 
     /* Print Styles */
@@ -1199,7 +1195,7 @@
         background: #fff !important;
         color: #000 !important;
       }
-      .ambient-glow, .ambient-bottom-glow, .tech-grid-overlay, .nav-pill, .search-card, .info-grid, .site-footer, .result-actions {
+      .tech-grid-overlay, .nav-pill, .search-card, .info-grid, .site-footer, .result-actions {
         display: none !important;
       }
       .page-container {
@@ -1240,8 +1236,7 @@
 <body>
 
   <!-- Ambient Light Vignettes & Tech Grid Overlay -->
-  <div class="ambient-glow" aria-hidden="true"></div>
-  <div class="ambient-bottom-glow" aria-hidden="true"></div>
+ 
   <div class="tech-grid-overlay" aria-hidden="true"></div>
 
   <div class="page-container">
@@ -1315,15 +1310,11 @@
          Footer
          ======================================================================== -->
     <footer class="site-footer" role="contentinfo">
-      <div class="footer-google-dots">
-        <span class="footer-dot" style="background:#4285f4"></span>
-        <span class="footer-dot" style="background:#ea4335"></span>
-        <span class="footer-dot" style="background:#fbbc04"></span>
-        <span class="footer-dot" style="background:#34a853"></span>
+      <div class="footer-bottom">
+        <div>
+          © 2026 <strong>GDGoC UNM</strong>. All Rights Reserved
+        </div>
       </div>
-      <p class="footer-text">
-        &copy; 2026/2027 <strong>GDGoC UNM</strong> &bull; Universitas Negeri Makassar &bull; Official Verification System
-      </p>
     </footer>
 
   </div>
@@ -1413,7 +1404,11 @@
                 '</div>' +
                 '<div class="signatory-details">' +
                   '<span class="signatory-name">Nur Hidayat</span>' +
-                  '<span class="signatory-title">Community Lead<br>Google Developer Groups on Campus &bull; Universitas Negeri Makassar</span>' +
+                  '<span class="signatory-role">Community Lead</span>' +
+                  '<div class="signatory-org">' +
+                    '<span>Google Developer Groups on Campus</span>' +
+                    '<span>Universitas Negeri Makassar</span>' +
+                  '</div>' +
                 '</div>' +
               '</div>' +
               '<div class="signatory-seal">' +
@@ -1443,7 +1438,6 @@
               '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' +
             '</div>' +
             '<h2 class="invalid-title">Certificate Not Found</h2>' +
-            '<span class="invalid-error-code">ERROR: ' + esc(code || "NOT_FOUND") + '</span>' +
             '<p class="invalid-desc">' + esc(msg || "The certificate ID you entered is not registered in the official database of GDGoC UNM.") + '</p>' +
 
             '<div class="invalid-tips">' +

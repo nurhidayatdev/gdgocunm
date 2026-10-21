@@ -292,6 +292,7 @@ function initTracksSection() {
     });
 }
 
+let trackJumpTimeout = null;
 function _startTrackRaf(trackEl, originalCount) {
     if (trackRafId) cancelAnimationFrame(trackRafId);
     let last = null;
@@ -304,7 +305,7 @@ function _startTrackRaf(trackEl, originalCount) {
             if (cards.length) {
                 const unitW = cards[0].offsetWidth + 20;
                 const halfW = originalCount * unitW;
-                trackScrollPos += 0.028 * dt; // ~1.7px per frame @60fps
+                trackScrollPos += 0.065 * dt; // Faster, smooth carousel movement
                 if (trackScrollPos >= halfW) trackScrollPos -= halfW;
                 trackEl.style.transform = `translateX(-${trackScrollPos}px)`;
             }
@@ -322,16 +323,18 @@ function _trackManualJump(trackEl, originalCount, direction) {
 
     // Smooth CSS transition for the manual jump
     trackScrollPaused = true;
+    if (trackJumpTimeout) clearTimeout(trackJumpTimeout);
+
     trackScrollPos += direction * unitW;
     if (trackScrollPos >= halfW) trackScrollPos -= halfW;
     if (trackScrollPos < 0) trackScrollPos += halfW;
 
-    trackEl.style.transition = "transform 0.42s cubic-bezier(0.16,1,0.3,1)";
+    trackEl.style.transition = "transform 0.38s cubic-bezier(0.16,1,0.3,1)";
     trackEl.style.transform = `translateX(-${trackScrollPos}px)`;
-    setTimeout(() => {
+    trackJumpTimeout = setTimeout(() => {
         trackEl.style.transition = "none";
         trackScrollPaused = false;
-    }, 440);
+    }, 400);
 }
 
 /* -------------------------------------------------------------------------
@@ -446,8 +449,8 @@ function renderEvents() {
 
 const DIVISION_COLORS = {
     "All Divisions": "blue",
-    Organizer: "blue",
-    "Research & Development (R&D)": "green",
+    Organizer: "white",
+    "Research & Development": "green",
     "Relation & Communication": "yellow",
     "Event Management": "red",
     "Branding & Design": "blue",
@@ -463,8 +466,7 @@ function getCarouselVisibleCount() {
     if (window.innerWidth <= 520) return 1;
     if (window.innerWidth <= 768) return 2;
     if (window.innerWidth <= 1024) return 3;
-    if (window.innerWidth <= 1200) return 4;
-    return 5;
+    return 4;
 }
 
 function renderTeam() {
@@ -575,7 +577,7 @@ function buildCarousel() {
                     .slice(0, 2)
                     .join("");
                 const isLead = member.division === "Organizer";
-                const color = member.color || "blue";
+                const color = isLead ? "white" : (member.color || "blue");
                 const photoContent = member.image
                     ? `<img src="${member.image}" alt="${member.name}" class="team-photo-img"
               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -584,12 +586,12 @@ function buildCarousel() {
                 return `
       <div class="team-card ${isLead ? "is-lead" : ""}">
         <div class="team-photo-area ${color}">${photoContent}</div>
-        <h3 class="team-card-name">${member.name}</h3>
-        <div class="team-card-role ${color}">${member.role}</div>
+        <h3 class="team-card-name" title="${member.name}">${member.name}</h3>
+        <div class="team-card-role ${color}" title="${member.role}">${member.role}</div>
         ${
             member.division !== "Organizer"
-                ? `<span class="team-card-division">${member.division}</span>`
-                : '<span class="team-card-division">Organizer</span>'
+                ? `<span class="team-card-division ${color}" title="${member.division}">${member.division}</span>`
+                : `<span class="team-card-division ${color}" title="Organizer">Organizer</span>`
         }
         <div class="team-card-divider"></div>
         <div class="team-socials">
@@ -637,6 +639,7 @@ function _sizeTeamCards(track) {
     });
 }
 
+let teamJumpTimeout = null;
 function _startTeamRaf(track, originalCount) {
     if (teamRafId) cancelAnimationFrame(teamRafId);
     let last = null;
@@ -649,7 +652,7 @@ function _startTeamRaf(track, originalCount) {
             if (cards.length) {
                 const unitW = cards[0].offsetWidth + 16;
                 const halfW = originalCount * unitW;
-                teamScrollPos += 0.025 * dt; // ~1.5px per frame @60fps
+                teamScrollPos += 0.065 * dt; // Faster, smooth carousel movement
                 if (teamScrollPos >= halfW) teamScrollPos -= halfW;
                 track.style.transform = `translateX(-${teamScrollPos}px)`;
             }
@@ -668,16 +671,18 @@ function _teamManualJump(direction) {
     const halfW = carouselMembers.length * unitW;
 
     teamScrollPaused = true;
+    if (teamJumpTimeout) clearTimeout(teamJumpTimeout);
+
     teamScrollPos += direction * unitW;
     if (teamScrollPos >= halfW) teamScrollPos -= halfW;
     if (teamScrollPos < 0) teamScrollPos += halfW;
 
-    track.style.transition = "transform 0.42s cubic-bezier(0.16,1,0.3,1)";
+    track.style.transition = "transform 0.38s cubic-bezier(0.16,1,0.3,1)";
     track.style.transform = `translateX(-${teamScrollPos}px)`;
-    setTimeout(() => {
+    teamJumpTimeout = setTimeout(() => {
         track.style.transition = "none";
         teamScrollPaused = false;
-    }, 440);
+    }, 400);
 }
 
 // Legacy stubs kept for compatibility (no-op now)
