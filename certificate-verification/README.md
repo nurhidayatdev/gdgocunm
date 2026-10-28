@@ -29,7 +29,28 @@ Data sertifikat ditarik langsung dari Google Spreadsheet menggunakan Google Visu
 ## URL Auto-Verify (Untuk QR Code Sertifikat)
 Untuk membuat QR Code di sertifikat yang langsung memverifikasi otomatis:
 ```
-https://gdgocunm.netlify.app/certificate-verification/?id=GDG-UNM/X/26/MBR001
+https://s.id/gdgocunm-verify?id=GDG-UNM/X/26/MBR001&auto=true
+```
+atau URL hosting langsung:
+```
+https://gdgocunm.netlify.app/certificate-verification/?id=GDG-UNM/X/26/MBR001&auto=true
+```
+
+### 💡 Catatan Penyesuaian di Web Verifikasi (Frontend):
+Untuk fitur Auto-Verifikasi, pastikan kode JavaScript di Web App (`s.id/gdgocunm-verify`) mendeteksi query `auto=true` saat halaman dimuat:
+
+```javascript
+window.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const certId = urlParams.get('id');
+  const isAuto = urlParams.get('auto');
+
+  if (certId && isAuto === 'true') {
+    // Panggil fungsi verifikasi kamu secara otomatis di sini
+    verifyCertificate(certId);
+  }
+});
 ```
 
 (c) 2026/2027 GDGoC UNM - Google Developer Groups on Campus • Universitas Negeri Makassar
+

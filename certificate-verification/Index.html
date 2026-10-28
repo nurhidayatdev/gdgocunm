@@ -1588,22 +1588,43 @@
       });
     }
 
-    /* Auto-Verify via URL query (?id=...) */
-    (function() {
+    /* Verification Function Alias & Global Export */
+    function verifyCertificate(certId) {
+      if (inputEl && certId) {
+        inputEl.value = String(certId).trim();
+      }
+      return runVerification(certId);
+    }
+    window.verifyCertificate = verifyCertificate;
+
+    /* Auto-Verify via URL query (?id=... & auto=true) */
+    function initAutoVerification() {
       try {
-        var params = new URLSearchParams(window.location.search);
-        var idParam = params.get("id");
-        if (idParam && idParam.trim() !== "") {
-          var cleanId = idParam.trim();
+        const urlParams = new URLSearchParams(window.location.search);
+        const certId = urlParams.get('id');
+        const isAuto = urlParams.get('auto');
+
+        if (certId && certId.trim() !== "") {
+          const cleanId = certId.trim();
           if (inputEl) inputEl.value = cleanId;
-          setTimeout(function() {
-            runVerification(cleanId);
-          }, 250);
+
+          // Auto-verify if auto=true is specified or if auto parameter is omitted (direct ID link)
+          if (isAuto === 'true' || isAuto === null) {
+            setTimeout(function() {
+              verifyCertificate(cleanId);
+            }, 250);
+          }
         }
       } catch (e) {
         console.warn("Could not parse query parameters:", e);
       }
-    })();
+    }
+
+    if (document.readyState === 'loading') {
+      window.addEventListener('DOMContentLoaded', initAutoVerification);
+    } else {
+      initAutoVerification();
+    }
 
   })();
   </script>
