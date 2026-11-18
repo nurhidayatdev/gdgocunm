@@ -2079,6 +2079,8 @@
                     window.scrollTo({ top: 0, behavior: 'smooth' });
 
                     if (viewName === 'result') {
+                        cachedExportBlob = null;
+                        cachedCloudUrl = null;
                         renderAllSlots();
                         if (state.stream) {
                             state.stream.getTracks().forEach(tr => tr.stop());
@@ -2565,8 +2567,6 @@
                                 backgroundColor: null,
                                 logging: false,
                                 imageTimeout: 15000,
-                                windowWidth: 1920,
-                                windowHeight: 1080,
                                 onclone: (clonedDoc) => {
                                     // Remove any CSS scaling transforms from the parent container in cloned document
                                     const clonedBox = clonedDoc.querySelector('.result-centered-box');
@@ -2580,50 +2580,6 @@
                                     }
                                 }
                             });
-                            // Direct HD Photo Compositing Pass:
-                            // Composite the original, uncompressed camera photos directly onto the canvas slots
-                            // at their exact subpixel-accurate positions to guarantee razor-sharp, pixel-perfect output.
-                            const ctx = canvas.getContext('2d');
-                            ctx.imageSmoothingEnabled = true;
-                            ctx.imageSmoothingQuality = 'high';
-
-                            const slots = stripEl.querySelectorAll('.art-slot');
-                            const stripRect = stripEl.getBoundingClientRect();
-
-                            for (let i = 0; i < state.slotCount; i++) {
-                                const photoData = state.photos[i];
-                                if (!photoData || !slots[i]) continue;
-
-                                const slotEl = slots[i];
-                                const slotRect = slotEl.getBoundingClientRect();
-
-                                const relX = ((slotRect.left - stripRect.left) / stripRect.width) * canvas.width;
-                                const relY = ((slotRect.top - stripRect.top) / stripRect.height) * canvas.height;
-                                const relW = (slotRect.width / stripRect.width) * canvas.width;
-                                const relH = (slotRect.height / stripRect.height) * canvas.height;
-
-                                const imgObj = await new Promise((resolve) => {
-                                    const img = new Image();
-                                    img.onload = () => resolve(img);
-                                    img.onerror = () => resolve(null);
-                                    img.src = photoData;
-                                });
-
-                                if (imgObj) {
-                                    const r = 6 * (canvas.width / stripRect.width);
-                                    ctx.save();
-                                    ctx.beginPath();
-                                    if (typeof ctx.roundRect === 'function') {
-                                        ctx.roundRect(relX, relY, relW, relH, r);
-                                    } else {
-                                        ctx.rect(relX, relY, relW, relH);
-                                    }
-                                    ctx.closePath();
-                                    ctx.clip();
-                                    ctx.drawImage(imgObj, relX, relY, relW, relH);
-                                    ctx.restore();
-                                }
-                            }
 
                             return canvas;
                         } catch (h2cErr) {
