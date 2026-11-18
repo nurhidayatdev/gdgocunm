@@ -1,0 +1,3017 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
+        <meta
+            name="description"
+            content="Official Photobooth Studio of Google Developer Groups On Campus Universitas Negeri Makassar (GDGoC UNM). Capture memories and download HD souvenir strips."
+        />
+        <meta name="theme-color" content="#171B21" />
+        <title>
+            Photobooth Studio • GDGoC UNM (Exclusive Module)
+        </title>
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="../assets/logo/favicon.png" />
+
+        <!-- Google Fonts: Google Sans & Space Grotesk for Tech Aesthetic -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&family=Courier+Prime:wght@700&display=swap"
+            rel="stylesheet"
+        />
+
+        <!-- Codebase Core Stylesheets -->
+        <link rel="stylesheet" href="../css/style.css" />
+        <link rel="stylesheet" href="../css/animations.css" />
+
+        <style>
+            /* ==========================================================================
+       Photobooth Studio - Fullscreen Immersion & Step-by-Step Flow (NO NAVBAR)
+       1. Setup Screen (with Live Frame Preview & Webcam Selector) 
+       2. Camera Session 
+       3. Result Strip Only
+       ========================================================================== */
+            body {
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                padding-top: 0 !important;
+                background: #12151b;
+            }
+            body.no-scroll-camera,
+            body.no-scroll-setup,
+            body.no-scroll-result {
+                overflow: hidden !important;
+                height: 100vh !important;
+                max-height: 100vh !important;
+            }
+            body.no-scroll-camera .photobooth-wrapper,
+            body.no-scroll-setup .photobooth-wrapper,
+            body.no-scroll-result .photobooth-wrapper {
+                padding-top: 56px !important;
+                padding-bottom: 12px !important;
+                height: 100vh !important;
+                justify-content: center !important;
+                box-sizing: border-box !important;
+            }
+            body.no-scroll-camera .studio-top-brand,
+            body.no-scroll-setup .studio-top-brand,
+            body.no-scroll-result .studio-top-brand {
+                top: 14px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            /* Studio Top Brand (Logo + Photobooth Studio) - Centered & Enlarged */
+            .studio-top-brand {
+                position: absolute;
+                top: 16px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 50;
+                display: inline-flex;
+                align-items: center;
+                gap: 14px;
+                text-decoration: none;
+                padding: 8px 22px 8px 16px;
+                background: rgba(18, 21, 28, 0.85);
+                backdrop-filter: blur(14px);
+                -webkit-backdrop-filter: blur(14px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: var(--radius-pill);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+                transition: var(--transition-fast);
+            }
+            .studio-top-brand:hover {
+                background: rgba(26, 30, 42, 0.98);
+                border-color: rgba(66, 133, 244, 0.5);
+                box-shadow: 0 6px 24px rgba(66, 133, 244, 0.2);
+                transform: translateX(-50%) translateY(-2px);
+            }
+            .studio-top-logo {
+                height: 28px;
+                width: auto;
+                max-width: 185px;
+                object-fit: contain;
+                display: block;
+            }
+            .studio-top-divider {
+                color: rgba(255, 255, 255, 0.25);
+                font-size: 1rem;
+                font-weight: 300;
+                user-select: none;
+            }
+            .studio-top-title {
+                font-size: 0.98rem;
+                font-weight: 700;
+                letter-spacing: -0.2px;
+                color: #ffffff;
+                white-space: nowrap;
+                user-select: none;
+            }
+            @media (max-width: 768px) {
+                .studio-top-brand {
+                    top: 10px !important;
+                    left: 50% !important;
+                    transform: translateX(-50%) !important;
+                    padding: 6px 14px 6px 12px;
+                    gap: 10px;
+                }
+                .studio-top-logo {
+                    height: 22px;
+                    max-width: 140px;
+                }
+                .studio-top-title {
+                    font-size: 0.82rem;
+                }
+            }
+
+            /* Main Studio Container */
+            .photobooth-wrapper {
+                width: 100%;
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: 64px 20px 48px;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            /* View Sections */
+            .view-section {
+                width: 100%;
+                display: none;
+                animation: fadeUpIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            }
+            .view-section.active-view {
+                display: block;
+            }
+            #viewSettings.active-view {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+            }
+
+            /* Common Panel Card */
+            .studio-panel {
+                background: var(--bg-card);
+                border: 1px solid var(--border-card);
+                border-radius: var(--radius-lg);
+                padding: 24px;
+                box-shadow: var(--shadow-md);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                position: relative;
+            }
+
+            /* ========================================================================
+       View 1: Setup Layout (Two-Column Compact on Desktop: Controls + Live Frame Preview)
+       ======================================================================== */
+            .setup-layout-grid {
+                display: grid;
+                grid-template-columns: 6fr 4fr;
+                gap: 24px;
+                align-items: center;
+                width: 100%;
+                max-width: 1080px;
+                margin: 0 auto;
+                transition: grid-template-columns 0.25s ease;
+            }
+            .setup-layout-grid.layout-2x2,
+            .setup-layout-grid.layout-3x2 {
+                grid-template-columns: 6fr 4fr;
+            }
+
+            @media (max-width: 1024px) {
+                .setup-layout-grid {
+                    grid-template-columns: 1fr;
+                    gap: 16px;
+                }
+            }
+
+            .setup-controls-col .studio-panel {
+                padding: 16px 20px;
+            }
+
+            .setup-header-title {
+                margin-bottom: 10px;
+            }
+            .setup-header-title h1 {
+                font-size: 1.25rem;
+                font-weight: 700;
+                margin-bottom: 2px;
+                background: linear-gradient(135deg, #ffffff 40%, var(--blue-light) 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+            .setup-header-title p {
+                font-size: 0.76rem;
+                color: var(--text-secondary);
+            }
+
+            /* Settings Stack */
+            .settings-stack {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .setting-box {
+                background: rgba(14, 16, 24, 0.65);
+                border: 1px solid var(--border-subtle);
+                border-radius: var(--radius-md);
+                padding: 9px 12px;
+            }
+            .setting-label-row {
+                font-size: 10.5px;
+                font-weight: 700;
+                color: var(--text-secondary);
+                margin-bottom: 6px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .settings-row-2col {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            @media (max-width: 520px) {
+                .settings-row-2col {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            /* Dropdown Select for Camera Devices */
+            .studio-select {
+                width: 100%;
+                background: rgba(20, 23, 32, 0.95);
+                border: 1px solid var(--border-card);
+                border-radius: var(--radius-sm);
+                padding: 10px 14px;
+                color: var(--text-primary);
+                font-size: 12.5px;
+                font-family: inherit;
+                outline: none;
+                cursor: pointer;
+                transition: var(--transition-fast);
+            }
+            .studio-select:focus {
+                border-color: var(--google-blue);
+                box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+            }
+            .studio-select option {
+                background: #171b21;
+                color: #ffffff;
+                padding: 6px;
+            }
+
+            /* Theme Gallery Swatches (Ultra-Compact) */
+            .theme-swatch-grid {
+                display: grid;
+                grid-template-columns: repeat(5, 1fr);
+                gap: 6px;
+            }
+            .theme-swatch-card {
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid var(--border-subtle);
+                border-radius: var(--radius-sm);
+                padding: 6px 4px;
+                cursor: pointer;
+                transition: var(--transition-fast);
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+            .theme-swatch-card:hover {
+                border-color: rgba(255, 255, 255, 0.2);
+                transform: translateY(-2px);
+            }
+            .theme-swatch-card.active {
+                border-color: var(--google-blue);
+                background: rgba(66, 133, 244, 0.12);
+                box-shadow: 0 0 16px rgba(66, 133, 244, 0.25);
+            }
+            .theme-swatch-preview {
+                height: 20px;
+                border-radius: 3px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 8px;
+                font-weight: 700;
+                letter-spacing: 0.3px;
+            }
+            .swatch-sticker-bomb {
+                background: linear-gradient(135deg, #1f2430 0%, #151821 100%);
+                border: 1px solid #ff4458;
+                color: #ffde59;
+            }
+            .swatch-cyber-matrix {
+                background: #090e17;
+                border: 1px solid #4285f4;
+                color: #4285f4;
+            }
+            .swatch-pinisi-tower {
+                background: linear-gradient(135deg, #0b1a30 0%, #060e1a 100%);
+                border: 1px solid #e3a838;
+                color: #fbbc04;
+            }
+            .swatch-retro-film {
+                background: #141414;
+                border: 1px dashed #ffffff;
+                color: #ffffff;
+                font-family: 'Courier Prime', monospace;
+            }
+            .swatch-clean-white {
+                background: #ffffff;
+                border: 1px solid #dadce0;
+                color: #1a1a1a;
+            }
+            .theme-swatch-name {
+                font-size: 9.5px;
+                font-weight: 600;
+                color: var(--text-primary);
+                text-align: center;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            /* Pills Selector Grid (Compact) */
+            .pills-selector-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 5px;
+            }
+            .pill-choice-card {
+                background: rgba(255, 255, 255, 0.04);
+                border: 1px solid var(--border-subtle);
+                color: var(--text-secondary);
+                padding: 6px 3px;
+                border-radius: var(--radius-sm);
+                font-size: 11px;
+                font-weight: 600;
+                text-align: center;
+                cursor: pointer;
+                transition: var(--transition-fast);
+                user-select: none;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 2px;
+            }
+            .pill-choice-card:hover {
+                background: rgba(255, 255, 255, 0.08);
+                color: var(--text-primary);
+            }
+            .pill-choice-card.active {
+                background: rgba(66, 133, 244, 0.16);
+                border-color: var(--google-blue);
+                color: var(--blue-light);
+                box-shadow: 0 0 14px rgba(66, 133, 244, 0.22);
+            }
+            .pill-subtext {
+                font-size: 8.5px;
+                color: var(--text-muted);
+                font-weight: 400;
+            }
+            .pill-choice-card.active .pill-subtext {
+                color: var(--blue-light);
+            }
+
+            /* Filter Slider Row */
+            .filter-slider-row {
+                display: flex;
+                gap: 6px;
+                overflow-x: auto;
+                padding-bottom: 2px;
+                scrollbar-width: none;
+            }
+            .filter-slider-row::-webkit-scrollbar {
+                display: none;
+            }
+            .filter-pill-button {
+                flex: 0 0 auto;
+                padding: 5px 12px;
+                border-radius: var(--radius-pill);
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid var(--border-subtle);
+                color: var(--text-secondary);
+                font-size: 11px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: var(--transition-fast);
+            }
+            .filter-pill-button:hover {
+                background: rgba(255, 255, 255, 0.1);
+                color: var(--text-primary);
+            }
+            .filter-pill-button.active {
+                background: var(--google-blue);
+                color: #ffffff;
+                border-color: var(--google-blue);
+                box-shadow: 0 0 10px rgba(66, 133, 244, 0.35);
+            }
+
+            /* Custom Input */
+            .custom-caption-input {
+                width: 100%;
+                background: rgba(20, 23, 32, 0.9);
+                border: 1px solid var(--border-card);
+                border-radius: var(--radius-sm);
+                padding: 7px 12px;
+                color: var(--text-primary);
+                font-size: 12px;
+                font-family: inherit;
+                outline: none;
+                transition: var(--transition-fast);
+            }
+            .custom-caption-input:focus {
+                border-color: var(--google-blue);
+                box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+            }
+
+            /* Compact Start Button */
+            .btn-start-camera-cta {
+                width: 100%;
+                background: linear-gradient(135deg, var(--google-blue) 0%, #1a73e8 100%);
+                color: #ffffff;
+                border: none;
+                border-radius: var(--radius-pill);
+                padding: 11px 22px;
+                font-size: 0.95rem;
+                font-weight: 700;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                box-shadow: 0 4px 18px rgba(66, 133, 244, 0.4);
+                transition: var(--transition-normal);
+                font-family: inherit;
+                margin-top: 8px;
+            }
+            .btn-start-camera-cta:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 24px rgba(66, 133, 244, 0.55);
+            }
+
+            /* Live Preview Right Column (Direct Frame - Ultra-Compact & Scaled to Viewport) */
+            .setup-preview-col,
+            .camera-right-strip-col {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                min-width: 0;
+                position: relative;
+                overflow: visible;
+            }
+            .setup-preview-col .photostrip-art-frame,
+            .camera-right-strip-col .photostrip-art-frame {
+                transform-origin: center center;
+                box-shadow:
+                    0 20px 45px rgba(0, 0, 0, 0.85),
+                    0 0 0 1px rgba(255, 255, 255, 0.08);
+                margin: 0 auto;
+                transition: width 0.25s ease, max-width 0.25s ease, transform 0.25s ease;
+            }
+
+            /* Layout-specific frame widths so height consistently matches left panel */
+            .photostrip-art-frame.layout-3x1,
+            .setup-preview-col .photostrip-art-frame.layout-3x1,
+            .camera-right-strip-col .photostrip-art-frame.layout-3x1 {
+                width: 240px;
+                max-width: 240px;
+            }
+
+            .photostrip-art-frame.layout-2x2,
+            .setup-preview-col .photostrip-art-frame.layout-2x2,
+            .camera-right-strip-col .photostrip-art-frame.layout-2x2 {
+                width: 360px;
+                max-width: 360px;
+            }
+
+            .photostrip-art-frame.layout-3x2,
+            .setup-preview-col .photostrip-art-frame.layout-3x2,
+            .camera-right-strip-col .photostrip-art-frame.layout-3x2 {
+                width: 345px;
+                max-width: 345px;
+            }
+
+            /* Responsive height-based scale per layout */
+            @media (max-height: 840px) {
+                .setup-preview-col .photostrip-art-frame.layout-3x1,
+                .camera-right-strip-col .photostrip-art-frame.layout-3x1 {
+                    transform: scale(0.85);
+                }
+                .setup-preview-col .photostrip-art-frame.layout-2x2,
+                .camera-right-strip-col .photostrip-art-frame.layout-2x2,
+                .setup-preview-col .photostrip-art-frame.layout-3x2,
+                .camera-right-strip-col .photostrip-art-frame.layout-3x2 {
+                    transform: scale(0.96);
+                }
+            }
+            @media (max-height: 740px) {
+                .setup-preview-col .photostrip-art-frame.layout-3x1,
+                .camera-right-strip-col .photostrip-art-frame.layout-3x1 {
+                    transform: scale(0.75);
+                }
+                .setup-preview-col .photostrip-art-frame.layout-2x2,
+                .camera-right-strip-col .photostrip-art-frame.layout-2x2,
+                .setup-preview-col .photostrip-art-frame.layout-3x2,
+                .camera-right-strip-col .photostrip-art-frame.layout-3x2 {
+                    transform: scale(0.86);
+                }
+            }
+            @media (max-height: 640px) {
+                .setup-preview-col .photostrip-art-frame.layout-3x1,
+                .camera-right-strip-col .photostrip-art-frame.layout-3x1 {
+                    transform: scale(0.65);
+                }
+                .setup-preview-col .photostrip-art-frame.layout-2x2,
+                .camera-right-strip-col .photostrip-art-frame.layout-2x2,
+                .setup-preview-col .photostrip-art-frame.layout-3x2,
+                .camera-right-strip-col .photostrip-art-frame.layout-3x2 {
+                    transform: scale(0.74);
+                }
+            }
+
+            /* ========================================================================
+       View 2: Camera Shooting View (Unified Split: Camera Left, Live Strip Right - NO SCROLL)
+       ======================================================================== */
+            #viewCamera.active-view {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                max-height: 100vh;
+                padding: 10px 18px;
+                box-sizing: border-box;
+                overflow: hidden;
+            }
+            .camera-dual-stage-layout {
+                display: grid;
+                grid-template-columns: 6fr 4fr;
+                gap: 24px;
+                width: 100%;
+                max-width: 1080px;
+                margin: 0 auto;
+                max-height: 94vh;
+                align-items: center;
+                transition: grid-template-columns 0.25s ease;
+            }
+            .camera-dual-stage-layout.layout-2x2,
+            .camera-dual-stage-layout.layout-3x2 {
+                grid-template-columns: 6fr 4fr;
+            }
+            @media (max-width: 860px) {
+                .camera-dual-stage-layout {
+                    grid-template-columns: 1fr;
+                    max-height: none;
+                    overflow-y: auto;
+                }
+                body.no-scroll-camera,
+                body.no-scroll-setup,
+                body.no-scroll-result {
+                    overflow-y: auto !important;
+                    height: auto !important;
+                    max-height: none !important;
+                }
+                body.no-scroll-setup .photobooth-wrapper,
+                body.no-scroll-result .photobooth-wrapper {
+                    height: auto !important;
+                    max-height: none !important;
+                    padding-top: 50px !important;
+                    padding-bottom: 30px !important;
+                }
+            }
+            .camera-left-col {
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+            }
+            .camera-left-col .studio-panel {
+                padding: 12px 16px;
+                display: flex;
+                flex-direction: column;
+                box-sizing: border-box;
+            }
+            .camera-top-toolbar {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 8px;
+                gap: 8px;
+                flex-shrink: 0;
+            }
+
+            .camera-box-stage {
+                position: relative;
+                width: 100%;
+                height: 48vh;
+                max-height: 420px;
+                min-height: 250px;
+                aspect-ratio: 4 / 3;
+                background: #08090d;
+                border-radius: var(--radius-md);
+                overflow: hidden;
+                border: 1px solid var(--border-card);
+                box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 1;
+                transition: aspect-ratio 0.25s ease;
+                margin: 0 auto;
+            }
+            .camera-box-stage.ratio-square {
+                aspect-ratio: 1 / 1;
+            }
+            .camera-box-stage.ratio-photo {
+                aspect-ratio: 4 / 3;
+            }
+            .camera-feed {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transform: scaleX(-1);
+                transition: filter 0.2s ease;
+            }
+            .camera-feed.unmirrored {
+                transform: scaleX(1);
+            }
+
+            .camera-dotted-guide {
+                position: absolute;
+                inset: 12px;
+                border: 1.5px dashed rgba(255, 255, 255, 0.22);
+                border-radius: var(--radius-sm);
+                pointer-events: none;
+                z-index: 10;
+            }
+            .camera-target-pill {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                z-index: 20;
+                background: rgba(17, 19, 25, 0.85);
+                backdrop-filter: blur(8px);
+                border: 1px solid var(--border-subtle);
+                border-radius: var(--radius-pill);
+                padding: 4px 10px;
+                font-size: 11px;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+            .pulse-dot-red {
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                background: var(--google-red);
+                box-shadow: 0 0 8px var(--google-red);
+                animation: pulseGlow 1.2s infinite;
+            }
+            @keyframes pulseGlow {
+                0%, 100% { opacity: 1; transform: scale(1); }
+                50% { opacity: 0.35; transform: scale(0.8); }
+            }
+
+            .camera-flash-layer {
+                position: absolute;
+                inset: 0;
+                background: #ffffff;
+                opacity: 0;
+                pointer-events: none;
+                z-index: 40;
+                transition: opacity 0.05s ease-out;
+            }
+            .camera-flash-layer.flashing {
+                opacity: 0.98;
+                transition: none;
+            }
+
+            .countdown-modal {
+                position: absolute;
+                inset: 0;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                background: rgba(0, 0, 0, 0.15);
+                backdrop-filter: none;
+                z-index: 30;
+                pointer-events: none;
+            }
+            .countdown-modal.active {
+                display: flex;
+            }
+            .countdown-big-number {
+                font-size: 100px;
+                font-weight: 700;
+                color: #ffffff;
+                text-shadow: 0 4px 30px rgba(66, 133, 244, 0.9), 0 0 50px rgba(0, 0, 0, 0.8);
+                animation: popCount 0.9s ease infinite;
+                font-family: var(--font-sans);
+            }
+            @keyframes popCount {
+                0% { transform: scale(0.6); opacity: 0; }
+                50% { transform: scale(1.15); opacity: 1; }
+                100% { transform: scale(1); opacity: 0.85; }
+            }
+
+            .camera-fallback-screen {
+                position: absolute;
+                inset: 0;
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 16px;
+                text-align: center;
+                background: rgba(17, 19, 25, 0.96);
+                z-index: 25;
+            }
+            .camera-fallback-screen.active {
+                display: flex;
+            }
+
+            .camera-tools-toolbar {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+                margin-top: 10px;
+                flex-shrink: 0;
+            }
+
+            .camera-bottom-actions {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-top: 10px;
+                flex-shrink: 0;
+            }
+            .btn-shoot-auto {
+                flex: 1.8;
+                background: linear-gradient(135deg, var(--google-blue) 0%, #1a73e8 100%);
+                color: #ffffff;
+                border: none;
+                border-radius: var(--radius-pill);
+                padding: 11px 18px;
+                font-size: 0.88rem;
+                font-weight: 700;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                box-shadow: 0 4px 18px rgba(66, 133, 244, 0.35);
+                transition: var(--transition-normal);
+                font-family: inherit;
+            }
+            .btn-shoot-auto:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 24px rgba(66, 133, 244, 0.5);
+            }
+            .btn-shoot-auto:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+            /* Note: .camera-right-strip-col styles are unified with .setup-preview-col above */
+
+            /* ========================================================================
+       View 3: Result Photostrip View (DIRECT FRAME + COMPACT ACTIONS - NO SCROLL)
+       ======================================================================== */
+            #viewResult.active-view {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+                max-height: calc(100vh - 55px);
+                width: 100%;
+                box-sizing: border-box;
+                overflow: hidden;
+            }
+
+            .result-centered-box {
+                max-width: 440px;
+                width: 100%;
+                margin: 0 auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                transition: transform 0.25s ease;
+            }
+
+            .result-centered-box .photostrip-art-frame {
+                box-shadow:
+                    0 20px 45px rgba(0, 0, 0, 0.85),
+                    0 0 0 1px rgba(255, 255, 255, 0.08);
+                margin: 0 auto;
+                transition: width 0.25s ease, max-width 0.25s ease;
+            }
+            .result-centered-box .photostrip-art-frame.layout-3x1 {
+                width: 215px;
+                max-width: 215px;
+            }
+            .result-centered-box .photostrip-art-frame.layout-2x2 {
+                width: 320px;
+                max-width: 320px;
+            }
+            .result-centered-box .photostrip-art-frame.layout-3x2 {
+                width: 300px;
+                max-width: 300px;
+            }
+
+            /* Scale the entire composite (Frame + Buttons together) so buttons NEVER submerge or separate */
+            @media (max-height: 780px) {
+                .result-centered-box {
+                    transform: scale(0.90);
+                    transform-origin: center center;
+                }
+            }
+            @media (max-height: 680px) {
+                .result-centered-box {
+                    transform: scale(0.82);
+                    transform-origin: center center;
+                }
+            }
+            @media (max-height: 580px) {
+                .result-centered-box {
+                    transform: scale(0.72);
+                    transform-origin: center center;
+                }
+            }
+
+            .photostrip-stage-box {
+                display: contents;
+            }
+
+            /* Live Photostrip Art Frame */
+            .photostrip-art-frame {
+                width: 100%;
+                max-width: 350px;
+                border-radius: 12px;
+                padding: 22px 18px 22px;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                transition: all 0.3s ease;
+                position: relative;
+                box-shadow:
+                    0 24px 50px rgba(0, 0, 0, 0.85),
+                    0 0 0 1px rgba(255, 255, 255, 0.08);
+            }
+
+            /* Themes */
+            .photostrip-art-frame.theme-stickers {
+                background: #171b21;
+                color: #f5f7fc;
+                border: 2px solid #282f3d;
+            }
+            .photostrip-art-frame.theme-matrix {
+                background: #090d15;
+                color: #e6f1ff;
+                border: 2px solid rgba(66, 133, 244, 0.4);
+                box-shadow: 0 0 35px rgba(66, 133, 244, 0.25);
+            }
+            .photostrip-art-frame.theme-pinisi {
+                background: linear-gradient(180deg, #091322 0%, #060a12 100%);
+                color: #fdfaf2;
+                border: 2px solid rgba(251, 188, 4, 0.35);
+                box-shadow: 0 20px 48px rgba(0, 0, 0, 0.9);
+            }
+            .photostrip-art-frame.theme-retro-film {
+                background: #0d0d0d;
+                color: #ffffff;
+                border-left: 12px dashed #333333;
+                border-right: 12px dashed #333333;
+                font-family: 'Courier Prime', monospace;
+            }
+            .photostrip-art-frame.theme-clean-white {
+                background: #ffffff;
+                color: #1a1a1a;
+                border: 1px solid #e0e0e0;
+                box-shadow: 0 20px 48px rgba(0, 0, 0, 0.3);
+            }
+
+            .strip-header-band {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+                padding-bottom: 8px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                position: relative;
+                z-index: 5;
+            }
+            .theme-clean-white .strip-header-band {
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            }
+            .strip-logo-full-img {
+                height: 24px;
+                max-width: 180px;
+                object-fit: contain;
+                display: block;
+            }
+
+            .strip-washi-tape {
+                display: none !important;
+            }
+
+            .strip-google-dots {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+            .s-dot {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+            }
+            .s-dot-b { background: var(--google-blue); }
+            .s-dot-r { background: var(--google-red); }
+            .s-dot-y { background: var(--google-yellow); }
+            .s-dot-g { background: var(--google-green); }
+
+            .strip-slots-grid {
+                display: grid;
+                gap: 8px;
+                width: 100%;
+                position: relative;
+                z-index: 5;
+            }
+            .grid-3x1 {
+                grid-template-columns: 1fr;
+            }
+            .grid-3x1 .art-slot {
+                aspect-ratio: 4 / 3;
+            }
+
+            .grid-2x2 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .grid-2x2 .art-slot {
+                aspect-ratio: 1 / 1;
+            }
+
+            .grid-3x2 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .grid-3x2 .art-slot {
+                aspect-ratio: 4 / 3;
+            }
+
+            .art-slot {
+                background: #090b10;
+                border-radius: 6px;
+                overflow: hidden;
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                cursor: pointer;
+                transition: transform 0.15s ease, border-color 0.15s ease;
+            }
+            .theme-clean-white .art-slot {
+                background: #f1f3f4;
+                border: 1px solid rgba(0, 0, 0, 0.08);
+            }
+            #cameraSlotsGrid .art-slot:hover {
+                border-color: var(--google-blue);
+                transform: scale(1.015);
+            }
+            #cameraSlotsGrid .art-slot.active-slot {
+                border: 2px solid var(--google-blue);
+                box-shadow: 0 0 12px rgba(66, 133, 244, 0.45);
+            }
+            #resultStripEl .art-slot,
+            #previewStripEl .art-slot {
+                cursor: default;
+            }
+            #resultStripEl .art-slot:hover,
+            #previewStripEl .art-slot:hover {
+                transform: none;
+            }
+            .art-slot img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+            .art-slot-photo-fill {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                background-size: cover;
+                background-position: center center;
+                background-repeat: no-repeat;
+            }
+            .art-slot-empty {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 6px;
+                color: rgba(255, 255, 255, 0.35);
+                font-size: 11px;
+                font-weight: 500;
+            }
+            .theme-clean-white .art-slot-empty {
+                color: rgba(0, 0, 0, 0.35);
+            }
+            .art-slot-number {
+                width: 22px;
+                height: 22px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 11px;
+                font-weight: 700;
+            }
+            .art-retake-hover {
+                position: absolute;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.7);
+                backdrop-filter: blur(2px);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 5px;
+                opacity: 0;
+                transition: opacity 0.2s ease;
+                color: #fff;
+                font-size: 11px;
+                font-weight: 600;
+            }
+            .art-slot:hover .art-retake-hover {
+                opacity: 1;
+            }
+
+            .scattered-decor-layer {
+                position: absolute;
+                inset: 0;
+                pointer-events: none;
+                z-index: 2;
+                overflow: hidden;
+            }
+            .sparkle-shape {
+                position: absolute;
+                font-size: 14px;
+                line-height: 1;
+                user-select: none;
+                pointer-events: none;
+                filter: drop-shadow(0 0 6px currentColor);
+            }
+
+            .pinisi-tower-backdrop-art {
+                position: absolute;
+                bottom: 20px;
+                right: -20px;
+                width: 180px;
+                opacity: 0.18;
+                pointer-events: none;
+                z-index: 1;
+                filter: drop-shadow(0 0 12px rgba(251, 188, 4, 0.3));
+                display: none;
+            }
+            .theme-pinisi .pinisi-tower-backdrop-art {
+                display: block;
+            }
+
+            .strip-bottom-band {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                padding-top: 8px;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                font-size: 10px;
+                position: relative;
+                z-index: 5;
+            }
+            .theme-clean-white .strip-bottom-band {
+                border-top: 1px solid rgba(0, 0, 0, 0.1);
+            }
+            .strip-footer-title-row {
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 8px;
+            }
+            .strip-caption-display {
+                font-weight: 700;
+                letter-spacing: 0.2px;
+                font-size: 11px;
+            }
+            .strip-date-display {
+                display: none !important;
+            }
+            .strip-watermark-row {
+                opacity: 0.55;
+                font-size: 8.5px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            /* Export Action Buttons (Ultra-Compact) */
+            .export-stack {
+                width: 100%;
+                max-width: 360px;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                margin-top: 10px;
+            }
+            .btn-download-hd-big {
+                background: linear-gradient(135deg, var(--google-green) 0%, #2e7d32 100%);
+                color: #ffffff;
+                border: none;
+                border-radius: var(--radius-pill);
+                padding: 10px 18px;
+                font-size: 0.90rem;
+                font-weight: 700;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                box-shadow: 0 4px 16px rgba(52, 168, 83, 0.35);
+                transition: var(--transition-normal);
+                font-family: inherit;
+            }
+            .btn-download-hd-big:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 22px rgba(52, 168, 83, 0.5);
+            }
+            .btn-download-hd-big:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+            .sub-action-row {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .btn-sub-pill {
+                flex: 1;
+                border-radius: var(--radius-pill);
+            }
+
+            /* Toast Notification */
+            .photobooth-toast {
+                position: fixed;
+                bottom: 24px;
+                left: 50%;
+                transform: translateX(-50%) translateY(100px);
+                background: #1e2330;
+                color: #fff;
+                border: 1px solid var(--border-card-hover);
+                padding: 12px 22px;
+                border-radius: var(--radius-pill);
+                font-size: 13px;
+                font-weight: 500;
+                box-shadow: var(--shadow-lg);
+                z-index: 120;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                opacity: 0;
+                transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                pointer-events: none;
+            }
+            .photobooth-toast.show {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+            /* Download & Scan QR Code Modal */
+            .modal-backdrop-qr {
+                position: fixed;
+                inset: 0;
+                background: rgba(4, 6, 10, 0.85);
+                backdrop-filter: blur(10px);
+                z-index: 200;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                padding: 16px;
+                animation: fadeInModal 0.2s ease-out;
+            }
+            .modal-backdrop-qr.active {
+                display: flex;
+            }
+            @keyframes fadeInModal {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            .modal-qr-card {
+                background: #141720;
+                border: 1px solid var(--border-card-hover);
+                border-radius: 20px;
+                padding: 24px 22px 20px;
+                max-width: 360px;
+                width: 100%;
+                position: relative;
+                box-shadow: 0 25px 65px rgba(0, 0, 0, 0.9);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                box-sizing: border-box;
+                animation: scaleInCard 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            @keyframes scaleInCard {
+                from { transform: scale(0.92); opacity: 0; }
+                to { transform: scale(1); opacity: 1; }
+            }
+            .modal-qr-close {
+                position: absolute;
+                top: 14px;
+                right: 14px;
+                background: rgba(255, 255, 255, 0.08);
+                border: none;
+                color: var(--text-secondary);
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: var(--transition-fast);
+            }
+            .modal-qr-close:hover {
+                background: rgba(255, 255, 255, 0.16);
+                color: #ffffff;
+            }
+            .modal-qr-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                background: rgba(66, 133, 244, 0.14);
+                border: 1px solid rgba(66, 133, 244, 0.3);
+                color: var(--blue-light);
+                border-radius: var(--radius-pill);
+                padding: 4px 10px;
+                font-size: 0.72rem;
+                font-weight: 600;
+            }
+            .qr-box-container {
+                background: #ffffff;
+                border-radius: 14px;
+                padding: 12px;
+                margin: 16px 0 14px;
+                width: 210px;
+                height: 210px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+                position: relative;
+                box-sizing: border-box;
+            }
+            .qr-loading-wrapper {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                width: 100%;
+                height: 100%;
+            }
+            .qr-spinner {
+                stroke: var(--google-blue);
+                animation: rotateSlow 1s linear infinite;
+            }
+            .qr-modal-divider {
+                display: flex;
+                align-items: center;
+                width: 100%;
+                margin: 6px 0 12px;
+            }
+            .qr-modal-divider::before,
+            .qr-modal-divider::after {
+                content: '';
+                flex: 1;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            }
+            .qr-modal-divider span {
+                padding: 0 10px;
+                font-size: 0.68rem;
+                color: var(--text-muted);
+                font-weight: 700;
+                letter-spacing: 0.5px;
+            }
+            .btn-download-device {
+                width: 100%;
+                background: linear-gradient(135deg, var(--google-green) 0%, #2e7d32 100%);
+                color: #ffffff;
+                border: none;
+                border-radius: var(--radius-pill);
+                padding: 12px 18px;
+                font-size: 0.85rem;
+                font-weight: 700;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                box-shadow: 0 4px 18px rgba(52, 168, 83, 0.35);
+                transition: var(--transition-normal);
+                font-family: inherit;
+            }
+            .btn-download-device:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 24px rgba(52, 168, 83, 0.5);
+            }
+        </style>
+        <!-- html2canvas for 100% pixel-perfect DOM-to-PNG export -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+        <!-- QRCode.js for client-side QR Code generation -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    </head>
+    <body>
+        <!-- Background Ambience & Grid Pattern -->
+        <div class="tech-grid-overlay" aria-hidden="true"></div>
+        <div class="ambient-glow" aria-hidden="true"></div>
+
+        <!-- Studio Top Brand (Logo + Photobooth Studio) -->
+        <a href="../" class="studio-top-brand" title="Back to GDGoC UNM Website">
+            <img src="../assets/logo/logo-gdgoc-full.png" alt="GDGoC UNM Logo" class="studio-top-logo" onerror="this.src='../assets/logo/GDGoC-Logo.png'" />
+            <span class="studio-top-divider" aria-hidden="true">|</span>
+            <span class="studio-top-title">Photobooth Studio</span>
+        </a>
+
+        <!-- Main Studio App -->
+        <main class="photobooth-wrapper">
+            <!-- ========================================================================
+           SCREEN 1: SETUP & LIVE FRAME PREVIEW
+           ======================================================================== -->
+            <section class="view-section active-view" id="viewSettings">
+                <div class="setup-layout-grid">
+                    <!-- LEFT COLUMN: Settings Controls -->
+                    <div class="setup-controls-col">
+                        <div class="studio-panel">
+                            <div class="setup-header-title">
+                                <h1>Photobooth Studio</h1>
+                                <p>Choose frame design, layout grid, and caption before taking photos</p>
+                            </div>
+
+                            <div class="settings-stack">
+                                <!-- 1. Frame Design Variation -->
+                                <div class="setting-box">
+                                    <div class="setting-label-row">
+                                        <span>1. Frame Design Variation</span>
+                                        <span id="labelCurrentTheme" style="color: var(--google-yellow)">Sticker & Y2K Doodle</span>
+                                    </div>
+                                    <div class="theme-swatch-grid">
+                                        <div class="theme-swatch-card active" data-theme="stickers">
+                                            <div class="theme-swatch-preview swatch-sticker-bomb">✦ STICKER</div>
+                                            <div class="theme-swatch-name">Sticker & Y2K</div>
+                                        </div>
+                                        <div class="theme-swatch-card" data-theme="matrix">
+                                            <div class="theme-swatch-preview swatch-cyber-matrix">&lt;MATRIX&gt;</div>
+                                            <div class="theme-swatch-name">Cyber Matrix</div>
+                                        </div>
+                                        <div class="theme-swatch-card" data-theme="pinisi">
+                                            <div class="theme-swatch-preview swatch-pinisi-tower">★ PINISI</div>
+                                            <div class="theme-swatch-name">Phinisi Tower</div>
+                                        </div>
+                                        <div class="theme-swatch-card" data-theme="retro-film">
+                                            <div class="theme-swatch-preview swatch-retro-film">35MM FILM</div>
+                                            <div class="theme-swatch-name">Retro Film</div>
+                                        </div>
+                                        <div class="theme-swatch-card" data-theme="clean-white">
+                                            <div class="theme-swatch-preview swatch-clean-white">MINIMAL</div>
+                                            <div class="theme-swatch-name">Clean White</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 2-Column Row: Layout & Countdown Side by Side (Compact) -->
+                                <div class="settings-row-2col">
+                                    <!-- 2. Grid Layout Options -->
+                                    <div class="setting-box">
+                                        <div class="setting-label-row">
+                                            <span>2. Layout</span>
+                                            <span id="labelCurrentLayout" style="color: var(--google-blue)">3x1 Strip (3 Photos)</span>
+                                        </div>
+                                        <div class="pills-selector-grid">
+                                            <div class="pill-choice-card active" data-layout="3x1">
+                                                <span>3x1 Strip</span>
+                                                <span class="pill-subtext">3 Photos</span>
+                                            </div>
+                                            <div class="pill-choice-card" data-layout="2x2">
+                                                <span>2x2 Grid</span>
+                                                <span class="pill-subtext">4 Photos</span>
+                                            </div>
+                                            <div class="pill-choice-card" data-layout="3x2">
+                                                <span>3x2 Grid</span>
+                                                <span class="pill-subtext">6 Photos</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 3. Countdown Delay -->
+                                    <div class="setting-box">
+                                        <div class="setting-label-row">
+                                            <span>3. Timer Delay</span>
+                                            <span id="labelCountdownDisplay" style="color: var(--blue-light)">3 Seconds</span>
+                                        </div>
+                                        <div class="pills-selector-grid">
+                                            <div class="pill-choice-card active" data-timer="3">
+                                                <span>3s</span>
+                                                <span class="pill-subtext">Standard</span>
+                                            </div>
+                                            <div class="pill-choice-card" data-timer="5">
+                                                <span>5s</span>
+                                                <span class="pill-subtext">Relaxed</span>
+                                            </div>
+                                            <div class="pill-choice-card" data-timer="0">
+                                                <span>0s</span>
+                                                <span class="pill-subtext">Instant</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 4. Custom Caption -->
+                                <div class="setting-box">
+                                    <div class="setting-label-row" style="margin-bottom: 6px">
+                                        <span>4. Custom Caption:</span>
+                                    </div>
+                                    <input type="text" id="inputEventCaption" class="custom-caption-input" value="Google Developer Groups on Campus UNM" placeholder="e.g. Solution Challenge / Info Session 2026" maxlength="50" />
+                                </div>
+                            </div>
+
+                            <!-- CTA Button: Continue to Camera -->
+                            <button class="btn-start-camera-cta" id="btnGoToCamera">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                    <circle cx="12" cy="13" r="4"></circle>
+                                </svg>
+                                <span>Continue to Camera 📸</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN: Direct Live Photostrip Frame -->
+                    <div class="setup-preview-col">
+                        <div class="photostrip-art-frame theme-stickers" id="previewStripEl">
+                            <img src="../assets/logo/phinisi-tower.png" alt="Phinisi Tower" class="pinisi-tower-backdrop-art" />
+                            <div class="scattered-decor-layer" id="scatterDecorPreview"></div>
+
+                            <div class="strip-header-band">
+                                <img src="../assets/logo/logo-gdgoc-full.png" alt="GDGoC UNM" class="strip-logo-full-img" onerror="this.src='../assets/logo/GDGoC-Logo.png'" />
+                                <div class="strip-google-dots">
+                                    <div class="s-dot s-dot-b"></div>
+                                    <div class="s-dot s-dot-r"></div>
+                                    <div class="s-dot s-dot-y"></div>
+                                    <div class="s-dot s-dot-g"></div>
+                                </div>
+                            </div>
+
+                            <div class="strip-slots-grid grid-3x1" id="previewSlotsGrid"></div>
+
+                            <div class="strip-bottom-band">
+                                <div class="strip-footer-title-row">
+                                    <span class="strip-caption-display" id="captionPreviewTxt">Google Developer Groups on Campus UNM</span>
+                                </div>
+                                <div class="strip-watermark-row">
+                                    <span>Learn • Build • Grow</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================================================
+           SCREEN 2: CAMERA SESSION (UNIFIED DUAL-VIEW: CAMERA LEFT, LIVE STRIP RIGHT)
+           ======================================================================== -->
+            <section class="view-section" id="viewCamera">
+                <div class="camera-dual-stage-layout">
+                    <!-- LEFT COLUMN: Live Camera Feed & Controls -->
+                    <div class="camera-left-col">
+                        <div class="studio-panel">
+                            <!-- Camera Toolbar Top -->
+                            <div class="camera-top-toolbar">
+                                <button class="btn-secondary" id="btnBackToSettingsFromCam" style="padding: 6px 14px; font-size: 0.8rem">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                                    <span>Change Settings</span>
+                                </button>
+
+                                <!-- Target Slot Indicator -->
+                                <div class="camera-target-pill" style="position: static">
+                                    <div class="pulse-dot-red"></div>
+                                    <span>Target: Slot <strong id="activeSlotBadge" style="color: var(--blue-light)">1</strong></span>
+                                </div>
+
+                                <button class="btn-secondary" id="btnSkipToResult" style="padding: 6px 14px; font-size: 0.8rem">
+                                    <span>View & Download</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                </button>
+                            </div>
+
+                            <!-- Camera Viewport Stage -->
+                            <div class="camera-box-stage" id="cameraStage">
+                                <video id="webcamVideo" class="camera-feed" autoplay playsinline muted></video>
+
+                                <div class="camera-dotted-guide"></div>
+                                <div class="camera-flash-layer" id="flashLayer"></div>
+
+                                <div class="countdown-modal" id="countdownModal">
+                                    <div class="countdown-big-number" id="countdownNumber">3</div>
+                                </div>
+
+                                <!-- Camera Fallback State -->
+                                <div class="camera-fallback-screen" id="cameraFallback">
+                                    <div style="width: 52px; height: 52px; border-radius: 50%; background: rgba(234, 67, 53, 0.15); color: var(--google-red); display: flex; align-items: center; justify-content: center; margin-bottom: 12px">
+                                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                                            <path d="M21 21H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3m3-3h6l2 3h4a2 2 0 0 1 2 2v9.34m-7.72-2.06a4 4 0 1 1-5.56-5.56"></path>
+                                        </svg>
+                                    </div>
+                                    <h3 id="fallbackTitle" style="font-size: 0.95rem; margin-bottom: 4px">Camera Access Required</h3>
+                                    <p id="fallbackDesc" style="font-size: 0.78rem; color: var(--text-secondary); max-width: 340px; margin-bottom: 14px; line-height: 1.5">
+                                        Please allow camera access in your browser or upload photos from your device.
+                                    </p>
+                                    <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center">
+                                        <button class="btn-primary" id="btnRetryCamera" style="padding: 8px 18px; font-size: 0.8rem">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                                            <span>Retry Camera</span>
+                                        </button>
+                                        <button class="btn-secondary" id="btnUploadFallback" style="padding: 8px 18px; font-size: 0.8rem">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                            <span>Upload File</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Camera Tools Controls -->
+                            <div class="camera-tools-toolbar">
+                                <div style="display: flex; gap: 8px; align-items: center; flex: 1; min-width: 0">
+                                    <button class="btn-secondary" id="btnMirrorToggle" style="padding: 6px 11px; font-size: 0.76rem; white-space: nowrap; flex-shrink: 0" title="Mirror video (natural selfie)">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg>
+                                        <span id="mirrorBtnText">Mirror: ON</span>
+                                    </button>
+                                    <!-- Camera Selector Dropdown & Refresh -->
+                                    <div style="display: flex; gap: 5px; align-items: center; flex: 1; min-width: 0">
+                                        <select id="selectCameraDevice" class="studio-select" style="padding: 5px 8px; font-size: 0.74rem; height: 31px; width: 100%; min-width: 120px; border-radius: var(--radius-sm); text-overflow: ellipsis; white-space: nowrap" title="Select active webcam">
+                                            <option value="">Loading camera...</option>
+                                        </select>
+                                        <button class="btn-secondary" id="btnRefreshCams" style="padding: 5px 8px; font-size: 0.74rem; height: 31px; flex-shrink: 0" title="Refresh camera devices">
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; gap: 8px; align-items: center; flex-shrink: 0">
+                                    <!-- Filter Dropdown -->
+                                    <select id="selectFilter" class="studio-select" style="padding: 5px 8px; font-size: 0.74rem; height: 31px; border-radius: var(--radius-sm); min-width: 125px" title="Select visual photo filter">
+                                        <option value="none">✨ Filter: Normal</option>
+                                        <option value="warm">☀️ Warm Studio</option>
+                                        <option value="bw">🎞️ B&W Noir</option>
+                                        <option value="vintage">📼 Retro Film</option>
+                                        <option value="cyber">⚡ Cyber Glow</option>
+                                    </select>
+                                    <button class="btn-secondary" id="btnResetAll" style="padding: 6px 12px; font-size: 0.76rem" title="Clear all photos">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                                        <span>Reset All</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Shoot Action Buttons -->
+                            <div class="camera-bottom-actions">
+                                <button class="btn-shoot-auto" id="btnStartAutoSequence">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                    <span>Auto-Sequence (Snap All Slots)</span>
+                                </button>
+
+                                <button class="btn-secondary btn-shoot-single" id="btnSnapSingleSlot" style="flex: 1; border-radius: var(--radius-pill)">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
+                                    <span>Snap Slot <span id="btnSnapSlotNum">1</span></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN: Direct Photostrip Frame -->
+                    <div class="camera-right-strip-col">
+                        <div class="photostrip-art-frame theme-stickers" id="cameraStripEl">
+                            <img src="../assets/logo/phinisi-tower.png" alt="Phinisi Tower" class="pinisi-tower-backdrop-art" />
+                            <div class="scattered-decor-layer" id="scatterDecorCamera"></div>
+
+                            <div class="strip-header-band">
+                                <img src="../assets/logo/logo-gdgoc-full.png" alt="GDGoC UNM" class="strip-logo-full-img" onerror="this.src='../assets/logo/GDGoC-Logo.png'" />
+                                <div class="strip-google-dots">
+                                    <div class="s-dot s-dot-b"></div>
+                                    <div class="s-dot s-dot-r"></div>
+                                    <div class="s-dot s-dot-y"></div>
+                                    <div class="s-dot s-dot-g"></div>
+                                </div>
+                            </div>
+
+                            <div class="strip-slots-grid grid-3x1" id="cameraSlotsGrid"></div>
+
+                            <div class="strip-bottom-band">
+                                <div class="strip-footer-title-row">
+                                    <span class="strip-caption-display" id="captionCameraTxt">Google Developer Groups on Campus UNM</span>
+                                </div>
+                                <div class="strip-watermark-row">
+                                    <span>Learn • Build • Grow</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================================================
+           SCREEN 3: RESULT VIEW (DIRECT FRAME + COMPACT ACTIONS - NO SCROLL)
+           ======================================================================== -->
+            <section class="view-section" id="viewResult">
+                <div class="result-centered-box">
+                    <div class="photostrip-art-frame theme-stickers" id="resultStripEl">
+                        <img src="../assets/logo/phinisi-tower.png" alt="Phinisi Tower" class="pinisi-tower-backdrop-art" />
+                        <div class="scattered-decor-layer" id="scatterDecorResult"></div>
+
+                        <div class="strip-header-band">
+                            <img src="../assets/logo/logo-gdgoc-full.png" alt="GDGoC UNM" class="strip-logo-full-img" onerror="this.src='../assets/logo/GDGoC-Logo.png'" />
+                            <div class="strip-google-dots">
+                                <div class="s-dot s-dot-b"></div>
+                                <div class="s-dot s-dot-r"></div>
+                                <div class="s-dot s-dot-y"></div>
+                                <div class="s-dot s-dot-g"></div>
+                            </div>
+                        </div>
+
+                        <div class="strip-slots-grid grid-3x1" id="resultSlotsGrid"></div>
+
+                        <div class="strip-bottom-band">
+                            <div class="strip-footer-title-row">
+                                <span class="strip-caption-display" id="captionResultTxt">Google Developer Groups on Campus UNM</span>
+                            </div>
+                            <div class="strip-watermark-row">
+                                <span>Learn • Build • Grow</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons Beneath Result Strip -->
+                    <div class="export-stack">
+                        <!-- Row 1: Download Photo / Open Mobile QR Scan -->
+                        <button class="btn-download-hd-big" id="btnDownloadHD">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            <span>Download HD Photo (Scan QR / Save)</span>
+                        </button>
+
+                        <!-- Row 2: Retake Photos -->
+                        <div class="sub-action-row">
+                            <button class="btn-secondary btn-sub-pill" id="btnRetakeFromResults" style="padding: 9px 18px; font-size: 0.84rem; justify-content: center; width: 100%">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                                <span>Retake Photos</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Offscreen Canvas for HD Export -->
+        <canvas id="renderExportCanvas" style="display: none"></canvas>
+        <input type="file" id="hiddenSlotFileInput" accept="image/*" style="display: none" />
+
+        <!-- Toast Notification Box -->
+        <div class="photobooth-toast" id="studioToast">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span id="toastMsg">Ready</span>
+        </div>
+
+        <!-- Modal Download & Scan QR Code -->
+        <div class="modal-backdrop-qr" id="modalDownloadQR">
+            <div class="modal-qr-card">
+                <button class="modal-qr-close" id="btnCloseQRModal" title="Close Modal">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+
+                <div class="modal-qr-header">
+                    <h3 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin: 4px 0 4px">Scan QR to View & Save</h3>
+                    <p style="font-size: 0.76rem; color: var(--text-secondary); margin: 0">Scan with your smartphone camera to open and save the high-resolution photo strip.</p>
+                </div>
+
+                <!-- QR Display Container -->
+                <div class="qr-box-container">
+                    <!-- Loading Spinner while rendering & uploading -->
+                    <div id="qrLoadingState" class="qr-loading-wrapper">
+                        <svg class="qr-spinner" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+                        <span id="qrStatusText" style="font-size: 0.78rem; color: #222; font-weight: 600; text-align: center">Preparing QR Code...</span>
+                    </div>
+
+                    <!-- Rendered QR Code Element -->
+                    <div id="qrCanvasWrapper" style="display: none;"></div>
+
+                    <!-- Fallback image tag if needed -->
+                    <img id="qrImageFallback" style="display: none; width: 185px; height: 185px; border-radius: 6px" alt="QR Code" />
+                </div>
+
+                <!-- Divider -->
+                <div class="qr-modal-divider">
+                    <span>OR</span>
+                </div>
+
+                <!-- Download Directly to Current Device -->
+                <button class="btn-download-device" id="btnDownloadToDeviceDirect">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <span>Download to This Device</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ========================================================================
+       Core JavaScript Engine
+       ======================================================================== -->
+        <script>
+            (function () {
+                'use strict';
+
+                /* State */
+                const state = {
+                    currentView: 'settings', // 'settings', 'camera', 'result'
+                    layout: '3x1',           // '3x1', '2x2', '3x2'
+                    slotCount: 3,            // 3, 4, 6
+                    activeSlotIndex: 0,      // 0-based
+                    photos: [],              // Data URLs
+                    countdownSeconds: 3,     // 3, 5, 0
+                    currentFilter: 'none',   // 'none', 'warm', 'bw', 'vintage', 'cyber'
+                    theme: 'stickers',       // 'stickers', 'matrix', 'pinisi', 'retro-film', 'clean-white'
+                    selectedDeviceId: '',    // Specific webcam deviceId
+                    isMirrored: true,        // Selfie flip
+                    facingMode: 'user',      // Front/back cam
+                    stream: null,
+                    isCapturingSequence: false
+                };
+
+                /* Preload Codebase Image Assets */
+                const assets = {
+                    logoFull: new Image(),
+                    logoIcon: new Image(),
+                    pinisiTower: new Image()
+                };
+                assets.logoFull.src = '../assets/logo/logo-gdgoc-full.png';
+                assets.logoIcon.src = '../assets/logo/GDGoC-Logo.png';
+                assets.pinisiTower.src = '../assets/logo/phinisi-tower.png';
+
+                /* DOM Elements */
+                const viewSettings = document.getElementById('viewSettings');
+                const viewCamera = document.getElementById('viewCamera');
+                const viewResult = document.getElementById('viewResult');
+
+                const selectCameraDevice = document.getElementById('selectCameraDevice');
+                const btnRefreshCams = document.getElementById('btnRefreshCams');
+                const labelCameraStatus = document.getElementById('labelCameraStatus');
+
+                const btnGoToCamera = document.getElementById('btnGoToCamera');
+                const btnBackToSettingsFromCam = document.getElementById('btnBackToSettingsFromCam');
+                const btnSkipToResult = document.getElementById('btnSkipToResult');
+                const btnRetakeFromResults = document.getElementById('btnRetakeFromResults');
+                const btnBackToSettingsFromResult = document.getElementById('btnBackToSettingsFromResult');
+
+                const videoEl = document.getElementById('webcamVideo');
+                const cameraStage = document.getElementById('cameraStage');
+                const flashLayer = document.getElementById('flashLayer');
+                const countdownModal = document.getElementById('countdownModal');
+                const countdownNumber = document.getElementById('countdownNumber');
+                const cameraFallback = document.getElementById('cameraFallback');
+                const fallbackTitle = document.getElementById('fallbackTitle');
+                const fallbackDesc = document.getElementById('fallbackDesc');
+                const btnRetryCamera = document.getElementById('btnRetryCamera');
+                const btnUploadFallback = document.getElementById('btnUploadFallback');
+
+                const btnMirrorToggle = document.getElementById('btnMirrorToggle');
+                const mirrorBtnText = document.getElementById('mirrorBtnText');
+                const btnSwitchCam = document.getElementById('btnSwitchCam');
+                const selectFilter = document.getElementById('selectFilter');
+                const btnUploadFileTrigger = document.getElementById('btnUploadFileTrigger');
+                const btnResetAll = document.getElementById('btnResetAll');
+                const btnStartAutoSequence = document.getElementById('btnStartAutoSequence');
+                const btnSnapSingleSlot = document.getElementById('btnSnapSingleSlot');
+                const btnSnapSlotNum = document.getElementById('btnSnapSlotNum');
+                const activeSlotBadge = document.getElementById('activeSlotBadge');
+
+                /* Preview Frame Elements (Screen 1) */
+                const previewStripEl = document.getElementById('previewStripEl');
+                const scatterDecorPreview = document.getElementById('scatterDecorPreview');
+                const previewSlotsGrid = document.getElementById('previewSlotsGrid');
+                const captionPreviewTxt = document.getElementById('captionPreviewTxt');
+                const previewThemeBadge = document.getElementById('previewThemeBadge');
+
+                /* Camera Side Strip Elements (Screen 2) */
+                const cameraStripEl = document.getElementById('cameraStripEl');
+                const scatterDecorCamera = document.getElementById('scatterDecorCamera');
+                const cameraSlotsGrid = document.getElementById('cameraSlotsGrid');
+                const captionCameraTxt = document.getElementById('captionCameraTxt');
+
+                /* Result Frame Elements (Screen 3) */
+                const resultStripEl = document.getElementById('resultStripEl');
+                const scatterDecorResult = document.getElementById('scatterDecorResult');
+                const resultSlotsGrid = document.getElementById('resultSlotsGrid');
+                const captionResultTxt = document.getElementById('captionResultTxt');
+
+                const inputEventCaption = document.getElementById('inputEventCaption');
+                const labelCurrentTheme = document.getElementById('labelCurrentTheme');
+                const labelCurrentLayout = document.getElementById('labelCurrentLayout');
+                const labelFilterTimer = document.getElementById('labelFilterTimer');
+
+                const btnDownloadHD = document.getElementById('btnDownloadHD');
+                const btnCopyClipboard = document.getElementById('btnCopyClipboard');
+                const btnShareNative = document.getElementById('btnShareNative');
+                const renderExportCanvas = document.getElementById('renderExportCanvas');
+                const hiddenSlotFileInput = document.getElementById('hiddenSlotFileInput');
+                const studioToast = document.getElementById('studioToast');
+
+                /* QR Modal Elements */
+                const modalDownloadQR = document.getElementById('modalDownloadQR');
+                const btnCloseQRModal = document.getElementById('btnCloseQRModal');
+                const qrLoadingState = document.getElementById('qrLoadingState');
+                const qrStatusText = document.getElementById('qrStatusText');
+                const qrCanvasWrapper = document.getElementById('qrCanvasWrapper');
+                const qrImageFallback = document.getElementById('qrImageFallback');
+                const btnDownloadToDeviceDirect = document.getElementById('btnDownloadToDeviceDirect');
+
+                let cachedExportBlob = null;
+                let cachedCloudUrl = null;
+
+                /* Toast */
+                let toastTimer = null;
+                function showToast(msg) {
+                    document.getElementById('toastMsg').textContent = msg;
+                    studioToast.classList.add('show');
+                    clearTimeout(toastTimer);
+                    toastTimer = setTimeout(() => {
+                        studioToast.classList.remove('show');
+                    }, 3000);
+                }
+
+                /* ========================================================================
+                   WEBCAM DEVICE ENUMERATION & SELECTION (ACCURATE DEVICE IDENTIFIER)
+                   ======================================================================== */
+                const STORAGE_KEY_CAM_ID = 'gdgoc_photobooth_selected_cam_id';
+
+                function classifyCamera(label) {
+                    if (!label) return { isExternal: false, badge: '' };
+                    const l = label.toLowerCase();
+
+                    // Known built-in laptop camera labels (e.g. Asus USB2.0 HD UVC WebCam, Integrated Camera, FaceTime, etc.)
+                    const isLaptopBuiltin = 
+                        l.includes('uvc webcam') ||
+                        l.includes('usb2.0 hd') ||
+                        l.includes('integrated') || 
+                        l.includes('built-in') || 
+                        l.includes('facetime') || 
+                        l.includes('internal') ||
+                        l.includes('laptop');
+
+                    // If it is explicitly an external webcam or dedicated USB camera (like DV20, Logitech, OBS, DroidCam, etc.)
+                    const isRealExternal = 
+                        l.includes('dv20') ||
+                        l.includes('external') ||
+                        l.includes('logitech') ||
+                        l.includes('c920') ||
+                        l.includes('c922') ||
+                        l.includes('brio') ||
+                        l.includes('droidcam') ||
+                        l.includes('iriun') ||
+                        l.includes('obs') ||
+                        (l.includes('usb camera') && !isLaptopBuiltin);
+
+                    if (isRealExternal) {
+                        return { isExternal: true, badge: ' 🎥 [External Webcam]' };
+                    }
+                    if (isLaptopBuiltin) {
+                        return { isExternal: false, badge: ' 💻 [Laptop Camera]' };
+                    }
+                    return { isExternal: false, badge: '' };
+                }
+
+                async function enumerateCameraDevices() {
+                    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+                        selectCameraDevice.innerHTML = '<option value="">Default Web Camera</option>';
+                        return;
+                    }
+
+                    try {
+                        const devices = await navigator.mediaDevices.enumerateDevices();
+                        const videoInputs = devices.filter(d => d.kind === 'videoinput');
+
+                        selectCameraDevice.innerHTML = '';
+                        if (videoInputs.length === 0) {
+                            selectCameraDevice.innerHTML = '<option value="">No webcam detected</option>';
+                            if (labelCameraStatus) {
+                                labelCameraStatus.textContent = 'Not Detected';
+                                labelCameraStatus.style.color = 'var(--google-red)';
+                            }
+                            return;
+                        }
+
+                        // Try to retrieve user's saved preference
+                        const savedCamId = localStorage.getItem(STORAGE_KEY_CAM_ID);
+
+                        let preferredDeviceId = '';
+                        if (savedCamId && videoInputs.some(d => d.deviceId === savedCamId)) {
+                            preferredDeviceId = savedCamId;
+                        } else if (state.selectedDeviceId && videoInputs.some(d => d.deviceId === state.selectedDeviceId)) {
+                            preferredDeviceId = state.selectedDeviceId;
+                        } else {
+                            // Find genuinely external webcam first (e.g. DV20 USB CAMERA)
+                            const externalCam = videoInputs.find(d => classifyCamera(d.label).isExternal);
+                            if (externalCam) {
+                                preferredDeviceId = externalCam.deviceId;
+                            } else {
+                                // If not recognized yet, pick non-laptop camera or the first device
+                                const nonLaptop = videoInputs.find(d => !classifyCamera(d.label).badge.includes('Laptop'));
+                                preferredDeviceId = nonLaptop ? nonLaptop.deviceId : videoInputs[0].deviceId;
+                            }
+                        }
+
+                        state.selectedDeviceId = preferredDeviceId;
+
+                        videoInputs.forEach((device, index) => {
+                            const opt = document.createElement('option');
+                            opt.value = device.deviceId;
+                            const info = classifyCamera(device.label);
+                            const label = (device.label || `Camera ${index + 1}`) + info.badge;
+                            opt.textContent = label;
+                            if (device.deviceId === preferredDeviceId) {
+                                opt.selected = true;
+                            }
+                            selectCameraDevice.appendChild(opt);
+                        });
+
+                        if (labelCameraStatus) {
+                            labelCameraStatus.textContent = `${videoInputs.length} Camera(s) Ready`;
+                            labelCameraStatus.style.color = 'var(--google-green)';
+                        }
+                    } catch (e) {
+                        console.warn('enumerateDevices error:', e);
+                    }
+                }
+
+                /* Camera Setup */
+                async function initCamera() {
+                    cameraFallback.classList.remove('active');
+
+                    if (state.stream) {
+                        state.stream.getTracks().forEach(tr => tr.stop());
+                        state.stream = null;
+                    }
+
+                    const videoConstraints = {
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    };
+
+                    if (state.selectedDeviceId) {
+                        videoConstraints.deviceId = { exact: state.selectedDeviceId };
+                    } else {
+                        videoConstraints.facingMode = state.facingMode;
+                    }
+
+                    const constraints = {
+                        audio: false,
+                        video: videoConstraints
+                    };
+
+                    try {
+                        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                            throw new Error('NOT_SUPPORTED');
+                        }
+                        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                        state.stream = stream;
+                        videoEl.srcObject = stream;
+                        await videoEl.play();
+
+                        // Once camera is allowed, device labels are available; update list!
+                        await enumerateCameraDevices();
+                    } catch (err) {
+                        console.warn('Camera err:', err);
+                        cameraFallback.classList.add('active');
+
+                        if (err.message === 'NOT_SUPPORTED') {
+                            fallbackTitle.textContent = 'Webcam Not Supported';
+                            fallbackDesc.textContent = 'Your browser does not support webcam access. Please choose Upload File.';
+                        } else if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                            fallbackTitle.textContent = 'Camera Permission Denied';
+                            fallbackDesc.textContent = 'Click the lock icon beside the browser URL, allow camera access, then click Retry Camera.';
+                        } else {
+                            fallbackTitle.textContent = 'Camera Not Detected';
+                            fallbackDesc.textContent = 'No active camera device found. You can still use this photobooth with the upload button.';
+                        }
+                    }
+                }
+
+                /* Navigation View Switcher */
+                function switchView(viewName) {
+                    state.currentView = viewName;
+
+                    document.querySelectorAll('.step-item').forEach(item => {
+                        if (item.dataset.step === viewName) {
+                            item.classList.add('active');
+                        } else {
+                            item.classList.remove('active');
+                        }
+                    });
+
+                    viewSettings.classList.toggle('active-view', viewName === 'settings');
+                    viewCamera.classList.toggle('active-view', viewName === 'camera');
+                    viewResult.classList.toggle('active-view', viewName === 'result');
+
+                    document.body.classList.toggle('no-scroll-camera', viewName === 'camera');
+                    document.body.classList.toggle('no-scroll-setup', viewName === 'settings');
+                    document.body.classList.toggle('no-scroll-result', viewName === 'result');
+
+                    if (viewName === 'camera') {
+                        initCamera();
+                    }
+
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                    if (viewName === 'result') {
+                        renderAllSlots();
+                        if (state.stream) {
+                            state.stream.getTracks().forEach(tr => tr.stop());
+                            state.stream = null;
+                        }
+                    } else if (viewName === 'settings') {
+                        renderAllSlots();
+                    }
+                }
+
+                /* Audio feedback */
+                let audioCtx = null;
+                function playShutterSound() {
+                    try {
+                        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                        if (audioCtx.state === 'suspended') audioCtx.resume();
+                        const now = audioCtx.currentTime;
+
+                        const osc1 = audioCtx.createOscillator();
+                        const g1 = audioCtx.createGain();
+                        osc1.type = 'triangle';
+                        osc1.frequency.setValueAtTime(800, now);
+                        osc1.frequency.exponentialRampToValueAtTime(140, now + 0.05);
+                        g1.gain.setValueAtTime(0.7, now);
+                        g1.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                        osc1.connect(g1);
+                        g1.connect(audioCtx.destination);
+                        osc1.start(now);
+                        osc1.stop(now + 0.05);
+
+                        const osc2 = audioCtx.createOscillator();
+                        const g2 = audioCtx.createGain();
+                        osc2.type = 'square';
+                        osc2.frequency.setValueAtTime(500, now + 0.06);
+                        osc2.frequency.exponentialRampToValueAtTime(90, now + 0.12);
+                        g2.gain.setValueAtTime(0.4, now + 0.06);
+                        g2.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                        osc2.connect(g2);
+                        g2.connect(audioCtx.destination);
+                        osc2.start(now + 0.06);
+                        osc2.stop(now + 0.12);
+                    } catch (e) {}
+                }
+
+                function triggerCameraFlash() {
+                    flashLayer.classList.add('flashing');
+                    playShutterSound();
+                    setTimeout(() => {
+                        flashLayer.classList.remove('flashing');
+                    }, 120);
+                }
+
+                function refreshTimestamp() {
+                    // Date display removed from all frames per user request
+                }
+
+                /* ========================================================================
+                   SLOTS RENDERING FOR BOTH PREVIEW (STEP 1) & RESULT (STEP 3)
+                   ======================================================================== */
+                function populateSlots(gridContainer, isInteractive, showActiveHighlight = false) {
+                    gridContainer.className = 'strip-slots-grid grid-' + state.layout;
+                    gridContainer.innerHTML = '';
+
+                    for (let i = 0; i < state.slotCount; i++) {
+                        const slot = document.createElement('div');
+                        const isActive = showActiveHighlight && (i === state.activeSlotIndex);
+                        slot.className = 'art-slot' + (isActive ? ' active-slot' : '');
+                        slot.dataset.slotIndex = i;
+
+                        const photoData = state.photos[i];
+                        if (photoData) {
+                            const photoBg = document.createElement('div');
+                            photoBg.className = 'art-slot-photo-fill';
+                            photoBg.style.backgroundImage = `url("${photoData}")`;
+                            slot.appendChild(photoBg);
+
+                            if (isInteractive) {
+                                const retakeOverlay = document.createElement('div');
+                                retakeOverlay.className = 'art-retake-hover';
+                                retakeOverlay.innerHTML = `
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                                    <span>Retake #${i + 1}</span>
+                                `;
+                                slot.appendChild(retakeOverlay);
+                            }
+                        } else {
+                            const empty = document.createElement('div');
+                            empty.className = 'art-slot-empty';
+                            empty.innerHTML = `
+                                <div class="art-slot-number">${i + 1}</div>
+                                <span>Slot ${i + 1}</span>
+                            `;
+                            slot.appendChild(empty);
+                        }
+
+                        if (isInteractive) {
+                            slot.addEventListener('click', () => {
+                                setActiveSlot(i);
+                                switchView('camera');
+                                showToast(`Target photo: Slot #${i + 1}`);
+                            });
+                        }
+
+                        gridContainer.appendChild(slot);
+                    }
+                }
+
+                function renderAllSlots() {
+                    // Update Step 1 Preview Slots (No interactive overlay, No active stroke)
+                    populateSlots(previewSlotsGrid, false, false);
+                    // Update Step 2 Camera Live Strip Slots (Interactive click to retake/select, with active stroke)
+                    if (cameraSlotsGrid) {
+                        populateSlots(cameraSlotsGrid, true, true);
+                    }
+                    // Update Step 3 Result Slots (Clean final export, No active stroke, No retake overlay)
+                    populateSlots(resultSlotsGrid, false, false);
+
+                    const hasAny = state.photos.some(p => !!p);
+                    btnDownloadHD.disabled = !hasAny;
+
+                    btnSnapSlotNum.textContent = state.activeSlotIndex + 1;
+                    activeSlotBadge.textContent = state.activeSlotIndex + 1;
+
+                    renderThemeDecorations();
+                }
+
+                function setActiveSlot(index) {
+                    state.activeSlotIndex = index;
+                    if (cameraSlotsGrid) {
+                        cameraSlotsGrid.querySelectorAll('.art-slot').forEach((el) => {
+                            const idx = parseInt(el.dataset.slotIndex, 10);
+                            if (idx === index) el.classList.add('active-slot');
+                            else el.classList.remove('active-slot');
+                        });
+                    }
+                    btnSnapSlotNum.textContent = index + 1;
+                    activeSlotBadge.textContent = index + 1;
+                }
+
+                function updateFrameClasses() {
+                    const frameClass = `photostrip-art-frame theme-${state.theme} layout-${state.layout}`;
+                    previewStripEl.className = frameClass;
+                    if (cameraStripEl) cameraStripEl.className = frameClass;
+                    resultStripEl.className = frameClass;
+
+                    const setupGrid = document.querySelector('.setup-layout-grid');
+                    if (setupGrid) {
+                        ['layout-3x1', 'layout-2x2', 'layout-3x2'].forEach(c => setupGrid.classList.remove(c));
+                        setupGrid.classList.add('layout-' + state.layout);
+                    }
+                    const camLayout = document.querySelector('.camera-dual-stage-layout');
+                    if (camLayout) {
+                        ['layout-3x1', 'layout-2x2', 'layout-3x2'].forEach(c => camLayout.classList.remove(c));
+                        camLayout.classList.add('layout-' + state.layout);
+                    }
+                }
+
+                function setLayout(layoutName) {
+                    state.layout = layoutName;
+                    if (layoutName === '3x1') {
+                        state.slotCount = 3;
+                        labelCurrentLayout.textContent = '3x1 Strip (3 Photos)';
+                        if (cameraStage) {
+                            cameraStage.classList.remove('ratio-square');
+                            cameraStage.classList.add('ratio-photo');
+                        }
+                    } else if (layoutName === '2x2') {
+                        state.slotCount = 4;
+                        labelCurrentLayout.textContent = '2x2 Grid (4 Photos)';
+                        if (cameraStage) {
+                            cameraStage.classList.remove('ratio-photo');
+                            cameraStage.classList.add('ratio-square');
+                        }
+                    } else if (layoutName === '3x2') {
+                        state.slotCount = 6;
+                        labelCurrentLayout.textContent = '3x2 Grid (6 Photos)';
+                        if (cameraStage) {
+                            cameraStage.classList.remove('ratio-square');
+                            cameraStage.classList.add('ratio-photo');
+                        }
+                    }
+
+                    state.photos = state.photos.slice(0, state.slotCount);
+                    while (state.photos.length < state.slotCount) {
+                        state.photos.push(null);
+                    }
+                    if (state.activeSlotIndex >= state.slotCount) {
+                        state.activeSlotIndex = 0;
+                    }
+
+                    updateFrameClasses();
+
+                    cachedExportBlob = null;
+                    cachedCloudUrl = null;
+
+                    renderAllSlots();
+                }
+
+                function renderThemeDecorations() {
+                    const layers = [scatterDecorPreview, scatterDecorCamera, scatterDecorResult];
+                    layers.forEach(layer => {
+                        if (!layer) return;
+                        layer.innerHTML = '';
+                        if (state.theme === 'stickers' || state.theme === 'matrix') {
+                            const sparkles = [
+                                { char: '✦', top: '8%', right: '14px', color: '#ffde59' },
+                                { char: '✧', top: '42%', left: '8px', color: '#4285f4' },
+                                { char: '⋆', bottom: '22%', right: '10px', color: '#ea4335' },
+                                { char: '✦', bottom: '6%', left: '24px', color: '#34a853' }
+                            ];
+                            sparkles.forEach(s => {
+                                const sp = document.createElement('div');
+                                sp.className = 'sparkle-shape';
+                                sp.textContent = s.char;
+                                sp.style.color = s.color;
+                                if (s.top) sp.style.top = s.top;
+                                if (s.bottom) sp.style.bottom = s.bottom;
+                                if (s.left) sp.style.left = s.left;
+                                if (s.right) sp.style.right = s.right;
+                                layer.appendChild(sp);
+                            });
+                        }
+                    });
+                }
+
+                function applyTheme(themeName) {
+                    state.theme = themeName;
+                    updateFrameClasses();
+
+                    // Switch logo asset: dark text version for clean-white, white text for dark themes
+                    const logoSrc = (themeName === 'clean-white')
+                        ? '../assets/logo/logo-gdgoc-full-dark.png'
+                        : '../assets/logo/logo-gdgoc-full.png';
+
+                    document.querySelectorAll('.strip-logo-full-img').forEach(img => {
+                        img.src = logoSrc;
+                    });
+
+                    cachedExportBlob = null;
+                    cachedCloudUrl = null;
+
+                    renderThemeDecorations();
+                }
+
+                function getFilterCSS(name) {
+                    switch (name) {
+                        case 'warm': return 'sepia(0.25) saturate(1.25) contrast(1.05)';
+                        case 'bw': return 'grayscale(1) contrast(1.2) brightness(0.95)';
+                        case 'vintage': return 'contrast(1.1) brightness(0.95) sepia(0.35) hue-rotate(-10deg)';
+                        case 'cyber': return 'saturate(1.5) contrast(1.15) brightness(1.05)';
+                        default: return 'none';
+                    }
+                }
+
+                function applyFilterToPreview() {
+                    videoEl.style.filter = getFilterCSS(state.currentFilter);
+                    if (selectFilter && selectFilter.value !== state.currentFilter) {
+                        selectFilter.value = state.currentFilter;
+                    }
+                    const filterTimerEl = document.getElementById('labelFilterTimer');
+                    if (filterTimerEl) {
+                        filterTimerEl.textContent = `${state.countdownSeconds}s • ${state.currentFilter.toUpperCase()}`;
+                    }
+                }
+
+                function captureCameraFrame() {
+                    const temp = document.createElement('canvas');
+                    const vw = videoEl.videoWidth || 1280;
+                    const vh = videoEl.videoHeight || 720;
+
+                    // Determine target aspect ratio based on active layout
+                    // 2x2 Grid uses 1:1 square; 3x1 and 3x2 use 4:3 landscape
+                    let targetRatio = 4 / 3;
+                    if (state.layout === '2x2') {
+                        targetRatio = 1 / 1;
+                    }
+
+                    let cropW = vw;
+                    let cropH = vh;
+                    const videoRatio = vw / vh;
+
+                    if (videoRatio > targetRatio) {
+                        // Video is wider than target slot (crop left/right)
+                        cropW = vh * targetRatio;
+                        cropH = vh;
+                    } else {
+                        // Video is taller than target slot (crop top/bottom)
+                        cropW = vw;
+                        cropH = vw / targetRatio;
+                    }
+
+                    const cropX = (vw - cropW) / 2;
+                    const cropY = (vh - cropH) / 2;
+
+                    // Set canvas resolution exactly to cropped dimensions
+                    temp.width = Math.round(cropW);
+                    temp.height = Math.round(cropH);
+                    const ctx = temp.getContext('2d');
+
+                    if (state.isMirrored) {
+                        ctx.translate(temp.width, 0);
+                        ctx.scale(-1, 1);
+                    }
+                    if (state.currentFilter !== 'none') {
+                        ctx.filter = getFilterCSS(state.currentFilter);
+                    }
+
+                    // Draw only the centered cropped region preserving true aspect ratio
+                    ctx.drawImage(videoEl, cropX, cropY, cropW, cropH, 0, 0, temp.width, temp.height);
+                    return temp.toDataURL('image/png');
+                }
+
+                function waitCountdown(sec) {
+                    return new Promise(resolve => {
+                        if (sec <= 0) {
+                            resolve();
+                            return;
+                        }
+                        let rem = sec;
+                        countdownModal.classList.add('active');
+                        countdownNumber.textContent = rem;
+
+                        const timer = setInterval(() => {
+                            rem--;
+                            if (rem > 0) {
+                                countdownNumber.textContent = rem;
+                            } else {
+                                clearInterval(timer);
+                                countdownModal.classList.remove('active');
+                                resolve();
+                            }
+                        }, 1000);
+                    });
+                }
+
+                async function snapSingle(targetIdx) {
+                    if (!state.stream) {
+                        showToast('Camera is not active. Please upload photos from your device.');
+                        hiddenSlotFileInput.click();
+                        return;
+                    }
+
+                    if (state.countdownSeconds > 0) {
+                        await waitCountdown(state.countdownSeconds);
+                    }
+
+                    triggerCameraFlash();
+                    state.photos[targetIdx] = captureCameraFrame();
+                    cachedExportBlob = null;
+                    cachedCloudUrl = null;
+                    renderAllSlots();
+
+                    const nextEmp = state.photos.findIndex(p => !p);
+                    if (nextEmp !== -1) {
+                        setActiveSlot(nextEmp);
+                    } else {
+                        showToast('All slots filled!');
+                        setTimeout(() => switchView('result'), 500);
+                    }
+                }
+
+                async function runAutoSequence() {
+                    if (state.isCapturingSequence) return;
+                    if (!state.stream) {
+                        showToast('Camera is not active! Please allow camera access first.');
+                        return;
+                    }
+
+                    state.isCapturingSequence = true;
+                    btnStartAutoSequence.disabled = true;
+                    btnSnapSingleSlot.disabled = true;
+
+                    for (let i = 0; i < state.slotCount; i++) {
+                        setActiveSlot(i);
+                        showToast(`Get ready for Photo #${i + 1} of ${state.slotCount}!`);
+
+                        const delay = state.countdownSeconds > 0 ? state.countdownSeconds : 2;
+                        await waitCountdown(delay);
+
+                        triggerCameraFlash();
+                        state.photos[i] = captureCameraFrame();
+                        renderAllSlots();
+
+                        if (i < state.slotCount - 1) {
+                            await new Promise(r => setTimeout(r, 650));
+                        }
+                    }
+
+                    state.isCapturingSequence = false;
+                    btnStartAutoSequence.disabled = false;
+                    btnSnapSingleSlot.disabled = false;
+                    showToast('Done! Showing your photo strip...');
+
+                    setTimeout(() => {
+                        switchView('result');
+                    }, 600);
+                }
+
+                function handlePhotoFileUpload(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = function (evt) {
+                        const img = new Image();
+                        img.onload = function () {
+                            let targetRatio = 4 / 3;
+                            if (state.layout === '2x2') {
+                                targetRatio = 1 / 1;
+                            }
+
+                            const origW = img.naturalWidth || img.width;
+                            const origH = img.naturalHeight || img.height;
+                            let cropW = origW;
+                            let cropH = origH;
+                            const imgRatio = origW / origH;
+
+                            if (imgRatio > targetRatio) {
+                                cropW = origH * targetRatio;
+                                cropH = origH;
+                            } else {
+                                cropW = origW;
+                                cropH = origW / targetRatio;
+                            }
+
+                            const cropX = (origW - cropW) / 2;
+                            const cropY = (origH - cropH) / 2;
+
+                            const c = document.createElement('canvas');
+                            c.width = Math.round(cropW);
+                            c.height = Math.round(cropH);
+                            const ctx = c.getContext('2d');
+                            ctx.drawImage(img, cropX, cropY, cropW, cropH, 0, 0, c.width, c.height);
+
+                            state.photos[state.activeSlotIndex] = c.toDataURL('image/png');
+                            renderAllSlots();
+                            showToast(`Photo placed in Slot #${state.activeSlotIndex + 1}!`);
+
+                            const nextEmp = state.photos.findIndex(p => !p);
+                            if (nextEmp !== -1) {
+                                setActiveSlot(nextEmp);
+                            } else {
+                                setTimeout(() => switchView('result'), 400);
+                            }
+                        };
+                        img.src = evt.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                    e.target.value = '';
+                }
+
+                function handleResetAll() {
+                    if (!confirm('Reset all photos and start over from Slot 1?')) return;
+                    state.photos = new Array(state.slotCount).fill(null);
+                    setActiveSlot(0);
+                    renderAllSlots();
+                    showToast('All photos have been reset.');
+                }
+
+                /* ========================================================================
+                   EXACT PIXEL-PERFECT EXPORT ENGINE (DOM-TO-CANVAS & RETINA HD)
+                   ======================================================================== */
+                async function renderHDCanvas() {
+                    const stripEl = resultStripEl;
+                    if (!stripEl) throw new Error('Result strip not found');
+
+                    // Guarantee that no active-slot stroke or hover state leaks into the export canvas
+                    stripEl.querySelectorAll('.art-slot').forEach(s => s.classList.remove('active-slot'));
+
+                    // If html2canvas is available, render the exact live DOM frame element!
+                    if (typeof html2canvas === 'function') {
+                        try {
+                            // Ultra HD scale factor (1300px - 2000px width, 300+ DPI Retina clarity)
+                            let scaleFactor = 6;
+                            if (state.layout === '2x2' || state.layout === '3x2') {
+                                scaleFactor = 5;
+                            }
+
+                            const canvas = await html2canvas(stripEl, {
+                                scale: scaleFactor,
+                                useCORS: true,
+                                allowTaint: false,
+                                backgroundColor: null,
+                                logging: false,
+                                imageTimeout: 15000,
+                                windowWidth: 1920,
+                                windowHeight: 1080,
+                                onclone: (clonedDoc) => {
+                                    // Remove any CSS scaling transforms from the parent container in cloned document
+                                    const clonedBox = clonedDoc.querySelector('.result-centered-box');
+                                    if (clonedBox) {
+                                        clonedBox.style.transform = 'none';
+                                        clonedBox.style.margin = '0 auto';
+                                    }
+                                    const clonedStrip = clonedDoc.getElementById('resultStripEl');
+                                    if (clonedStrip) {
+                                        clonedStrip.style.transform = 'none';
+                                    }
+                                }
+                            });
+                            return canvas;
+                        } catch (h2cErr) {
+                            console.warn('html2canvas error, falling back to manual canvas:', h2cErr);
+                        }
+                    }
+
+                    // Fallback to manual Canvas if html2canvas is not loaded or throws
+                    const canvas = renderExportCanvas;
+                    const ctx = canvas.getContext('2d');
+
+                    let canvasW = 1200;
+                    let canvasH = 2800;
+                    let cols = 1;
+                    let rows = 3;
+
+                    if (state.layout === '3x1') {
+                        canvasW = 1200;
+                        canvasH = 2800;
+                        cols = 1;
+                        rows = 3;
+                    } else if (state.layout === '2x2') {
+                        canvasW = 2000;
+                        canvasH = 2200;
+                        cols = 2;
+                        rows = 2;
+                    } else if (state.layout === '3x2') {
+                        canvasW = 2000;
+                        canvasH = 2800;
+                        cols = 2;
+                        rows = 3;
+                    }
+
+                    canvas.width = canvasW;
+                    canvas.height = canvasH;
+
+                    let bgFill = '#171B21';
+                    let cardBg = '#111319';
+                    let textPrimary = '#f5f7fc';
+                    let textSecondary = '#9aa0a6';
+                    let borderColor = '#282f3d';
+
+                    if (state.theme === 'matrix') {
+                        bgFill = '#090d15';
+                        cardBg = '#0e1624';
+                        textPrimary = '#e6f1ff';
+                        textSecondary = '#8892b0';
+                        borderColor = 'rgba(66, 133, 244, 0.4)';
+                    } else if (state.theme === 'pinisi') {
+                        bgFill = '#091322';
+                        cardBg = '#060a12';
+                        textPrimary = '#fdfaf2';
+                        textSecondary = '#dcd3b8';
+                        borderColor = 'rgba(251, 188, 4, 0.4)';
+                    } else if (state.theme === 'retro-film') {
+                        bgFill = '#0d0d0d';
+                        cardBg = '#171717';
+                        textPrimary = '#ffffff';
+                        textSecondary = '#aaaaaa';
+                        borderColor = '#333333';
+                    } else if (state.theme === 'clean-white') {
+                        bgFill = '#ffffff';
+                        cardBg = '#f1f3f4';
+                        textPrimary = '#1a1a1a';
+                        textSecondary = '#5f6368';
+                        borderColor = '#dadce0';
+                    }
+
+                    ctx.fillStyle = bgFill;
+                    ctx.fillRect(0, 0, canvasW, canvasH);
+
+                    return canvas;
+                }
+
+                /* ========================================================================
+                   DOWNLOAD MODAL & CLOUD QR GENERATOR (DIRECT IMAGE ACCESS)
+                   ======================================================================== */
+                async function renderStripBlob() {
+                    const canvas = await renderHDCanvas();
+                    return new Promise((resolve, reject) => {
+                        canvas.toBlob(blob => {
+                            if (blob) resolve(blob);
+                            else reject(new Error('CANVAS_TO_BLOB_EMPTY'));
+                        }, 'image/png', 0.95);
+                    });
+                }
+
+                async function uploadBlobToCloud(blob) {
+                    let rawImageUrl = '';
+
+                    // 1. Primary: Litterbox (Catbox direct image host)
+                    try {
+                        const fd = new FormData();
+                        fd.append('reqtype', 'fileupload');
+                        fd.append('time', '24h');
+                        fd.append('fileToUpload', blob, 'photobooth-gdgoc.png');
+
+                        const res = await fetch('https://litterbox.catbox.moe/resources/internals/api.php', {
+                            method: 'POST',
+                            body: fd
+                        });
+
+                        if (res.ok) {
+                            const url = (await res.text()).trim();
+                            if (url.startsWith('http')) {
+                                rawImageUrl = url;
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('Litterbox attempt error:', e);
+                    }
+
+                    // 2. Fallback: Direct Raw Image CDN (Direct .png link, zero ads/no web wrapper)
+                    if (!rawImageUrl) {
+                        try {
+                            const fdImg = new FormData();
+                            fdImg.append('image', blob, 'photobooth-gdgoc.png');
+
+                            const resImg = await fetch('https://api.imgur.com/3/image', {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': 'Client-ID 546c25a59c58ad7'
+                                },
+                                body: fdImg
+                            });
+
+                            if (resImg.ok) {
+                                const data = await resImg.json();
+                                if (data && data.success && data.data && data.data.link) {
+                                    rawImageUrl = data.data.link;
+                                }
+                            }
+                        } catch (e2) {
+                            console.warn('Direct Image CDN fallback error:', e2);
+                        }
+                    }
+
+                    if (!rawImageUrl) {
+                        throw new Error('CLOUD_UPLOAD_ERROR');
+                    }
+
+                    return rawImageUrl;
+                }
+
+                async function openDownloadQRModal() {
+                    modalDownloadQR.classList.add('active');
+
+                    // If already generated for current photos, reuse cached link
+                    if (cachedCloudUrl) {
+                        qrLoadingState.style.display = 'none';
+                        qrCanvasWrapper.style.display = 'block';
+                        return;
+                    }
+
+                    qrCanvasWrapper.style.display = 'none';
+                    qrImageFallback.style.display = 'none';
+                    qrLoadingState.style.display = 'flex';
+                    qrStatusText.textContent = 'Rendering HD photo strip...';
+
+                    try {
+                        if (!cachedExportBlob) {
+                            cachedExportBlob = await renderStripBlob();
+                        }
+
+                        qrStatusText.textContent = 'Generating QR Code...';
+                        cachedCloudUrl = await uploadBlobToCloud(cachedExportBlob);
+
+                        qrLoadingState.style.display = 'none';
+                        qrCanvasWrapper.innerHTML = '';
+                        qrCanvasWrapper.style.display = 'block';
+
+                        if (typeof QRCode === 'function') {
+                            new QRCode(qrCanvasWrapper, {
+                                text: cachedCloudUrl,
+                                width: 185,
+                                height: 185,
+                                colorDark: '#111111',
+                                colorLight: '#ffffff',
+                                correctLevel: QRCode.CorrectLevel.M
+                            });
+                        } else {
+                            qrCanvasWrapper.style.display = 'none';
+                            qrImageFallback.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(cachedCloudUrl)}`;
+                            qrImageFallback.style.display = 'block';
+                        }
+                    } catch (err) {
+                        console.warn('QR Code generation error:', err);
+                        qrLoadingState.innerHTML = `
+                            <div style="color: #ea4335; font-size: 0.74rem; text-align: center; padding: 10px; line-height: 1.5">
+                                ⚠️ Failed to generate mobile QR link (offline or limited connection).
+                                <br><br>
+                                You can still download the photo directly to this device using the button below.
+                            </div>
+                        `;
+                    }
+                }
+
+                async function downloadDirectToDevice() {
+                    try {
+                        btnDownloadToDeviceDirect.disabled = true;
+                        const origText = btnDownloadToDeviceDirect.innerHTML;
+                        btnDownloadToDeviceDirect.innerHTML = `
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:rotateSlow 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+                            <span>Saving to Device...</span>
+                        `;
+
+                        if (!cachedExportBlob) {
+                            cachedExportBlob = await renderStripBlob();
+                        }
+
+                        const url = URL.createObjectURL(cachedExportBlob);
+                        const link = document.createElement('a');
+                        const timeCode = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+                        link.download = `gdgoc-unm-photobooth-${state.theme}-${state.layout}-${timeCode}.png`;
+                        link.href = url;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        setTimeout(() => URL.revokeObjectURL(url), 2000);
+
+                        showToast('HD photo successfully saved to device! 💾');
+                    } catch (err) {
+                        console.error('Download error:', err);
+                        showToast('An error occurred while downloading the image.');
+                    } finally {
+                        btnDownloadToDeviceDirect.disabled = false;
+                        btnDownloadToDeviceDirect.innerHTML = origText;
+                    }
+                }
+
+                /* Copy Image (Optional Helper) */
+                async function copyImageBlob() {
+                    if (!navigator.clipboard || !window.ClipboardItem) {
+                        showToast('Direct image copy is not supported in this browser.');
+                        return;
+                    }
+                    try {
+                        const canvas = await renderHDCanvas();
+                        canvas.toBlob(async blob => {
+                            if (!blob) return;
+                            await navigator.clipboard.write([
+                                new ClipboardItem({ 'image/png': blob })
+                            ]);
+                            showToast('Image copied to clipboard! Ready to paste.');
+                        }, 'image/png');
+                    } catch (e) {
+                        showToast('Failed to copy image.');
+                    }
+                }
+
+                /* Native Web Share */
+                async function shareNativeSheet() {
+                    if (!navigator.share) {
+                        showToast('Web Share is not supported in this browser.');
+                        return;
+                    }
+                    try {
+                        const canvas = await renderHDCanvas();
+                        canvas.toBlob(async blob => {
+                            if (!blob) return;
+                            const file = new File([blob], 'gdgoc-unm-photobooth.png', { type: 'image/png' });
+                            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                                await navigator.share({
+                                    title: 'GDGoC UNM Photobooth',
+                                    text: 'Precious moments with Google Developer Groups on Campus UNM!',
+                                    files: [file]
+                                });
+                            }
+                        }, 'image/png');
+                    } catch (e) {}
+                }
+
+                /* Setup Event Listeners */
+                function bindEvents() {
+                    // Stepper click navigation
+                    document.querySelectorAll('.step-item').forEach(item => {
+                        item.addEventListener('click', () => {
+                            const targetStep = item.dataset.step;
+                            if (targetStep === 'result' && !state.photos.some(p => !!p)) {
+                                showToast('No photos taken yet! Please take photos first.');
+                                return;
+                            }
+                            switchView(targetStep);
+                        });
+                    });
+
+                    // Navigation CTA buttons
+                    btnGoToCamera.addEventListener('click', () => switchView('camera'));
+                    btnBackToSettingsFromCam.addEventListener('click', () => switchView('settings'));
+                    btnSkipToResult.addEventListener('click', () => {
+                        if (!state.photos.some(p => !!p)) {
+                            showToast('No photos taken yet! Please take photos first.');
+                            return;
+                        }
+                        switchView('result');
+                    });
+                    btnRetakeFromResults.addEventListener('click', () => switchView('camera'));
+                    if (btnBackToSettingsFromResult) {
+                        btnBackToSettingsFromResult.addEventListener('click', () => switchView('settings'));
+                    }
+
+                    // Camera Device Selection
+                    selectCameraDevice.addEventListener('change', (e) => {
+                        state.selectedDeviceId = e.target.value;
+                        if (e.target.value) {
+                            localStorage.setItem(STORAGE_KEY_CAM_ID, e.target.value);
+                        }
+                        showToast('Webcam selected & saved');
+                        if (state.currentView === 'camera') {
+                            initCamera();
+                        }
+                    });
+                    btnRefreshCams.addEventListener('click', async () => {
+                        await enumerateCameraDevices();
+                        showToast('Camera list updated');
+                    });
+
+                    // Layout selection
+                    document.querySelectorAll('[data-layout]').forEach(pill => {
+                        pill.addEventListener('click', () => {
+                            document.querySelectorAll('[data-layout]').forEach(p => p.classList.remove('active'));
+                            pill.classList.add('active');
+                            setLayout(pill.dataset.layout);
+                        });
+                    });
+
+                    // Theme Frame selection
+                    document.querySelectorAll('[data-theme]').forEach(card => {
+                        card.addEventListener('click', () => {
+                            document.querySelectorAll('[data-theme]').forEach(c => c.classList.remove('active'));
+                            card.classList.add('active');
+                            const themeName = card.dataset.theme;
+                            labelCurrentTheme.textContent = card.querySelector('.theme-swatch-name').textContent;
+                            if (previewThemeBadge) {
+                                previewThemeBadge.textContent = `Theme: ${card.querySelector('.theme-swatch-name').textContent}`;
+                            }
+                            applyTheme(themeName);
+                        });
+                    });
+
+                    // Countdown timer
+                    document.querySelectorAll('[data-timer]').forEach(pill => {
+                        pill.addEventListener('click', () => {
+                            document.querySelectorAll('[data-timer]').forEach(p => p.classList.remove('active'));
+                            pill.classList.add('active');
+                            state.countdownSeconds = parseInt(pill.dataset.timer, 10);
+                            const cdLabel = document.getElementById('labelCountdownDisplay');
+                            if (cdLabel) {
+                                cdLabel.textContent = state.countdownSeconds === 0 ? 'Instant (0s)' : `${state.countdownSeconds} Seconds`;
+                            }
+                            applyFilterToPreview();
+                        });
+                    });
+
+                    // Filter Dropdown selection
+                    if (selectFilter) {
+                        selectFilter.addEventListener('change', (e) => {
+                            state.currentFilter = e.target.value;
+                            applyFilterToPreview();
+                            const filterLabel = selectFilter.options[selectFilter.selectedIndex].text;
+                            showToast(`Filter: ${filterLabel}`);
+                        });
+                    }
+
+                    // Filter buttons (if any present)
+                    document.querySelectorAll('[data-filter]').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+                            btn.classList.add('active');
+                            state.currentFilter = btn.dataset.filter;
+                            applyFilterToPreview();
+                        });
+                    });
+
+                    // Caption input
+                    inputEventCaption.addEventListener('input', e => {
+                        const val = e.target.value.trim() || 'Google Developer Groups on Campus UNM';
+                        captionPreviewTxt.textContent = val;
+                        if (captionCameraTxt) captionCameraTxt.textContent = val;
+                        captionResultTxt.textContent = val;
+                    });
+
+                    // Mirror Toggle
+                    btnMirrorToggle.addEventListener('click', () => {
+                        state.isMirrored = !state.isMirrored;
+                        if (state.isMirrored) {
+                            videoEl.classList.remove('unmirrored');
+                            mirrorBtnText.textContent = 'Mirror: ON';
+                        } else {
+                            videoEl.classList.add('unmirrored');
+                            mirrorBtnText.textContent = 'Mirror: OFF';
+                        }
+                    });
+
+                    // Camera flip (if button exists)
+                    if (btnSwitchCam) {
+                        btnSwitchCam.addEventListener('click', () => {
+                            state.facingMode = state.facingMode === 'user' ? 'environment' : 'user';
+                            state.selectedDeviceId = ''; // reset specific ID when flipping
+                            initCamera();
+                        });
+                    }
+
+                    // Photo upload
+                    btnUploadFallback.addEventListener('click', () => hiddenSlotFileInput.click());
+                    if (btnUploadFileTrigger) {
+                        btnUploadFileTrigger.addEventListener('click', () => hiddenSlotFileInput.click());
+                    }
+                    btnRetryCamera.addEventListener('click', () => initCamera());
+                    hiddenSlotFileInput.addEventListener('change', handlePhotoFileUpload);
+
+                    // Shoot actions
+                    btnSnapSingleSlot.addEventListener('click', () => snapSingle(state.activeSlotIndex));
+                    btnStartAutoSequence.addEventListener('click', runAutoSequence);
+                    btnResetAll.addEventListener('click', handleResetAll);
+
+                    // Export & Modal QR
+                    btnDownloadHD.addEventListener('click', openDownloadQRModal);
+                    btnDownloadToDeviceDirect.addEventListener('click', downloadDirectToDevice);
+                    btnCloseQRModal.addEventListener('click', () => modalDownloadQR.classList.remove('active'));
+                    modalDownloadQR.addEventListener('click', (e) => {
+                        if (e.target === modalDownloadQR) modalDownloadQR.classList.remove('active');
+                    });
+                    if (btnCopyClipboard) btnCopyClipboard.addEventListener('click', copyImageBlob);
+                    if (btnShareNative) btnShareNative.addEventListener('click', shareNativeSheet);
+                }
+
+                async function bootstrap() {
+                    refreshTimestamp();
+                    setLayout('3x1');
+                    applyTheme(state.theme);
+                    bindEvents();
+                    await enumerateCameraDevices();
+                    switchView('settings');
+                }
+
+                window.addEventListener('DOMContentLoaded', bootstrap);
+            })();
+        </script>
+    </body>
+</html>
