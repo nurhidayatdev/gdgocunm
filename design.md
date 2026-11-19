@@ -95,14 +95,10 @@ Seluruh variabel CSS didefinisikan pada root [`css/style.css`](file:///d:/Coding
 
 Setiap halaman di proyek ini **wajib** menggunakan lapisan background global berikut agar tidak terasa datar (*flat*):
 
-### 3.1 Struktur HTML Ambient Layer
+### 3.1 Struktur HTML Background Layer
 Letakkan tepat setelah tag pembuka `<body>`:
 ```html
 <body id="top">
-    <!-- Ambient Radial Glows (Google AI Studio Aesthetic) -->
-    <div class="ambient-glow" aria-hidden="true"></div>
-    <div class="ambient-bottom-glow" aria-hidden="true"></div>
-
     <!-- Tech Grid Lines Overlay -->
     <div class="tech-grid-overlay" aria-hidden="true"></div>
 
@@ -110,7 +106,7 @@ Letakkan tepat setelah tag pembuka `<body>`:
 </body>
 ```
 
-### 3.2 Spesifikasi CSS Lapis Ambient
+### 3.2 Spesifikasi CSS Lapis Background
 - **Body Background**:
   ```css
   body {
@@ -120,8 +116,6 @@ Letakkan tepat setelah tag pembuka `<body>`:
       font-family: var(--font-sans);
   }
   ```
-- **`.ambient-glow`**: Fixed layer dengan `pointer-events: none` dan `z-index: 0`. Mengandung pseudo-element `::before` (radial gradient biru, blur 80px) dan `::after` (radial gradient hijau & kuning, blur 90px).
-- **`.ambient-bottom-glow`**: Fixed layer di bawah dengan radial gradient merah & biru lembut.
 - **`.tech-grid-overlay`**: Grid geometris berukuran `48px x 48px` dengan garis transparan `rgba(255, 255, 255, 0.02)` dan radial mask untuk efek vignette modern.
 
 ### 3.3 Container Layout
@@ -585,7 +579,7 @@ Sistem breakpoint GDGoC UNM:
 Saat Anda atau agen AI membuat halaman baru di repositori ini (misal `events.html`, `verify.html`, `photobooth.html`), pastikan:
 
 1. [ ] **Head Tag Lengkap**: Mengimpor font `'Google Sans'` atau Inter, favicon resmi GDGoC, meta viewport, dan link ke `css/style.css` serta `css/animations.css`.
-2. [ ] **Ambient Layer**: Memasang `.ambient-glow`, `.ambient-bottom-glow`, dan `.tech-grid-overlay` di awal tag `<body>`.
+2. [ ] **Background Overlay**: Memasang `.tech-grid-overlay` di awal tag `<body>`.
 3. [ ] **Header Konsisten**: Menggunakan `.site-header` dengan floating frosted pill dan link navigasi yang sesuai.
 4. [ ] **Palet Warna**: Selalu gunakan variabel CSS `--google-blue`, `--bg-primary`, `--bg-card`, `--border-card` dan jangan gunakan *hardcoded hex* acak di luar design system.
 5. [ ] **Buttons & Actions (Aturan 2 Tipe)**: HANYA gunakan Style Putih (`.btn-primary`) untuk aksi utama dan Style Hitam (`.btn-secondary`) untuk aksi sekunder. DILARANG membuat tombol dengan background berwarna solid (biru, hijau, dsb).

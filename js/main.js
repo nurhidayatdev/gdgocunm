@@ -498,6 +498,12 @@ function renderTeam() {
       </button>
     </div>
     <div class="team-carousel-dots" id="team-carousel-dots"></div>
+    <div style="text-align: center; margin-top: 28px;">
+      <a href="team.html" class="btn-primary" style="display: inline-flex; align-items: center; gap: 8px; padding: 11px 24px; font-size: 0.88rem;">
+        <span>View All 29 Core Team Members</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
   `,
     );
 
