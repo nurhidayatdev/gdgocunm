@@ -42,7 +42,12 @@
                 display: flex;
                 flex-direction: column;
                 padding-top: 0 !important;
-                background: #12151b;
+                background: linear-gradient(180deg, #181818 0%, #171b21 100%) no-repeat fixed;
+                background-color: #171b21;
+                font-family: var(--font-sans);
+                color: var(--text-primary);
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
             }
             body.no-scroll-camera,
             body.no-scroll-setup,
@@ -68,7 +73,7 @@
                 transform: translateX(-50%);
             }
 
-            /* Studio Top Brand (Logo + Photobooth Studio) - Centered & Enlarged */
+            /* Studio Top Brand (Logo + Photobooth Studio) - Quad-Color Frosted Glass Pill */
             .studio-top-brand {
                 position: absolute;
                 top: 16px;
@@ -79,19 +84,30 @@
                 align-items: center;
                 gap: 14px;
                 text-decoration: none;
-                padding: 8px 22px 8px 16px;
-                background: rgba(18, 21, 28, 0.85);
-                backdrop-filter: blur(14px);
-                -webkit-backdrop-filter: blur(14px);
-                border: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 8px 24px 8px 18px;
                 border-radius: var(--radius-pill);
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
-                transition: var(--transition-fast);
+                border: 1.82px solid transparent;
+                background:
+                    linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%) padding-box,
+                    linear-gradient(
+                        90deg,
+                        #ea4335 0%,
+                        #fbbc04 34%,
+                        #34a853 67%,
+                        #4285f4 100%
+                    ) border-box;
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.35);
+                transition:
+                    box-shadow var(--transition-normal),
+                    transform var(--transition-normal);
             }
             .studio-top-brand:hover {
-                background: rgba(26, 30, 42, 0.98);
-                border-color: rgba(66, 133, 244, 0.5);
-                box-shadow: 0 6px 24px rgba(66, 133, 244, 0.2);
+                box-shadow:
+                    0 12px 38px rgba(0, 0, 0, 0.7),
+                    0 0 24px rgba(0, 122, 255, 0.25),
+                    0 0 24px rgba(255, 204, 0, 0.18);
                 transform: translateX(-50%) translateY(-2px);
             }
             .studio-top-logo {
@@ -160,16 +176,27 @@
                 width: 100%;
             }
 
-            /* Common Panel Card */
+            /* Common Panel Card (design.md Section 5.4 & 5.6) */
             .studio-panel {
-                background: var(--bg-card);
-                border: 1px solid var(--border-card);
+                background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
+                border: 1px solid rgba(255, 255, 255, 0.12);
                 border-radius: var(--radius-lg);
                 padding: 24px;
-                box-shadow: var(--shadow-md);
-                backdrop-filter: blur(16px);
-                -webkit-backdrop-filter: blur(16px);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.35);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
                 position: relative;
+                overflow: hidden;
+            }
+            .studio-panel::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%);
+                z-index: 10;
             }
 
             /* ========================================================================
@@ -224,10 +251,14 @@
                 gap: 8px;
             }
             .setting-box {
-                background: rgba(14, 16, 24, 0.65);
-                border: 1px solid var(--border-subtle);
+                background: rgba(14, 16, 24, 0.72);
+                border: 1px solid rgba(255, 255, 255, 0.08);
                 border-radius: var(--radius-md);
                 padding: 9px 12px;
+                transition: border-color var(--transition-fast);
+            }
+            .setting-box:hover {
+                border-color: rgba(255, 255, 255, 0.16);
             }
             .setting-label-row {
                 font-size: 10.5px;
@@ -255,8 +286,8 @@
             /* Dropdown Select for Camera Devices */
             .studio-select {
                 width: 100%;
-                background: rgba(20, 23, 32, 0.95);
-                border: 1px solid var(--border-card);
+                background: rgba(18, 21, 28, 0.95);
+                border: 1px solid rgba(255, 255, 255, 0.12);
                 border-radius: var(--radius-sm);
                 padding: 10px 14px;
                 color: var(--text-primary);
@@ -268,12 +299,47 @@
             }
             .studio-select:focus {
                 border-color: var(--google-blue);
-                box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+                box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.25);
             }
             .studio-select option {
                 background: #171b21;
                 color: #ffffff;
                 padding: 6px;
+            }
+
+            /* Setting Status Pills (design.md Section 5.3) */
+            .setting-status-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                padding: 2px 10px;
+                border-radius: var(--radius-pill);
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 0.4px;
+                text-transform: uppercase;
+                background: rgba(255, 255, 255, 0.06);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                color: #ffffff;
+                transition: all var(--transition-fast);
+            }
+            .setting-status-pill.pill-yellow {
+                color: var(--yellow-light) !important;
+                background: rgba(251, 188, 4, 0.12);
+                border-color: rgba(251, 188, 4, 0.35);
+                box-shadow: 0 0 10px rgba(251, 188, 4, 0.15);
+            }
+            .setting-status-pill.pill-blue {
+                color: var(--blue-light) !important;
+                background: rgba(66, 133, 244, 0.12);
+                border-color: rgba(66, 133, 244, 0.35);
+                box-shadow: 0 0 10px rgba(66, 133, 244, 0.15);
+            }
+            .setting-status-pill.pill-green {
+                color: var(--green-light) !important;
+                background: rgba(52, 168, 83, 0.12);
+                border-color: rgba(52, 168, 83, 0.35);
+                box-shadow: 0 0 10px rgba(52, 168, 83, 0.15);
             }
 
             /* Theme Gallery Swatches (Ultra-Compact) */
@@ -284,23 +350,24 @@
             }
             .theme-swatch-card {
                 background: rgba(255, 255, 255, 0.03);
-                border: 1px solid var(--border-subtle);
+                border: 1px solid rgba(255, 255, 255, 0.08);
                 border-radius: var(--radius-sm);
                 padding: 6px 4px;
                 cursor: pointer;
-                transition: var(--transition-fast);
+                transition: all var(--transition-fast);
                 display: flex;
                 flex-direction: column;
                 gap: 4px;
             }
             .theme-swatch-card:hover {
-                border-color: rgba(255, 255, 255, 0.2);
+                border-color: rgba(255, 255, 255, 0.25);
+                background: rgba(255, 255, 255, 0.06);
                 transform: translateY(-2px);
             }
             .theme-swatch-card.active {
                 border-color: var(--google-blue);
-                background: rgba(66, 133, 244, 0.12);
-                box-shadow: 0 0 16px rgba(66, 133, 244, 0.25);
+                background: rgba(66, 133, 244, 0.16);
+                box-shadow: 0 0 16px rgba(66, 133, 244, 0.3), inset 0 0 8px rgba(66, 133, 244, 0.15);
             }
             .theme-swatch-preview {
                 height: 20px;
@@ -313,9 +380,13 @@
                 letter-spacing: 0.3px;
             }
             .swatch-sticker-bomb {
-                background: linear-gradient(135deg, #1f2430 0%, #151821 100%);
-                border: 1px solid #ff4458;
-                color: #ffde59;
+                background:
+                    linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%) padding-box,
+                    linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%) border-box;
+                border: 1.5px solid transparent;
+                color: #ffffff;
+                font-weight: 700;
+                letter-spacing: 0.5px;
             }
             .swatch-cyber-matrix {
                 background: #090e17;
@@ -356,9 +427,9 @@
             }
             .pill-choice-card {
                 background: rgba(255, 255, 255, 0.04);
-                border: 1px solid var(--border-subtle);
+                border: 1px solid rgba(255, 255, 255, 0.08);
                 color: var(--text-secondary);
-                padding: 6px 3px;
+                padding: 7px 4px;
                 border-radius: var(--radius-sm);
                 font-size: 11px;
                 font-weight: 600;
@@ -374,12 +445,13 @@
             .pill-choice-card:hover {
                 background: rgba(255, 255, 255, 0.08);
                 color: var(--text-primary);
+                border-color: rgba(255, 255, 255, 0.16);
             }
             .pill-choice-card.active {
-                background: rgba(66, 133, 244, 0.16);
+                background: rgba(66, 133, 244, 0.18);
                 border-color: var(--google-blue);
-                color: var(--blue-light);
-                box-shadow: 0 0 14px rgba(66, 133, 244, 0.22);
+                color: #ffffff;
+                box-shadow: 0 0 16px rgba(66, 133, 244, 0.3);
             }
             .pill-subtext {
                 font-size: 8.5px;
@@ -406,7 +478,7 @@
                 padding: 5px 12px;
                 border-radius: var(--radius-pill);
                 background: rgba(255, 255, 255, 0.05);
-                border: 1px solid var(--border-subtle);
+                border: 1px solid rgba(255, 255, 255, 0.08);
                 color: var(--text-secondary);
                 font-size: 11px;
                 font-weight: 600;
@@ -416,21 +488,22 @@
             .filter-pill-button:hover {
                 background: rgba(255, 255, 255, 0.1);
                 color: var(--text-primary);
+                border-color: rgba(255, 255, 255, 0.16);
             }
             .filter-pill-button.active {
-                background: var(--google-blue);
-                color: #ffffff;
-                border-color: var(--google-blue);
-                box-shadow: 0 0 10px rgba(66, 133, 244, 0.35);
+                background: linear-gradient(180deg, #ffffff 0%, #a4a4a4 100%);
+                color: #111111;
+                border-color: rgba(255, 255, 255, 0.8);
+                box-shadow: 0 2px 10px rgba(255, 255, 255, 0.25);
             }
 
             /* Custom Input */
             .custom-caption-input {
                 width: 100%;
-                background: rgba(20, 23, 32, 0.9);
-                border: 1px solid var(--border-card);
+                background: rgba(18, 21, 28, 0.95);
+                border: 1px solid rgba(255, 255, 255, 0.12);
                 border-radius: var(--radius-sm);
-                padding: 7px 12px;
+                padding: 8px 12px;
                 color: var(--text-primary);
                 font-size: 12px;
                 font-family: inherit;
@@ -439,32 +512,45 @@
             }
             .custom-caption-input:focus {
                 border-color: var(--google-blue);
-                box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+                box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.25);
             }
 
-            /* Compact Start Button */
+            /* Compact Start Button (design.md Section 5.2 - White Metallic .btn-primary) */
             .btn-start-camera-cta {
                 width: 100%;
-                background: linear-gradient(135deg, var(--google-blue) 0%, #1a73e8 100%);
-                color: #ffffff;
-                border: none;
+                background: linear-gradient(180deg, #ffffff 0%, #a4a4a4 100%);
+                color: #111111;
+                border: 1px solid rgba(255, 255, 255, 0.6);
                 border-radius: var(--radius-pill);
-                padding: 11px 22px;
-                font-size: 0.95rem;
+                padding: 12px 24px;
+                font-size: 0.96rem;
                 font-weight: 700;
                 cursor: pointer;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
                 gap: 10px;
-                box-shadow: 0 4px 18px rgba(66, 133, 244, 0.4);
-                transition: var(--transition-normal);
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+                transition: all var(--transition-normal);
                 font-family: inherit;
-                margin-top: 8px;
+                margin-top: 10px;
             }
             .btn-start-camera-cta:hover {
+                background: linear-gradient(180deg, #ffffff 0%, #b8b8b8 100%);
+                color: #000000;
                 transform: translateY(-2px);
-                box-shadow: 0 6px 24px rgba(66, 133, 244, 0.55);
+                box-shadow: 0 6px 22px rgba(255, 255, 255, 0.25), 0 4px 14px rgba(0, 0, 0, 0.4);
+            }
+            .btn-start-camera-cta:active {
+                transform: translateY(0);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+            }
+            .btn-start-camera-cta svg {
+                color: #111111;
+                transition: transform var(--transition-fast);
+            }
+            .btn-start-camera-cta:hover svg {
+                transform: scale(1.08);
             }
 
             /* Live Preview Right Column (Direct Frame - Ultra-Compact & Scaled to Viewport) */
@@ -767,9 +853,9 @@
             }
             .btn-shoot-auto {
                 flex: 1.8;
-                background: linear-gradient(135deg, var(--google-blue) 0%, #1a73e8 100%);
-                color: #ffffff;
-                border: none;
+                background: linear-gradient(180deg, #ffffff 0%, #a4a4a4 100%);
+                color: #111111;
+                border: 1px solid rgba(255, 255, 255, 0.6);
                 border-radius: var(--radius-pill);
                 padding: 11px 18px;
                 font-size: 0.88rem;
@@ -779,18 +865,23 @@
                 align-items: center;
                 justify-content: center;
                 gap: 8px;
-                box-shadow: 0 4px 18px rgba(66, 133, 244, 0.35);
-                transition: var(--transition-normal);
+                box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+                transition: all var(--transition-normal);
                 font-family: inherit;
             }
-            .btn-shoot-auto:hover {
+            .btn-shoot-auto:hover:not(:disabled) {
+                background: linear-gradient(180deg, #ffffff 0%, #b8b8b8 100%);
+                color: #000000;
                 transform: translateY(-2px);
-                box-shadow: 0 6px 24px rgba(66, 133, 244, 0.5);
+                box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2), 0 4px 12px rgba(0, 0, 0, 0.3);
             }
             .btn-shoot-auto:disabled {
                 opacity: 0.5;
                 cursor: not-allowed;
                 transform: none;
+            }
+            .btn-shoot-auto svg {
+                color: #111111;
             }
 
             /* Note: .camera-right-strip-col styles are unified with .setup-preview-col above */
@@ -881,11 +972,61 @@
                     0 0 0 1px rgba(255, 255, 255, 0.08);
             }
 
-            /* Themes */
+            /* GDGoC Dark (Official Brand Frame - design.md) */
             .photostrip-art-frame.theme-stickers {
-                background: #171b21;
+                background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
+                background-color: #222222;
                 color: #f5f7fc;
-                border: 2px solid #282f3d;
+                border: 1px solid rgba(255, 255, 255, 0.14);
+                box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), 0 0 24px rgba(66, 133, 244, 0.16);
+                position: relative;
+                overflow: hidden;
+            }
+            .photostrip-art-frame.theme-stickers::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3.5px;
+                background: linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%);
+                z-index: 10;
+            }
+            /* Gradient Stroke on Photo Slots for GDGoC Dark Frame (100% html2canvas & DOM Compatible) */
+            .theme-stickers .art-slot {
+                padding: 1.5px;
+                background: linear-gradient(135deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%);
+                border: none !important;
+                border-radius: 7px;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.55);
+                box-sizing: border-box;
+            }
+            .theme-stickers .art-slot img,
+            .theme-stickers .art-slot .art-slot-photo-img {
+                width: 100%;
+                height: 100%;
+                border-radius: 5.5px;
+                display: block;
+                object-fit: cover;
+                background: #111319;
+            }
+            .theme-stickers .art-slot .art-slot-empty {
+                width: 100%;
+                height: 100%;
+                border-radius: 5.5px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background: #111319;
+            }
+            .theme-stickers .art-slot .art-retake-hover {
+                border-radius: 5.5px;
+                inset: 1.5px;
+            }
+            #cameraSlotsGrid .theme-stickers .art-slot.active-slot,
+            .theme-stickers .art-slot.active-slot {
+                box-shadow: 0 0 16px rgba(66, 133, 244, 0.65), 0 0 0 2px #ffffff;
             }
             .photostrip-art-frame.theme-matrix {
                 background: #090d15;
@@ -1034,10 +1175,13 @@
                 display: flex;
                 flex-direction: column;
                 align-items: center;
+                justify-content: center;
                 gap: 6px;
-                color: rgba(255, 255, 255, 0.35);
+                color: rgba(255, 255, 255, 0.45);
                 font-size: 11px;
                 font-weight: 500;
+                text-align: center;
+                user-select: none;
             }
             .theme-clean-white .art-slot-empty {
                 color: rgba(0, 0, 0, 0.35);
@@ -1151,30 +1295,35 @@
                 margin-top: 10px;
             }
             .btn-download-hd-big {
-                background: linear-gradient(135deg, var(--google-green) 0%, #2e7d32 100%);
-                color: #ffffff;
-                border: none;
+                background: linear-gradient(180deg, #ffffff 0%, #a4a4a4 100%);
+                color: #111111;
+                border: 1px solid rgba(255, 255, 255, 0.6);
                 border-radius: var(--radius-pill);
-                padding: 10px 18px;
-                font-size: 0.90rem;
+                padding: 12px 22px;
+                font-size: 0.92rem;
                 font-weight: 700;
                 cursor: pointer;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
                 gap: 8px;
-                box-shadow: 0 4px 16px rgba(52, 168, 83, 0.35);
-                transition: var(--transition-normal);
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+                transition: all var(--transition-normal);
                 font-family: inherit;
             }
-            .btn-download-hd-big:hover {
+            .btn-download-hd-big:hover:not(:disabled) {
+                background: linear-gradient(180deg, #ffffff 0%, #b8b8b8 100%);
+                color: #000000;
                 transform: translateY(-2px);
-                box-shadow: 0 6px 22px rgba(52, 168, 83, 0.5);
+                box-shadow: 0 6px 22px rgba(255, 255, 255, 0.25), 0 4px 14px rgba(0, 0, 0, 0.4);
             }
             .btn-download-hd-big:disabled {
                 opacity: 0.5;
                 cursor: not-allowed;
                 transform: none;
+            }
+            .btn-download-hd-big svg {
+                color: #111111;
             }
 
             .sub-action-row {
@@ -1193,9 +1342,9 @@
                 bottom: 24px;
                 left: 50%;
                 transform: translateX(-50%) translateY(100px);
-                background: #1e2330;
+                background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
                 color: #fff;
-                border: 1px solid var(--border-card-hover);
+                border: 1px solid rgba(255, 255, 255, 0.16);
                 padding: 12px 22px;
                 border-radius: var(--radius-pill);
                 font-size: 13px;
@@ -1213,12 +1362,13 @@
                 transform: translateX(-50%) translateY(0);
                 opacity: 1;
             }
-            /* Download & Scan QR Code Modal */
+            /* Download & Scan QR Code Modal (design.md Section 5.4 & 5.6) */
             .modal-backdrop-qr {
                 position: fixed;
                 inset: 0;
                 background: rgba(4, 6, 10, 0.85);
-                backdrop-filter: blur(10px);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
                 z-index: 200;
                 display: none;
                 align-items: center;
@@ -1234,20 +1384,30 @@
                 to { opacity: 1; }
             }
             .modal-qr-card {
-                background: #141720;
-                border: 1px solid var(--border-card-hover);
-                border-radius: 20px;
-                padding: 24px 22px 20px;
+                background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
+                border: 1px solid rgba(255, 255, 255, 0.14);
+                border-radius: var(--radius-lg);
+                padding: 26px 24px 22px;
                 max-width: 360px;
                 width: 100%;
                 position: relative;
-                box-shadow: 0 25px 65px rgba(0, 0, 0, 0.9);
+                box-shadow: 0 25px 65px rgba(0, 0, 0, 0.85);
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 text-align: center;
                 box-sizing: border-box;
+                overflow: hidden;
                 animation: scaleInCard 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            .modal-qr-card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%);
             }
             @keyframes scaleInCard {
                 from { transform: scale(0.92); opacity: 0; }
@@ -1270,7 +1430,7 @@
                 transition: var(--transition-fast);
             }
             .modal-qr-close:hover {
-                background: rgba(255, 255, 255, 0.16);
+                background: rgba(255, 255, 255, 0.18);
                 color: #ffffff;
             }
             .modal-qr-badge {
@@ -1333,25 +1493,30 @@
             }
             .btn-download-device {
                 width: 100%;
-                background: linear-gradient(135deg, var(--google-green) 0%, #2e7d32 100%);
-                color: #ffffff;
-                border: none;
+                background: linear-gradient(180deg, #ffffff 0%, #a4a4a4 100%);
+                color: #111111;
+                border: 1px solid rgba(255, 255, 255, 0.6);
                 border-radius: var(--radius-pill);
                 padding: 12px 18px;
-                font-size: 0.85rem;
+                font-size: 0.88rem;
                 font-weight: 700;
                 cursor: pointer;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
                 gap: 8px;
-                box-shadow: 0 4px 18px rgba(52, 168, 83, 0.35);
-                transition: var(--transition-normal);
+                box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+                transition: all var(--transition-normal);
                 font-family: inherit;
             }
             .btn-download-device:hover {
+                background: linear-gradient(180deg, #ffffff 0%, #b8b8b8 100%);
+                color: #000000;
                 transform: translateY(-2px);
-                box-shadow: 0 6px 24px rgba(52, 168, 83, 0.5);
+                box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25), 0 4px 14px rgba(0, 0, 0, 0.4);
+            }
+            .btn-download-device svg {
+                color: #111111;
             }
         </style>
         <!-- html2canvas for 100% pixel-perfect DOM-to-PNG export -->
@@ -1360,9 +1525,10 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     </head>
     <body>
-        <!-- Background Ambience & Grid Pattern -->
-        <div class="tech-grid-overlay" aria-hidden="true"></div>
+        <!-- Background Ambience & Grid Pattern (design.md Section 3) -->
         <div class="ambient-glow" aria-hidden="true"></div>
+        <div class="ambient-bottom-glow" aria-hidden="true"></div>
+        <div class="tech-grid-overlay" aria-hidden="true"></div>
 
         <!-- Studio Top Brand (Logo + Photobooth Studio) -->
         <a href="../" class="studio-top-brand" title="Back to GDGoC UNM Website">
@@ -1391,12 +1557,12 @@
                                 <div class="setting-box">
                                     <div class="setting-label-row">
                                         <span>1. Frame Design Variation</span>
-                                        <span id="labelCurrentTheme" style="color: var(--google-yellow)">Sticker & Y2K Doodle</span>
+                                        <span id="labelCurrentTheme" class="setting-status-pill pill-blue">GDGoC Dark</span>
                                     </div>
                                     <div class="theme-swatch-grid">
                                         <div class="theme-swatch-card active" data-theme="stickers">
-                                            <div class="theme-swatch-preview swatch-sticker-bomb">✦ STICKER</div>
-                                            <div class="theme-swatch-name">Sticker & Y2K</div>
+                                            <div class="theme-swatch-preview swatch-sticker-bomb">GDGoC</div>
+                                            <div class="theme-swatch-name">GDGoC Dark</div>
                                         </div>
                                         <div class="theme-swatch-card" data-theme="matrix">
                                             <div class="theme-swatch-preview swatch-cyber-matrix">&lt;MATRIX&gt;</div>
@@ -1423,7 +1589,7 @@
                                     <div class="setting-box">
                                         <div class="setting-label-row">
                                             <span>2. Layout</span>
-                                            <span id="labelCurrentLayout" style="color: var(--google-blue)">3x1 Strip (3 Photos)</span>
+                                            <span id="labelCurrentLayout" class="setting-status-pill pill-blue">3x1 Strip (3 Photos)</span>
                                         </div>
                                         <div class="pills-selector-grid">
                                             <div class="pill-choice-card active" data-layout="3x1">
@@ -1445,7 +1611,7 @@
                                     <div class="setting-box">
                                         <div class="setting-label-row">
                                             <span>3. Timer Delay</span>
-                                            <span id="labelCountdownDisplay" style="color: var(--blue-light)">3 Seconds</span>
+                                            <span id="labelCountdownDisplay" class="setting-status-pill pill-green">3 Seconds</span>
                                         </div>
                                         <div class="pills-selector-grid">
                                             <div class="pill-choice-card active" data-timer="3">
@@ -1479,7 +1645,7 @@
                                     <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
                                     <circle cx="12" cy="13" r="4"></circle>
                                 </svg>
-                                <span>Continue to Camera 📸</span>
+                                <span>Continue to Camera</span>
                             </button>
                         </div>
                     </div>
@@ -1507,7 +1673,7 @@
                                     <span class="strip-caption-display" id="captionPreviewTxt">Google Developer Groups on Campus UNM</span>
                                 </div>
                                 <div class="strip-watermark-row">
-                                    <span>Learn • Build • Grow</span>
+                                    <span><strong style="color: var(--blue-light)">Learn</strong> &bull; <strong style="color: var(--green-light)">Build</strong> &bull; <strong style="color: var(--yellow-light)">Grow</strong></span>
                                 </div>
                             </div>
                         </div>
@@ -1599,11 +1765,11 @@
                                 <div style="display: flex; gap: 8px; align-items: center; flex-shrink: 0">
                                     <!-- Filter Dropdown -->
                                     <select id="selectFilter" class="studio-select" style="padding: 5px 8px; font-size: 0.74rem; height: 31px; border-radius: var(--radius-sm); min-width: 125px" title="Select visual photo filter">
-                                        <option value="none">✨ Filter: Normal</option>
-                                        <option value="warm">☀️ Warm Studio</option>
-                                        <option value="bw">🎞️ B&W Noir</option>
-                                        <option value="vintage">📼 Retro Film</option>
-                                        <option value="cyber">⚡ Cyber Glow</option>
+                                        <option value="none">Filter: Normal</option>
+                                        <option value="warm">Warm Studio</option>
+                                        <option value="bw">B&W Noir</option>
+                                        <option value="vintage">Retro Film</option>
+                                        <option value="cyber">Cyber Glow</option>
                                     </select>
                                     <button class="btn-secondary" id="btnResetAll" style="padding: 6px 12px; font-size: 0.76rem" title="Clear all photos">
                                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
@@ -1652,7 +1818,7 @@
                                     <span class="strip-caption-display" id="captionCameraTxt">Google Developer Groups on Campus UNM</span>
                                 </div>
                                 <div class="strip-watermark-row">
-                                    <span>Learn • Build • Grow</span>
+                                    <span><strong style="color: var(--blue-light)">Learn</strong> &bull; <strong style="color: var(--green-light)">Build</strong> &bull; <strong style="color: var(--yellow-light)">Grow</strong></span>
                                 </div>
                             </div>
                         </div>
@@ -1686,7 +1852,7 @@
                                 <span class="strip-caption-display" id="captionResultTxt">Google Developer Groups on Campus UNM</span>
                             </div>
                             <div class="strip-watermark-row">
-                                <span>Learn • Build • Grow</span>
+                                <span><strong style="color: var(--blue-light)">Learn</strong> &bull; <strong style="color: var(--green-light)">Build</strong> &bull; <strong style="color: var(--yellow-light)">Grow</strong></span>
                             </div>
                         </div>
                     </div>
@@ -1927,10 +2093,10 @@
                         (l.includes('usb camera') && !isLaptopBuiltin);
 
                     if (isRealExternal) {
-                        return { isExternal: true, badge: ' 🎥 [External Webcam]' };
+                        return { isExternal: true, badge: ' [External Webcam]' };
                     }
                     if (isLaptopBuiltin) {
-                        return { isExternal: false, badge: ' 💻 [Laptop Camera]' };
+                        return { isExternal: false, badge: ' [Laptop Camera]' };
                     }
                     return { isExternal: false, badge: '' };
                 }
@@ -2285,7 +2451,7 @@
                     layers.forEach(layer => {
                         if (!layer) return;
                         layer.innerHTML = '';
-                        if (state.theme === 'stickers' || state.theme === 'matrix') {
+                        if (state.theme === 'matrix') {
                             const sparkles = [
                                 { char: '✦', top: '8%', right: '14px', color: '#ffde59' },
                                 { char: '✧', top: '42%', left: '8px', color: '#4285f4' },
@@ -2769,7 +2935,7 @@
                         console.warn('QR Code generation error:', err);
                         qrLoadingState.innerHTML = `
                             <div style="color: #ea4335; font-size: 0.74rem; text-align: center; padding: 10px; line-height: 1.5">
-                                ⚠️ Failed to generate mobile QR link (offline or limited connection).
+                                Failed to generate mobile QR link (offline or limited connection).
                                 <br><br>
                                 You can still download the photo directly to this device using the button below.
                             </div>
@@ -2800,7 +2966,7 @@
                         document.body.removeChild(link);
                         setTimeout(() => URL.revokeObjectURL(url), 2000);
 
-                        showToast('HD photo successfully saved to device! 💾');
+                        showToast('HD photo successfully saved to device!');
                     } catch (err) {
                         console.error('Download error:', err);
                         showToast('An error occurred while downloading the image.');

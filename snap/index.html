@@ -2,13 +2,150 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="refresh" content="0; url=../photobooth/">
-  <title>Redirecting to GDGoC UNM Photobooth...</title>
+  <title>Redirecting to GDGoC UNM Photobooth Studio...</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="../assets/logo/favicon.png">
+
+  <!-- Google Fonts: Google Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Core Stylesheets -->
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/animations.css">
+
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(180deg, #181818 0%, #171b21 100%) no-repeat fixed;
+      background-color: #171b21;
+      font-family: var(--font-sans);
+      color: var(--text-primary);
+      overflow: hidden;
+    }
+
+    .redirect-card {
+      position: relative;
+      z-index: 10;
+      max-width: 420px;
+      width: 100%;
+      background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: var(--radius-lg);
+      padding: 36px 28px;
+      text-align: center;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .redirect-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      background: linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%);
+    }
+
+    .redirect-logo {
+      height: 36px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .redirect-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid rgba(255, 255, 255, 0.12);
+      border-top-color: var(--google-blue);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .redirect-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+
+    .redirect-desc {
+      font-size: 0.86rem;
+      color: var(--text-secondary);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .redirect-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--blue-light);
+      text-decoration: none;
+      padding: 8px 18px;
+      border-radius: var(--radius-pill);
+      background: rgba(66, 133, 244, 0.1);
+      border: 1px solid rgba(66, 133, 244, 0.25);
+      transition: all var(--transition-fast);
+    }
+
+    .redirect-link:hover {
+      background: rgba(66, 133, 244, 0.2);
+      border-color: var(--google-blue);
+      color: #ffffff;
+      transform: translateY(-2px);
+    }
+  </style>
+
+  <!-- Instant Redirection Script (Preserved completely) -->
   <script>
     window.location.replace('../photobooth/');
   </script>
 </head>
-<body style="background:#171B21;color:#f5f7fc;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
-  <p>Redirecting to <a href="../photobooth/" style="color:#4285f4;">GDGoC UNM Photobooth Studio</a>...</p>
+<body>
+  <!-- Ambient Atmosphere (design.md Section 3) -->
+  <div class="ambient-glow" aria-hidden="true"></div>
+  <div class="ambient-bottom-glow" aria-hidden="true"></div>
+  <div class="tech-grid-overlay" aria-hidden="true"></div>
+
+  <div class="redirect-card">
+    <img src="../assets/logo/logo-gdgoc-full.png" alt="GDGoC UNM" class="redirect-logo" onerror="this.src='../assets/logo/GDGoC-Logo.png'">
+    
+    <div class="redirect-spinner"></div>
+    
+    <h1 class="redirect-title">Photobooth Studio</h1>
+    <p class="redirect-desc">Redirecting you to the official GDGoC UNM Photobooth Studio...</p>
+    
+    <a href="../photobooth/" class="redirect-link">
+      <span>Click here if not redirected</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+        <polyline points="12 5 19 12 12 19"></polyline>
+      </svg>
+    </a>
+  </div>
 </body>
 </html>
