@@ -464,28 +464,6 @@ Komponen FAQ yang bersih dengan panah SVG yang berputar mulus saat dibuka:
     </div>
 </div>
 ```
-
----
-
-### 5.7 Call To Action (CTA) Card
-Banner penutup dengan garis aksen 4 warna Google di bagian atasnya:
-```html
-<section class="cta-section">
-    <div class="container">
-        <div class="cta-box">
-            <div class="cta-box-content">
-                <h2>Siap Mengembangkan Potensi Teknologimu?</h2>
-                <p>Bergabunglah dengan ratusan mahasiswa UNM lainnya dalam ekosistem belajar teknologi Google secara kolaboratif.</p>
-                <div class="cta-btn-group">
-                    <a href="#" class="btn-primary">Gabung GDGoC UNM</a>
-                    <a href="#" class="btn-secondary">Hubungi Kami</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-```
-
 ---
 
 ### 5.8 Footer Ekosistem (`.site-footer`)
