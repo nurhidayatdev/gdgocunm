@@ -50,29 +50,6 @@
                 z-index: 1;
             }
 
-            .team-back-breadcrumb {
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                padding: 6px 14px;
-                background: rgba(255, 255, 255, 0.04);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                border-radius: var(--radius-pill);
-                color: var(--text-secondary);
-                text-decoration: none;
-                font-size: 0.82rem;
-                font-weight: 500;
-                margin-bottom: 20px;
-                transition: all var(--transition-fast);
-            }
-
-            .team-back-breadcrumb:hover {
-                color: #ffffff;
-                background: rgba(255, 255, 255, 0.08);
-                border-color: rgba(255, 255, 255, 0.25);
-                transform: translateX(-3px);
-            }
-
             .team-hero-header {
                 text-align: center;
                 max-width: 820px;
@@ -97,24 +74,6 @@
                 line-height: 1.6;
                 margin-bottom: 18px;
             }
-
-            .team-hero-accent-dots {
-                display: flex;
-                justify-content: center;
-                gap: 8px;
-                margin-bottom: 12px;
-            }
-
-            .team-hero-accent-dots .h-dot {
-                width: 9px;
-                height: 9px;
-                border-radius: 50%;
-            }
-
-            .h-dot.b { background-color: var(--google-blue); }
-            .h-dot.r { background-color: var(--google-red); }
-            .h-dot.y { background-color: var(--google-yellow); }
-            .h-dot.g { background-color: var(--google-green); }
 
             /* Interactive Filter & Search Controls Bar */
             .team-controls-panel {
@@ -312,7 +271,21 @@
                 width: 100% !important;
                 height: 100% !important;
                 box-sizing: border-box;
+                border: 1.5px solid rgba(255, 255, 255, 0.14);
                 animation: fadeUpIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            }
+
+            .team-grid-container .team-card:hover {
+                background:
+                    linear-gradient(55deg, #242424 0%, #222222 68%, #363636 100%) padding-box,
+                    linear-gradient(135deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%) border-box;
+                border: 1.5px solid transparent;
+                transform: translateY(-4px);
+                box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55), 0 0 20px rgba(66, 133, 244, 0.22);
+            }
+
+            .team-grid-container .team-card:hover::before {
+                background: transparent;
             }
 
             /* Responsive Breakpoints */
@@ -551,18 +524,7 @@
                 <!-- Hero Header -->
                 <section class="team-hero-section">
                     <div class="container">
-                        <a href="index.html" class="team-back-breadcrumb">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
-                            <span>Back to Home</span>
-                        </a>
-
                         <div class="team-hero-header">
-                            <div class="team-hero-accent-dots">
-                                <span class="h-dot b"></span>
-                                <span class="h-dot r"></span>
-                                <span class="h-dot y"></span>
-                                <span class="h-dot g"></span>
-                            </div>
                             <h1 class="team-hero-title">Core Team</h1>
                             <p class="team-hero-desc">
                                 Meet the dedicated <strong>2026/2027 Core Team</strong> members of Google Developer Groups On Campus Universitas Negeri Makassar driving collaboration, innovation, and developer community empowerment across 5 divisions.
