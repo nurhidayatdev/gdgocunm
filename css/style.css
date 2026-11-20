@@ -1232,7 +1232,7 @@ a {
     flex: 0 0 calc((100% - 60px) / 4); /* 4 visible items on large desktop */
     background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
     backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
     border-radius: var(--radius-lg);
     padding: 24px;
     display: flex;
@@ -1256,15 +1256,17 @@ a {
     transition: background var(--transition-fast);
 }
 
-.track-card:hover::before {
-    background: var(--gradient-google);
+.track-card:hover {
+    transform: translateY(-4px);
+    background:
+        linear-gradient(55deg, #242424 0%, #222222 68%, #363636 100%) padding-box,
+        linear-gradient(135deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%) border-box;
+    border: 1.5px solid transparent;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 0 20px rgba(66, 133, 244, 0.2);
 }
 
-.track-card:hover {
-    transform: translateY(-3px);
-    border-color: rgba(255, 255, 255, 0.25);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
-    background: linear-gradient(55deg, #262626 0%, #262626 68%, #464646 100%);
+.track-card:hover::before {
+    background: transparent;
 }
 
 .track-top {
@@ -2344,7 +2346,7 @@ a {
 .team-card {
     flex: 0 0 calc((100% - 48px) / 4);
     background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    border: 1.5px solid rgba(255, 255, 255, 0.16);
     border-radius: 18px;
     padding: 16px 14px 16px;
     display: flex;
@@ -2374,14 +2376,16 @@ a {
 }
 
 .team-card:hover {
-    border-color: rgba(255, 255, 255, 0.3);
     transform: translateY(-4px);
-    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55);
-    background: linear-gradient(55deg, #262626 0%, #262626 68%, #464646 100%);
+    background:
+        linear-gradient(55deg, #242424 0%, #222222 68%, #363636 100%) padding-box,
+        linear-gradient(135deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%) border-box;
+    border: 1.5px solid transparent;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55), 0 0 20px rgba(66, 133, 244, 0.22);
 }
 
 .team-card:hover::before {
-    background: linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%);
+    background: transparent;
 }
 
 /* Lead/Organizer emphasis */
@@ -2391,6 +2395,9 @@ a {
 }
 .team-card.is-lead::before {
     background: linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%);
+}
+.team-card.is-lead:hover::before {
+    background: transparent;
 }
 
 /* ── Photo Blob Area ──────────────────────────────────── */
