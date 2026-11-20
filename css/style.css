@@ -1053,8 +1053,8 @@ a {
    ========================================================================== */
 .activities-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
 }
 
 .activity-card {
@@ -1062,10 +1062,10 @@ a {
     backdrop-filter: blur(14px);
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: var(--radius-lg);
-    padding: 30px;
+    padding: 24px 20px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 10px;
     box-shadow: var(--shadow-md);
     transition: all var(--transition-normal);
 }
@@ -1128,13 +1128,15 @@ a {
 }
 
 .activity-card h3 {
-    font-size: 1.3rem;
+    font-size: 1.18rem;
     color: #fff;
+    line-height: 1.3;
 }
 
 .activity-card p {
-    font-size: 0.94rem;
-    line-height: 1.6;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
 }
 
 .activity-tags {
@@ -1225,6 +1227,8 @@ a {
 
 /* Track Card: Exact 1-row sizing */
 .track-card {
+    text-decoration: none;
+    color: inherit;
     flex: 0 0 calc((100% - 60px) / 4); /* 4 visible items on large desktop */
     background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
     backdrop-filter: blur(14px);
@@ -1301,12 +1305,12 @@ a {
 
 /* Track Icon / Visual Slot (User Upload Ready) */
 .track-icon-container {
-    width: 64px;
-    height: 64px;
+    width: 100%;
+    aspect-ratio: 1 / 1;
     border-radius: var(--radius-md);
-    background: linear-gradient(180deg, #ffffff 0%, #a4a4a4 100%);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    background: #181818;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1316,43 +1320,40 @@ a {
 }
 
 .track-card:hover .track-icon-container {
-    border-color: rgba(255, 255, 255, 0.8);
-    transform: scale(1.04);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
 }
 
 .track-icon-container.color-blue {
-    background: linear-gradient(180deg, #ffffff 0%, #a4a4a4 100%);
-    border-color: rgba(255, 255, 255, 0.6);
-    color: #1a73e8;
+    border-color: rgba(66, 133, 244, 0.35);
 }
 .track-icon-container.color-green {
-    background: linear-gradient(180deg, #ffffff 0%, #a4a4a4 100%);
-    border-color: rgba(255, 255, 255, 0.6);
-    color: #1e8e3e;
+    border-color: rgba(52, 168, 83, 0.35);
 }
 .track-icon-container.color-yellow {
-    background: linear-gradient(180deg, #ffffff 0%, #a4a4a4 100%);
-    border-color: rgba(255, 255, 255, 0.6);
-    color: #d97706;
+    border-color: rgba(251, 188, 4, 0.35);
 }
 .track-icon-container.color-red {
-    background: linear-gradient(180deg, #ffffff 0%, #a4a4a4 100%);
-    border-color: rgba(255, 255, 255, 0.6);
-    color: #ea4335;
+    border-color: rgba(234, 67, 53, 0.35);
 }
 
 .track-icon-img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    padding: 8px;
+    object-fit: cover;
+    padding: 0;
     display: block;
+    border-radius: inherit;
+    transition: transform var(--transition-normal);
+}
+
+.track-card:hover .track-icon-img {
+    transform: scale(1.05);
 }
 
 .track-icon-svg {
-    width: 32px;
-    height: 32px;
+    width: 48px;
+    height: 48px;
     stroke: currentColor;
 }
 
@@ -2713,6 +2714,11 @@ a {
     }
     .hero-cta-group {
         justify-content: center;
+    }
+    /* Activities Grid: 2 columns on tablet */
+    .activities-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
     }
     /* Tracks Carousel: 2 visible cards */
     .track-card {

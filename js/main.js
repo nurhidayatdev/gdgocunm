@@ -115,9 +115,6 @@ function renderActivities() {
     <div class="activity-card ${act.color}">
       <h3>${act.title}</h3>
       <p>${act.desc}</p>
-      <div class="activity-tags">
-        ${act.tags.map((t) => `<span class="tag-pill">#${t}</span>`).join("")}
-      </div>
     </div>
   `,
         )
@@ -200,14 +197,12 @@ function initTracksSection() {
             .map((track) => {
                 const fallbackSvg =
                     TRACK_ICONS[track.id] || TRACK_ICONS["frontend"];
+                const imgSrc =
+                    track.image || `assets/images/tracks/${track.id}.png`;
                 return `
-      <div class="track-card">
-        <div class="track-top">
-          <span class="track-category">${track.category}</span>
-          <span class="track-indicator ${track.color}"></span>
-        </div>
+      <a href="learning-path.html?track=${track.id}" class="track-card">
         <div class="track-icon-container color-${track.color}">
-          <img src="assets/images/tracks/${track.id}.png" alt="${track.title} icon"
+          <img src="${imgSrc}" alt="${track.title} icon"
                class="track-icon-img" loading="lazy"
                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"/>
           <div class="track-icon-fallback" style="display:none;width:100%;height:100%;align-items:center;justify-content:center;">
@@ -216,7 +211,7 @@ function initTracksSection() {
         </div>
         <h3>${track.title}</h3>
         <p>${track.desc}</p>
-      </div>`;
+      </a>`;
             })
             .join("");
 
@@ -338,68 +333,16 @@ function _trackManualJump(trackEl, originalCount, direction) {
 }
 
 /* -------------------------------------------------------------------------
- * Track Detail Modal
+ * Track Detail Navigation (No Modal, redirects to learning-path.html)
  * ------------------------------------------------------------------------- */
 function initTrackModal() {
-    const modalOverlay = document.getElementById("track-modal-overlay");
-    const modalClose = document.getElementById("modal-close-btn");
-
-    if (modalClose && modalOverlay) {
-        modalClose.addEventListener("click", () =>
-            modalOverlay.classList.remove("open"),
-        );
-        modalOverlay.addEventListener("click", (e) => {
-            if (e.target === modalOverlay)
-                modalOverlay.classList.remove("open");
-        });
-        document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape") modalOverlay.classList.remove("open");
-        });
-    }
+    // Modal removed: Navigation handled directly via links to learning-path.html
 }
 
 window.openTrackModal = function (trackId) {
-    const track = GDG_DATA.tracks.find((t) => t.id === trackId);
-    const modalOverlay = document.getElementById("track-modal-overlay");
-    const modalBody = document.getElementById("modal-body-content");
-    if (!track || !modalOverlay || !modalBody) return;
-
-    modalBody.innerHTML = `
-    <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-      <span class="activity-badge badge-${track.color}">${track.category}</span>
-      <span style="font-size:0.8rem; color:var(--text-muted); font-family:var(--font-mono);">Track #${track.id}</span>
-    </div>
-    <h2 style="font-size:1.8rem; margin-bottom:12px; color:#fff;">${track.title}</h2>
-    <p style="font-size:0.98rem; line-height:1.6; margin-bottom:20px; color:var(--text-secondary);">${track.details}</p>
-
-    <h4 style="font-size:0.95rem; text-transform:uppercase; letter-spacing:0.04em; color:var(--blue-light); margin-bottom:10px;">Core Technologies & Tools</h4>
-    <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px;">
-      ${track.techStack.map((t) => `<span class="tech-tag" style="padding:5px 12px; font-size:0.82rem;">${t}</span>`).join("")}
-    </div>
-
-    <h4 style="font-size:0.95rem; text-transform:uppercase; letter-spacing:0.04em; color:var(--green-light); margin-bottom:12px;">Weekly Curriculum Modules</h4>
-    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:28px;">
-      ${track.syllabus
-          .map(
-              (item, idx) => `
-        <div style="display:flex; align-items:flex-start; gap:12px; font-size:0.9rem; color:var(--text-primary); padding:10px 14px; background:rgba(255,255,255,0.03); border-radius:8px; border:1px solid var(--border-subtle);">
-          <span style="font-family:var(--font-mono); font-weight:700; color:var(--blue-light); font-size:0.82rem;">0${idx + 1}.</span>
-          <span>${item}</span>
-        </div>
-      `,
-          )
-          .join("")}
-    </div>
-
-    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding-top:16px; border-top:1px solid var(--border-subtle);">
-      <span style="font-size:0.84rem; color:var(--text-muted);">Weekly sessions in UNM Campus labs & online</span>
-      <a href="${GDG_DATA.chapter.communityUrl}" target="_blank" rel="noopener noreferrer" class="btn-primary" style="padding:8px 20px;">
-        Join This Track
-      </a>
-    </div>
-  `;
-
-    modalOverlay.classList.add("open");
+    if (trackId) {
+        window.location.href = `learning-path.html?track=${encodeURIComponent(trackId)}`;
+    }
 };
 
 /* -------------------------------------------------------------------------
@@ -583,7 +526,7 @@ function buildCarousel() {
                     .slice(0, 2)
                     .join("");
                 const isLead = member.division === "Organizer";
-                const color = isLead ? "white" : (member.color || "blue");
+                const color = isLead ? "white" : member.color || "blue";
                 const photoContent = member.image
                     ? `<img src="${member.image}" alt="${member.name}" class="team-photo-img"
               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
