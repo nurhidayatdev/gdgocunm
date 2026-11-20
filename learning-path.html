@@ -122,7 +122,7 @@
                 box-sizing: border-box;
                 background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
                 backdrop-filter: blur(14px);
-                border: 1px solid rgba(255, 255, 255, 0.12);
+                border: 1.8px solid rgba(255, 255, 255, 0.12);
                 border-radius: var(--radius-lg);
                 padding: 22px;
                 display: flex;
@@ -157,13 +157,20 @@
             }
 
             .lp-track-card.active {
-                border-color: var(--blue-light);
-                box-shadow: 0 0 0 1px var(--blue-light), 0 8px 28px rgba(66, 133, 244, 0.25);
-                background: linear-gradient(55deg, #262a36 0%, #222228 68%, #363c4e 100%);
+                background:
+                    linear-gradient(55deg, #242424 0%, #222222 68%, #363636 100%) padding-box,
+                    linear-gradient(135deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%) border-box;
+                border: 1.8px solid transparent;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(66, 133, 244, 0.25);
+            }
+
+            .lp-track-card.active:hover {
+                border-color: transparent;
+                box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 24px rgba(66, 133, 244, 0.3);
             }
 
             .lp-track-card.active::before {
-                background: var(--gradient-google);
+                background: transparent;
             }
 
             .lp-card-img-wrap {
@@ -260,11 +267,12 @@
             }
 
             .lp-detail-wrapper {
-                background: linear-gradient(55deg, #1f222b 0%, #1e1f26 68%, #2d313d 100%);
-                border: 1px solid rgba(255, 255, 255, 0.14);
+                background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
+                backdrop-filter: blur(14px);
+                border: 1px solid rgba(255, 255, 255, 0.12);
                 border-radius: var(--radius-lg);
                 padding: 40px;
-                box-shadow: 0 8px 36px rgba(0, 0, 0, 0.4);
+                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
                 position: relative;
                 overflow: hidden;
             }
@@ -275,8 +283,8 @@
                 top: 0;
                 left: 0;
                 right: 0;
-                height: 4px;
-                background: var(--gradient-google);
+                height: 3px;
+                background: linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%);
             }
 
             /* Detail Section Layout */
@@ -394,12 +402,13 @@
 
             /* Instructor Card (Right Column) */
             .lp-instructor-card {
-                background: linear-gradient(55deg, #242732 0%, #20222a 68%, #363a48 100%);
-                border: 1px solid rgba(255, 255, 255, 0.14);
+                background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
+                backdrop-filter: blur(14px);
+                border: 1px solid rgba(255, 255, 255, 0.12);
                 border-radius: var(--radius-lg);
                 padding: 28px 24px 22px;
                 text-align: center;
-                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
@@ -409,6 +418,18 @@
                 max-width: 350px;
                 box-sizing: border-box;
                 flex-shrink: 0;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .lp-instructor-card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%);
             }
 
             .lp-instructor-top {
@@ -785,12 +806,6 @@
                     font-size: 2rem;
                 }
             }
-
-            /* Nav link active indicator for Learning Path */
-            .nav-link.active-page {
-                color: #ffffff !important;
-                background: rgba(255, 255, 255, 0.08);
-            }
         </style>
     </head>
     <body>
@@ -832,7 +847,7 @@
                                 >
                             </li>
                             <li>
-                                <a href="learning-path.html" class="nav-link active-page"
+                                <a href="learning-path.html" class="nav-link active"
                                     >Learning Path</a
                                 >
                             </li>
@@ -895,7 +910,7 @@
                 <ul class="mobile-nav-links">
                     <li><a href="index.html#about" class="nav-link">About</a></li>
                     <li><a href="index.html#activities" class="nav-link">Our Activities</a></li>
-                    <li><a href="learning-path.html" class="nav-link active-page">Learning Path</a></li>
+                    <li><a href="learning-path.html" class="nav-link active">Learning Path</a></li>
                     <li><a href="team.html" class="nav-link">Core Team</a></li>
                     <li><a href="index.html#faq" class="nav-link">FAQ</a></li>
                 </ul>
@@ -1048,6 +1063,79 @@
                 // Master Learning Paths Data (Official Curriculum GDGoC UNM 2026/2027)
                 const LEARNING_PATHS = [
                     {
+                        id: 'uiux',
+                        title: 'UI/UX Design',
+                        shortTitle: 'UI/UX Design',
+                        category: 'Design & Product',
+                        color: 'blue',
+                        whatsappUrl: 'https://chat.whatsapp.com/', // Ganti dengan link grup WhatsApp UI/UX
+                        image: 'assets/images/tracks/Logo - UIUX.jpg',
+                        desc: 'Master the Design Thinking framework, user research, wireframing, high-fidelity components, and clickable prototypes in Figma.',
+                        objective: 'Guide students from zero design experience through the Design Thinking framework to create user-centered, clickable website prototypes in Figma.',
+                        longDesc: 'The UI/UX Design track guides students with zero design experience through the complete human-centered Design Thinking journey. You will learn to construct Empathy Maps, define How Might We (HMW) problem statements, sketch rapid low-fidelity wireframes, engineer reusable UI component systems, and link clickable interactive prototypes in Figma for usability testing.',
+                        techStack: ['Figma', 'Pen & Paper', 'Usability Testing', 'Design Thinking', 'Wireframing', 'Component Sets'],
+                        outcomes: {
+                            learn: 'User empathy techniques, HMW problem synthesis, digital wireframing in Figma, visual hierarchy & component variants, and interactive prototyping.',
+                            prereq: 'Zero prior design experience needed. Access to a laptop with Figma desktop app or web browser, plus pen and paper.',
+                            capstone: 'Interactive Clickable Prototype — A complete, validated prototype covering Login Page and Landing Page in Figma.'
+                        },
+                        timeline: [
+                            {
+                                num: '01',
+                                title: 'Introduction to UI/UX, Team Formation & Empathy Mapping',
+                                objectives: 'Differentiate UI vs. UX using real-world analogies, understand Design Thinking basics, form project teams, and construct an Empathy Map.',
+                                materials: 'UI vs. UX definitions, career opportunities, 5 stages of Design Thinking, user empathy techniques.',
+                                assignment: 'Complete an initial Empathy Map and conduct quick user interviews with 1–2 target users.'
+                            },
+                            {
+                                num: '02',
+                                title: 'Problem Statement (HMW) & Figma Workspace Onboarding',
+                                objectives: 'Synthesize user feedback into How Might We (HMW) statements, define web page goals, and set up a team project in Figma.',
+                                materials: 'Problem statement templates, website sitemaps (Login & Landing Page), Figma UI walkthrough, frames, shapes, and desktop artboards.',
+                                assignment: 'Formulate team HMW problem statements and set up the team Figma project file.'
+                            },
+                            {
+                                num: '03',
+                                title: 'Low-Fidelity Wireframing',
+                                objectives: 'Translate abstract ideas into paper sketches and digital low-fidelity wireframes in Figma.',
+                                materials: 'Layout anatomy (header, hero section, features grid, form, footer), information architecture, rapid paper sketching, low-fi wireframing in Figma.',
+                                assignment: 'Complete low-fidelity digital wireframes for both Login and Landing pages in Figma.'
+                            },
+                            {
+                                num: '04',
+                                title: 'High-Fidelity UI Design & Reusable Components',
+                                objectives: 'Transform wireframes into high-fidelity UI designs utilizing visual design principles, typography, color palettes, and Figma components.',
+                                materials: 'Visual hierarchy, contrast, color theory, font selection, creating reusable UI components (buttons, input fields, cards, navbars).',
+                                assignment: 'Convert wireframes into complete High-Fidelity designs in Figma.'
+                            },
+                            {
+                                num: '05',
+                                title: 'Interactive Prototyping, Usability Testing & Showcase',
+                                objectives: 'Link static design screens into clickable prototypes, conduct quick usability testing, and pitch design decisions.',
+                                materials: 'Figma prototyping transitions, basic usability testing scripts, 4 UX pillars (Usefulness, Usability, Desirability, Accessibility), design presentation tactics.',
+                                assignment: 'Present the final clickable prototype and share design process reflection.'
+                            }
+                        ],
+                        instructor: {
+                            name: 'Andi Muh. Yusran Haris',
+                            role: 'UI/UX Tech Lead',
+                            division: 'Research & Development',
+                            image: 'assets/images/team/rd-yusran.png',
+                            quote: 'Great design starts with deep user empathy. We guide you through the complete Design Thinking journey to turn real-world problems into clickable Figma prototypes.',
+                            socials: {
+                                linkedin: '#',
+                                instagram: 'https://instagram.com/gdgoc.unm',
+                                github: '#'
+                            }
+                        },
+                        specs: {
+                            level: 'Beginner Friendly',
+                            sessions: '5 Sessions',
+                            duration: '5 Weeks',
+                            cohort: 'Cohort 2026/2027'
+                        }
+                    },
+                    {
                         id: 'frontend',
                         title: 'Front-End Web Development',
                         shortTitle: 'Front-End',
@@ -1194,65 +1282,72 @@
                         }
                     },
                     {
-                        id: 'uiux',
-                        title: 'UI/UX Design',
-                        shortTitle: 'UI/UX Design',
-                        category: 'Design & Product',
-                        color: 'blue',
-                        whatsappUrl: 'https://chat.whatsapp.com/', // Ganti dengan link grup WhatsApp UI/UX
-                        image: 'assets/images/tracks/Logo - UIUX.jpg',
-                        desc: 'Master the Design Thinking framework, user research, wireframing, high-fidelity components, and clickable prototypes in Figma.',
-                        objective: 'Guide students from zero design experience through the Design Thinking framework to create user-centered, clickable website prototypes in Figma.',
-                        longDesc: 'The UI/UX Design track guides students with zero design experience through the complete human-centered Design Thinking journey. You will learn to construct Empathy Maps, define How Might We (HMW) problem statements, sketch rapid low-fidelity wireframes, engineer reusable UI component systems, and link clickable interactive prototypes in Figma for usability testing.',
-                        techStack: ['Figma', 'Pen & Paper', 'Usability Testing', 'Design Thinking', 'Wireframing', 'Component Sets'],
+                        id: 'data-science',
+                        title: 'Data Science',
+                        shortTitle: 'Data Science',
+                        category: 'Intelligence',
+                        color: 'yellow',
+                        whatsappUrl: 'https://chat.whatsapp.com/', // Ganti dengan link grup WhatsApp Data Science
+                        image: 'assets/images/tracks/Logo - Data Science.jpg',
+                        desc: 'Guide through complete data analysis workflows—from descriptive statistics and data cleaning to hypothesis testing and data storytelling.',
+                        objective: 'Guide members through data analysis workflows—from descriptive statistics and data cleaning to hypothesis testing and data storytelling.',
+                        longDesc: 'The Data Science track guides student researchers through the end-to-end data lifecycle in Google Colab. You will explore descriptive statistics, clean messy datasets with Pandas, formulate hypothesis tests for business decisions, design clear visualizations with Matplotlib & Seaborn, and deliver an impactful data storytelling presentation.',
+                        techStack: ['Google Colab', 'Python', 'Pandas', 'Matplotlib', 'Seaborn', 'Jupyter', 'Descriptive Stats'],
                         outcomes: {
-                            learn: 'User empathy techniques, HMW problem synthesis, digital wireframing in Figma, visual hierarchy & component variants, and interactive prototyping.',
-                            prereq: 'Zero prior design experience needed. Access to a laptop with Figma desktop app or web browser, plus pen and paper.',
-                            capstone: 'Interactive Clickable Prototype — A complete, validated prototype covering Login Page and Landing Page in Figma.'
+                            learn: 'Data science workflow lifecycle, descriptive central tendency/dispersion stats, handling missing data & outliers, inferential hypothesis testing, and narrative data storytelling.',
+                            prereq: 'Zero prior statistical expertise needed. A Google account to run Google Colab, and curiosity to ask questions of data.',
+                            capstone: 'Data-Driven Storytelling Showcase & Presentation — A polished analytical presentation solving a domain problem backed by clean visual evidence.'
                         },
                         timeline: [
                             {
                                 num: '01',
-                                title: 'Introduction to UI/UX, Team Formation & Empathy Mapping',
-                                objectives: 'Differentiate UI vs. UX using real-world analogies, understand Design Thinking basics, form project teams, and construct an Empathy Map.',
-                                materials: 'UI vs. UX definitions, career opportunities, 5 stages of Design Thinking, user empathy techniques.',
-                                assignment: 'Complete an initial Empathy Map and conduct quick user interviews with 1–2 target users.'
+                                title: 'Getting to Know Data Science & Google Colab',
+                                objectives: 'Define Data Science, understand its interdisciplinary nature (Statistics, Computer Science, Domain Knowledge), and explore Google Colab.',
+                                materials: 'Data Science workflow lifecycle, real-world industry applications, tour of Google Colab interface, running basic Python code blocks.',
+                                assignment: 'Complete an interactive ice-breaker quiz and write a reflection on how data curiosity applies to your field.'
                             },
                             {
                                 num: '02',
-                                title: 'Problem Statement (HMW) & Figma Workspace Onboarding',
-                                objectives: 'Synthesize user feedback into How Might We (HMW) statements, define web page goals, and set up a team project in Figma.',
-                                materials: 'Problem statement templates, website sitemaps (Login & Landing Page), Figma UI walkthrough, frames, shapes, and desktop artboards.',
-                                assignment: 'Formulate team HMW problem statements and set up the team Figma project file.'
+                                title: 'Fundamentals of Data & Descriptive Statistics',
+                                objectives: 'Differentiate data types (categorical vs. numerical, continuous vs. discrete) and compute core descriptive statistics.',
+                                materials: 'Categorical/numerical variable types, measures of central tendency (Mean, Median, Mode), measures of dispersion (Range, Variance, Standard Deviation), guided calculations in Colab.',
+                                assignment: 'Perform descriptive statistical analysis on a provided dataset in Colab and summarize takeaways.'
                             },
                             {
                                 num: '03',
-                                title: 'Low-Fidelity Wireframing',
-                                objectives: 'Translate abstract ideas into paper sketches and digital low-fidelity wireframes in Figma.',
-                                materials: 'Layout anatomy (header, hero section, features grid, form, footer), information architecture, rapid paper sketching, low-fi wireframing in Figma.',
-                                assignment: 'Complete low-fidelity digital wireframes for both Login and Landing pages in Figma.'
+                                title: 'Data Cleaning & Preparation',
+                                objectives: 'Identify common data quality issues ("dirty data"), handle missing values and duplicates, and perform structural transformations.',
+                                materials: 'Handling missing data (NaN), removing duplicate rows, correcting data types, handling outliers, data transformation principles.',
+                                assignment: 'Complete a hands-on data cleaning exercise on a messy real-world dataset in Google Colab.'
                             },
                             {
                                 num: '04',
-                                title: 'High-Fidelity UI Design & Reusable Components',
-                                objectives: 'Transform wireframes into high-fidelity UI designs utilizing visual design principles, typography, color palettes, and Figma components.',
-                                materials: 'Visual hierarchy, contrast, color theory, font selection, creating reusable UI components (buttons, input fields, cards, navbars).',
-                                assignment: 'Convert wireframes into complete High-Fidelity designs in Figma.'
+                                title: 'Data-Driven Decision Making & Inferential Statistics',
+                                objectives: 'Understand basic inferential statistics, sampling vs. population concepts, and hypothesis testing for business decisions.',
+                                materials: 'Population vs. Sample, statistical significance (p-value), hypothesis testing steps (H0 vs. H1), business decision modeling.',
+                                assignment: 'Execute a step-by-step hypothesis test in Colab and interpret the results in a business context.'
                             },
                             {
                                 num: '05',
-                                title: 'Interactive Prototyping, Usability Testing & Showcase',
-                                objectives: 'Link static design screens into clickable prototypes, conduct quick usability testing, and pitch design decisions.',
-                                materials: 'Figma prototyping transitions, basic usability testing scripts, 4 UX pillars (Usefulness, Usability, Desirability, Accessibility), design presentation tactics.',
-                                assignment: 'Present the final clickable prototype and share design process reflection.'
+                                title: 'Data Visualization, Storytelling & Capstone Onboarding',
+                                objectives: 'Design clean data visualizations, transform statistical insights into narrative stories, and onboard onto final capstone projects.',
+                                materials: 'Chart selection guides (Bar, Line, Scatter, Boxplot), ethical visualization principles, data storytelling frameworks, project dataset distribution.',
+                                assignment: 'Draft initial visualization charts and outline the narrative story for your team\'s final capstone dataset.'
+                            },
+                            {
+                                num: '06',
+                                title: 'Final Capstone Project Showcase',
+                                objectives: 'Present data-driven findings clearly to an audience, defend analytical methods, and reflect on personal skill growth.',
+                                materials: 'Data presentation techniques, Q&A defense strategies, peer evaluation rubrics.',
+                                assignment: 'Deliver the final team Data Science presentation and complete the program evaluation form.'
                             }
                         ],
                         instructor: {
-                            name: 'Andi Muh. Yusran Haris',
-                            role: 'UI/UX Tech Lead',
+                            name: 'Namira Sarip',
+                            role: 'Data Science Tech Lead',
                             division: 'Research & Development',
-                            image: 'assets/images/team/rd-yusran.png',
-                            quote: 'Great design starts with deep user empathy. We guide you through the complete Design Thinking journey to turn real-world problems into clickable Figma prototypes.',
+                            image: 'assets/images/team/rd-namira.png',
+                            quote: 'Data without insights is just numbers. We teach you how to clean messy real-world datasets, perform inferential testing, and communicate stories that drive impact.',
                             socials: {
                                 linkedin: '#',
                                 instagram: 'https://instagram.com/gdgoc.unm',
@@ -1260,9 +1355,9 @@
                             }
                         },
                         specs: {
-                            level: 'Beginner Friendly',
-                            sessions: '5 Sessions',
-                            duration: '5 Weeks',
+                            level: 'Beginner to Intermediate',
+                            sessions: '6 Sessions',
+                            duration: '6 Weeks',
                             cohort: 'Cohort 2026/2027'
                         }
                     },
@@ -1336,65 +1431,6 @@
                             level: 'Beginner to Intermediate',
                             sessions: '5 Sessions',
                             duration: '5 Weeks',
-                            cohort: 'Cohort 2026/2027'
-                        }
-                    },
-                    {
-                        id: 'robotics',
-                        title: 'Robotics',
-                        shortTitle: 'Robotics',
-                        category: 'Hardware',
-                        color: 'green',
-                        whatsappUrl: 'https://chat.whatsapp.com/', // Ganti dengan link grup WhatsApp Robotics
-                        image: 'assets/images/tracks/Logo - Robotics.jpg',
-                        desc: 'Build a working Smart Trash Bin (Tempat Sampah Digital) integrating ESP32, ultrasonic sensors, servos, and Blynk IoT Cloud.',
-                        objective: 'Build a physical, working Smart Trash Bin (Tempat Sampah Digital) integrating ESP32, ultrasonic sensors, servos, status LEDs/buzzers, and Blynk IoT Cloud.',
-                        longDesc: 'The Robotics track combines physical microcontroller circuits with cloud connectivity. You will configure Arduino IDE for ESP32, interface HC-SR04 ultrasonic distance sensors, program servo motor lid actuation, write conditional alert algorithms, and broadcast telemetry over Wi-Fi to a live Blynk IoT Cloud dashboard.',
-                        techStack: ['ESP32 Microcontroller', 'Arduino IDE', 'HC-SR04 Sensor', 'Servo Motors', 'Blynk IoT Cloud', 'C++ / Embedded'],
-                        outcomes: {
-                            learn: 'IoT hardware architecture, ultrasonic distance measurement, servo motor automation, Wi-Fi provisioning on ESP32, and Blynk Cloud telemetry.',
-                            prereq: 'Enthusiasm for physical computing and electronics. Basic logic or C++ familiarity is helpful; hardware is guided in person in campus labs.',
-                            capstone: 'Smart Trash Bin Physical Prototype & Blynk Dashboard Integration — A fully assembled automated trash bin with cloud capacity alerts.'
-                        },
-                        timeline: [
-                            {
-                                num: '01',
-                                title: 'Introduction to IoT, Smart Trash Bin Concept & ESP32 Setup',
-                                objectives: 'Grasp IoT basics, understand smart trash bin mechanics, configure Arduino IDE for ESP32, and read ultrasonic sensor data via Serial Monitor.',
-                                materials: 'IoT architecture (Sensors -> Microcontroller -> Cloud -> Actuators), ESP32 board manager setup, Arduino C++ structure (setup(), loop()), HC-SR04 ultrasonic sensor mechanics (Trig/Echo, pulseIn()).',
-                                assignment: 'Run the basic Blink LED program and print ultrasonic distance values to the Serial Monitor. Sketch a team system flowchart.'
-                            },
-                            {
-                                num: '02',
-                                title: 'Actuators, Automation Logic & Blynk Cloud Integration',
-                                objectives: 'Control servo motors based on sensor inputs, construct conditional automation logic (if-else), implement LED/buzzer alerts, and push data to Blynk Cloud.',
-                                materials: 'Servo control using ESP32Servo library, distance thresholds (< 20 cm opens lid, < 10 cm internal signals bin full), Wi-Fi connection setup, Blynk Cloud Virtual Pins & Dashboard Gauge widgets, voltage divider safety notes.',
-                                assignment: 'Construct an automated system: lid opens on detection, alert triggers when full, and live fill capacity displays on Blynk.'
-                            },
-                            {
-                                num: '03',
-                                title: 'PRACTICAL LAB — Assembly, Calibration, Debugging & Showcase',
-                                objectives: 'Assemble hardware components into a physical container prototype, merge code routines, calibrate detection thresholds, and present live demos.',
-                                materials: 'Final wiring schematics, physical housing assembly, code merging, distance calibration, power management, Wi-Fi reconnection logic, troubleshooting checklist.',
-                                assignment: 'Complete, debug, and demonstrate a fully functional Smart Trash Bin prototype in the physical lab.'
-                            }
-                        ],
-                        instructor: {
-                            name: 'Alfira Resky Pratiwi',
-                            role: 'Robotics Tech Lead',
-                            division: 'Research & Development',
-                            image: 'assets/images/team/rd-alfira.png',
-                            quote: 'Hardware comes alive when code meets circuitry. In this track, we build functional IoT devices like the Smart Trash Bin integrated with ESP32 and Blynk Cloud.',
-                            socials: {
-                                linkedin: '#',
-                                instagram: 'https://instagram.com/gdgoc.unm',
-                                github: '#'
-                            }
-                        },
-                        specs: {
-                            level: 'Beginner to Intermediate',
-                            sessions: '3 Sessions',
-                            duration: '3 Weeks',
                             cohort: 'Cohort 2026/2027'
                         }
                     },
@@ -1479,72 +1515,51 @@
                         }
                     },
                     {
-                        id: 'data-science',
-                        title: 'Data Science',
-                        shortTitle: 'Data Science',
-                        category: 'Intelligence',
-                        color: 'yellow',
-                        whatsappUrl: 'https://chat.whatsapp.com/', // Ganti dengan link grup WhatsApp Data Science
-                        image: 'assets/images/tracks/Logo - Data Science.jpg',
-                        desc: 'Guide through complete data analysis workflows—from descriptive statistics and data cleaning to hypothesis testing and data storytelling.',
-                        objective: 'Guide members through data analysis workflows—from descriptive statistics and data cleaning to hypothesis testing and data storytelling.',
-                        longDesc: 'The Data Science track guides student researchers through the end-to-end data lifecycle in Google Colab. You will explore descriptive statistics, clean messy datasets with Pandas, formulate hypothesis tests for business decisions, design clear visualizations with Matplotlib & Seaborn, and deliver an impactful data storytelling presentation.',
-                        techStack: ['Google Colab', 'Python', 'Pandas', 'Matplotlib', 'Seaborn', 'Jupyter', 'Descriptive Stats'],
+                        id: 'robotics',
+                        title: 'Robotics',
+                        shortTitle: 'Robotics',
+                        category: 'Hardware',
+                        color: 'green',
+                        whatsappUrl: 'https://chat.whatsapp.com/', // Ganti dengan link grup WhatsApp Robotics
+                        image: 'assets/images/tracks/Logo - Robotics.jpg',
+                        desc: 'Build a working Smart Trash Bin (Tempat Sampah Digital) integrating ESP32, ultrasonic sensors, servos, and Blynk IoT Cloud.',
+                        objective: 'Build a physical, working Smart Trash Bin (Tempat Sampah Digital) integrating ESP32, ultrasonic sensors, servos, status LEDs/buzzers, and Blynk IoT Cloud.',
+                        longDesc: 'The Robotics track combines physical microcontroller circuits with cloud connectivity. You will configure Arduino IDE for ESP32, interface HC-SR04 ultrasonic distance sensors, program servo motor lid actuation, write conditional alert algorithms, and broadcast telemetry over Wi-Fi to a live Blynk IoT Cloud dashboard.',
+                        techStack: ['ESP32 Microcontroller', 'Arduino IDE', 'HC-SR04 Sensor', 'Servo Motors', 'Blynk IoT Cloud', 'C++ / Embedded'],
                         outcomes: {
-                            learn: 'Data science workflow lifecycle, descriptive central tendency/dispersion stats, handling missing data & outliers, inferential hypothesis testing, and narrative data storytelling.',
-                            prereq: 'Zero prior statistical expertise needed. A Google account to run Google Colab, and curiosity to ask questions of data.',
-                            capstone: 'Data-Driven Storytelling Showcase & Presentation — A polished analytical presentation solving a domain problem backed by clean visual evidence.'
+                            learn: 'IoT hardware architecture, ultrasonic distance measurement, servo motor automation, Wi-Fi provisioning on ESP32, and Blynk Cloud telemetry.',
+                            prereq: 'Enthusiasm for physical computing and electronics. Basic logic or C++ familiarity is helpful; hardware is guided in person in campus labs.',
+                            capstone: 'Smart Trash Bin Physical Prototype & Blynk Dashboard Integration — A fully assembled automated trash bin with cloud capacity alerts.'
                         },
                         timeline: [
                             {
                                 num: '01',
-                                title: 'Getting to Know Data Science & Google Colab',
-                                objectives: 'Define Data Science, understand its interdisciplinary nature (Statistics, Computer Science, Domain Knowledge), and explore Google Colab.',
-                                materials: 'Data Science workflow lifecycle, real-world industry applications, tour of Google Colab interface, running basic Python code blocks.',
-                                assignment: 'Complete an interactive ice-breaker quiz and write a reflection on how data curiosity applies to your field.'
+                                title: 'Introduction to IoT, Smart Trash Bin Concept & ESP32 Setup',
+                                objectives: 'Grasp IoT basics, understand smart trash bin mechanics, configure Arduino IDE for ESP32, and read ultrasonic sensor data via Serial Monitor.',
+                                materials: 'IoT architecture (Sensors -> Microcontroller -> Cloud -> Actuators), ESP32 board manager setup, Arduino C++ structure (setup(), loop()), HC-SR04 ultrasonic sensor mechanics (Trig/Echo, pulseIn()).',
+                                assignment: 'Run the basic Blink LED program and print ultrasonic distance values to the Serial Monitor. Sketch a team system flowchart.'
                             },
                             {
                                 num: '02',
-                                title: 'Fundamentals of Data & Descriptive Statistics',
-                                objectives: 'Differentiate data types (categorical vs. numerical, continuous vs. discrete) and compute core descriptive statistics.',
-                                materials: 'Categorical/numerical variable types, measures of central tendency (Mean, Median, Mode), measures of dispersion (Range, Variance, Standard Deviation), guided calculations in Colab.',
-                                assignment: 'Perform descriptive statistical analysis on a provided dataset in Colab and summarize takeaways.'
+                                title: 'Actuators, Automation Logic & Blynk Cloud Integration',
+                                objectives: 'Control servo motors based on sensor inputs, construct conditional automation logic (if-else), implement LED/buzzer alerts, and push data to Blynk Cloud.',
+                                materials: 'Servo control using ESP32Servo library, distance thresholds (< 20 cm opens lid, < 10 cm internal signals bin full), Wi-Fi connection setup, Blynk Cloud Virtual Pins & Dashboard Gauge widgets, voltage divider safety notes.',
+                                assignment: 'Construct an automated system: lid opens on detection, alert triggers when full, and live fill capacity displays on Blynk.'
                             },
                             {
                                 num: '03',
-                                title: 'Data Cleaning & Preparation',
-                                objectives: 'Identify common data quality issues ("dirty data"), handle missing values and duplicates, and perform structural transformations.',
-                                materials: 'Handling missing data (NaN), removing duplicate rows, correcting data types, handling outliers, data transformation principles.',
-                                assignment: 'Complete a hands-on data cleaning exercise on a messy real-world dataset in Google Colab.'
-                            },
-                            {
-                                num: '04',
-                                title: 'Data-Driven Decision Making & Inferential Statistics',
-                                objectives: 'Understand basic inferential statistics, sampling vs. population concepts, and hypothesis testing for business decisions.',
-                                materials: 'Population vs. Sample, statistical significance (p-value), hypothesis testing steps (H0 vs. H1), business decision modeling.',
-                                assignment: 'Execute a step-by-step hypothesis test in Colab and interpret the results in a business context.'
-                            },
-                            {
-                                num: '05',
-                                title: 'Data Visualization, Storytelling & Capstone Onboarding',
-                                objectives: 'Design clean data visualizations, transform statistical insights into narrative stories, and onboard onto final capstone projects.',
-                                materials: 'Chart selection guides (Bar, Line, Scatter, Boxplot), ethical visualization principles, data storytelling frameworks, project dataset distribution.',
-                                assignment: 'Draft initial visualization charts and outline the narrative story for your team\'s final capstone dataset.'
-                            },
-                            {
-                                num: '06',
-                                title: 'Final Capstone Project Showcase',
-                                objectives: 'Present data-driven findings clearly to an audience, defend analytical methods, and reflect on personal skill growth.',
-                                materials: 'Data presentation techniques, Q&A defense strategies, peer evaluation rubrics.',
-                                assignment: 'Deliver the final team Data Science presentation and complete the program evaluation form.'
+                                title: 'PRACTICAL LAB — Assembly, Calibration, Debugging & Showcase',
+                                objectives: 'Assemble hardware components into a physical container prototype, merge code routines, calibrate detection thresholds, and present live demos.',
+                                materials: 'Final wiring schematics, physical housing assembly, code merging, distance calibration, power management, Wi-Fi reconnection logic, troubleshooting checklist.',
+                                assignment: 'Complete, debug, and demonstrate a fully functional Smart Trash Bin prototype in the physical lab.'
                             }
                         ],
                         instructor: {
-                            name: 'Namira Sarip',
-                            role: 'Data Science Tech Lead',
+                            name: 'Alfira Resky Pratiwi',
+                            role: 'Robotics Tech Lead',
                             division: 'Research & Development',
-                            image: 'assets/images/team/rd-namira.png',
-                            quote: 'Data without insights is just numbers. We teach you how to clean messy real-world datasets, perform inferential testing, and communicate stories that drive impact.',
+                            image: 'assets/images/team/rd-alfira.png',
+                            quote: 'Hardware comes alive when code meets circuitry. In this track, we build functional IoT devices like the Smart Trash Bin integrated with ESP32 and Blynk Cloud.',
                             socials: {
                                 linkedin: '#',
                                 instagram: 'https://instagram.com/gdgoc.unm',
@@ -1553,15 +1568,15 @@
                         },
                         specs: {
                             level: 'Beginner to Intermediate',
-                            sessions: '6 Sessions',
-                            duration: '6 Weeks',
+                            sessions: '3 Sessions',
+                            duration: '3 Weeks',
                             cohort: 'Cohort 2026/2027'
                         }
                     }
                 ];
 
                 // State
-                let activeTrackId = 'frontend';
+                let activeTrackId = 'uiux';
 
                 // DOM Elements
                 const gridEl = document.getElementById('lpTracksGrid');
