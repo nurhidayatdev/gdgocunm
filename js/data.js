@@ -286,6 +286,8 @@ const GDG_DATA = {
             location: "Offline: Telkom AI Connect Makassar (*Limited for 30 Participants)",
             date: "Saturday, November 14, 2026",
             time: "13.00 WITA - Finish",
+            raw_date: "2026-11-14",
+            raw_time: "13:00",
             speaker: "Andi Muh. Yusran Haris",
             speakerRole: "Research & Development",
             moderator: "Azzahra Suci Ramadhani",

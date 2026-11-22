@@ -386,7 +386,18 @@ async function renderEvents() {
     }
 
     container.innerHTML = eventsList.map(ev => {
-        const isUpcoming = (ev.status || 'Upcoming').toLowerCase() === 'upcoming';
+        let currentStatus = ev.status || 'Upcoming';
+        if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.getEventAutoStatus === 'function') {
+            currentStatus = window.GDG_SUPABASE.getEventAutoStatus(ev);
+        } else if (ev.raw_date || ev.rawDate) {
+            const rawD = ev.raw_date || ev.rawDate;
+            const rawT = ev.raw_time || ev.rawTime || '23:59:59';
+            const dt = new Date(`${rawD}T${rawT.length === 5 ? rawT + ':00' : rawT}`);
+            if (!isNaN(dt.getTime())) {
+                currentStatus = dt >= new Date() ? 'Upcoming' : 'Completed';
+            }
+        }
+        const isUpcoming = currentStatus.toLowerCase() === 'upcoming';
         const posterSrc = ev.poster || 'assets/images/events/weekly-class-2.jpg';
 
         return `
@@ -407,7 +418,7 @@ async function renderEvents() {
                     <div>
                         <div class="event-header-row">
                             <span class="event-category-pill">${ev.category || 'Weekly Class'}</span>
-                            <span class="event-status-pill ${isUpcoming ? 'upcoming' : 'completed'}">${ev.status || 'Upcoming'}</span>
+                            <span class="event-status-pill ${isUpcoming ? 'upcoming' : 'completed'}">${currentStatus}</span>
                         </div>
                         <h3 class="event-title" style="margin-top: 14px;">${ev.title}</h3>
                     </div>

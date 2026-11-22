@@ -212,7 +212,29 @@
         } catch (e) {}
     }
 
+    function getEventAutoStatus(row) {
+        if (!row) return 'Upcoming';
+        const rawDate = row.raw_date || row.rawDate;
+        const rawTime = row.raw_time || row.rawTime;
+        if (rawDate) {
+            const timeStr = rawTime ? (rawTime.length === 5 ? rawTime + ':00' : rawTime) : '23:59:59';
+            const dt = new Date(`${rawDate}T${timeStr}`);
+            if (!isNaN(dt.getTime())) {
+                return dt >= new Date() ? 'Upcoming' : 'Completed';
+            }
+        }
+        if (row.date) {
+            const parsed = new Date(row.date);
+            if (!isNaN(parsed.getTime())) {
+                parsed.setHours(23, 59, 59, 999);
+                return parsed >= new Date() ? 'Upcoming' : 'Completed';
+            }
+        }
+        return row.status || 'Upcoming';
+    }
+
     function mapEventRow(row) {
+        const autoStatus = getEventAutoStatus(row);
         return {
             id: row.id,
             title: row.title || 'GDGoC UNM Event',
@@ -221,12 +243,14 @@
             location: row.location || 'Offline / Online',
             date: row.date || '',
             time: row.time || '',
+            rawDate: row.raw_date || '',
+            rawTime: row.raw_time || '',
             speaker: row.speaker || '',
             speakerRole: row.speaker_role || 'Speaker',
             moderator: row.moderator || '',
             moderatorRole: row.moderator_role || 'Moderator',
             registrationUrl: row.registration_url || '#',
-            status: row.status || 'Upcoming',
+            status: autoStatus,
             color: row.badge_color || 'blue',
             createdAt: row.created_at
         };
@@ -932,8 +956,13 @@
             }
         },
 
+        getEventAutoStatus(eventObj) {
+            return getEventAutoStatus(eventObj);
+        },
+
         async saveEvent(eventData, originalId = '') {
             const client = initSupabase();
+            const autoStatus = getEventAutoStatus(eventData);
             const payload = {
                 title: eventData.title,
                 category: eventData.category || 'Weekly Class',
@@ -941,12 +970,14 @@
                 location: eventData.location,
                 date: eventData.date,
                 time: eventData.time,
+                raw_date: eventData.rawDate || eventData.raw_date || null,
+                raw_time: eventData.rawTime || eventData.raw_time || null,
                 speaker: eventData.speaker,
                 speaker_role: eventData.speakerRole || 'Speaker',
                 moderator: eventData.moderator,
                 moderator_role: eventData.moderatorRole || 'Moderator',
                 registration_url: eventData.registrationUrl || '#',
-                status: eventData.status || 'Upcoming',
+                status: autoStatus,
                 badge_color: eventData.color || 'blue'
             };
 
@@ -989,7 +1020,13 @@
             }
 
             const events = getLocalEvents();
-            const newEvent = { ...eventData, id: savedId || eventData.id || 'temp-' + Date.now() };
+            const newEvent = {
+                ...eventData,
+                id: savedId || eventData.id || 'temp-' + Date.now(),
+                status: autoStatus,
+                rawDate: payload.raw_date,
+                rawTime: payload.raw_time
+            };
             const idx = events.findIndex(ev => (eventData.id && ev.id === eventData.id) || (originalId && ev.id === originalId) || ev.title === eventData.title);
             if (idx >= 0) {
                 events[idx] = { ...events[idx], ...newEvent };

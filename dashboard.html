@@ -1656,11 +1656,12 @@
                         </div>
 
                         <div class="dash-form-group">
-                            <label class="dash-form-label">Status</label>
-                            <select id="eventFormStatus" class="dash-form-select">
-                                <option value="Upcoming">Upcoming</option>
-                                <option value="Completed">Completed</option>
-                            </select>
+                            <label class="dash-form-label">Status (Otomatis berdasarkan Waktu)</label>
+                            <div style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 12px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-sm);">
+                                <span id="eventAutoStatusBadge" class="dash-badge badge-valid" style="font-size: 0.8rem; font-weight: 700; letter-spacing: 0.05em;">UPCOMING</span>
+                                <span style="font-size: 0.74rem; color: var(--text-muted);">(Auto update saat terlewat)</span>
+                                <input type="hidden" id="eventFormStatus" value="Upcoming" />
+                            </div>
                         </div>
 
                         <div class="dash-form-group dash-form-full">
@@ -1669,33 +1670,73 @@
                         </div>
 
                         <div class="dash-form-group">
-                            <label class="dash-form-label">Tanggal</label>
-                            <input type="text" id="eventFormDate" class="dash-form-input" placeholder="e.g. Saturday, November 14, 2026" required />
+                            <label class="dash-form-label">Pilih Tanggal Event</label>
+                            <input type="date" id="eventFormDateInput" class="dash-form-input" onchange="onEventDateTimeInputChanged()" required />
+                            <div id="eventDateFormattedPreview" style="font-size: 0.76rem; color: var(--google-blue); margin-top: 5px; font-weight: 500;"></div>
+                            <input type="hidden" id="eventFormDate" />
                         </div>
 
                         <div class="dash-form-group">
-                            <label class="dash-form-label">Waktu</label>
-                            <input type="text" id="eventFormTime" class="dash-form-input" placeholder="e.g. 13.00 WITA - Finish" required />
+                            <label class="dash-form-label">Pilih Waktu & Zona</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1.25fr; gap: 8px;">
+                                <input type="time" id="eventFormTimeInput" class="dash-form-input" value="13:00" onchange="onEventDateTimeInputChanged()" required />
+                                <select id="eventFormTimeSuffix" class="dash-form-select" onchange="onEventDateTimeInputChanged()">
+                                    <option value="WITA - Finish">WITA - Finish</option>
+                                    <option value="WITA">WITA</option>
+                                    <option value="WIB - Finish">WIB - Finish</option>
+                                    <option value="WIB">WIB</option>
+                                    <option value="WIT - Finish">WIT - Finish</option>
+                                    <option value="Online">Online</option>
+                                </select>
+                            </div>
+                            <div id="eventTimeFormattedPreview" style="font-size: 0.76rem; color: var(--google-green); margin-top: 5px; font-weight: 500;"></div>
+                            <input type="hidden" id="eventFormTime" />
                         </div>
 
-                        <div class="dash-form-group">
-                            <label class="dash-form-label">Nama Speaker</label>
-                            <input type="text" id="eventFormSpeaker" class="dash-form-input" placeholder="e.g. Andi Muh. Yusran Haris" required />
+                        <!-- Speaker Selection + Manual Input -->
+                        <div class="dash-form-group dash-form-full" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: var(--radius-md); padding: 14px;">
+                            <label class="dash-form-label" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="font-weight: 600; color: #ffffff;">Speaker</span>
+                                <span style="font-size: 0.74rem; color: var(--google-blue); font-weight: 500;">Pilih dari Core Team atau ketik manual</span>
+                            </label>
+                            <div style="margin-bottom: 8px;">
+                                <select id="eventSpeakerSelect" class="dash-form-select" onchange="handleSelectSpeaker(this.value)">
+                                    <option value="">-- Pilih dari Anggota Core Team --</option>
+                                </select>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 10px;">
+                                <div>
+                                    <label style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 3px;">Nama Speaker</label>
+                                    <input type="text" id="eventFormSpeaker" class="dash-form-input" placeholder="e.g. Andi Muh. Yusran Haris" required />
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 3px;">Role / Divisi Speaker</label>
+                                    <input type="text" id="eventFormSpeakerRole" class="dash-form-input" placeholder="e.g. Research & Development" />
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="dash-form-group">
-                            <label class="dash-form-label">Role / Divisi Speaker</label>
-                            <input type="text" id="eventFormSpeakerRole" class="dash-form-input" placeholder="e.g. Research & Development" />
-                        </div>
-
-                        <div class="dash-form-group">
-                            <label class="dash-form-label">Nama Moderator</label>
-                            <input type="text" id="eventFormModerator" class="dash-form-input" placeholder="e.g. Azzahra Suci Ramadhani" required />
-                        </div>
-
-                        <div class="dash-form-group">
-                            <label class="dash-form-label">Role / Divisi Moderator</label>
-                            <input type="text" id="eventFormModeratorRole" class="dash-form-input" placeholder="e.g. Relation & Communication" />
+                        <!-- Moderator Selection + Manual Input -->
+                        <div class="dash-form-group dash-form-full" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: var(--radius-md); padding: 14px;">
+                            <label class="dash-form-label" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="font-weight: 600; color: #ffffff;">Moderator</span>
+                                <span style="font-size: 0.74rem; color: var(--google-green); font-weight: 500;">Pilih dari Core Team atau ketik manual</span>
+                            </label>
+                            <div style="margin-bottom: 8px;">
+                                <select id="eventModeratorSelect" class="dash-form-select" onchange="handleSelectModerator(this.value)">
+                                    <option value="">-- Pilih dari Anggota Core Team --</option>
+                                </select>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 10px;">
+                                <div>
+                                    <label style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 3px;">Nama Moderator</label>
+                                    <input type="text" id="eventFormModerator" class="dash-form-input" placeholder="e.g. Azzahra Suci Ramadhani" required />
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 3px;">Role / Divisi Moderator</label>
+                                    <input type="text" id="eventFormModeratorRole" class="dash-form-input" placeholder="e.g. Relation & Communication" />
+                                </div>
+                            </div>
                         </div>
 
                         <div class="dash-form-group dash-form-full">
@@ -1875,7 +1916,18 @@
                     }
 
                     tbody.innerHTML = events.map(ev => {
-                        const isUpcoming = (ev.status || 'Upcoming').toLowerCase() === 'upcoming';
+                        let curStatus = ev.status || 'Upcoming';
+                        if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.getEventAutoStatus === 'function') {
+                            curStatus = window.GDG_SUPABASE.getEventAutoStatus(ev);
+                        } else if (ev.raw_date || ev.rawDate) {
+                            const rawD = ev.raw_date || ev.rawDate;
+                            const rawT = ev.raw_time || ev.rawTime || '23:59:59';
+                            const dt = new Date(`${rawD}T${rawT.length === 5 ? rawT + ':00' : rawT}`);
+                            if (!isNaN(dt.getTime())) {
+                                curStatus = dt >= new Date() ? 'Upcoming' : 'Completed';
+                            }
+                        }
+                        const isUpcoming = curStatus.toLowerCase() === 'upcoming';
                         const posterSrc = ev.poster || 'assets/images/events/weekly-class-2.jpg';
 
                         return `
@@ -1901,7 +1953,7 @@
                                     <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px;">Mod: ${ev.moderator}</div>
                                 </td>
                                 <td>
-                                    <span class="dash-badge ${isUpcoming ? 'badge-valid' : ''}">${ev.status || 'Upcoming'}</span>
+                                    <span class="dash-badge ${isUpcoming ? 'badge-valid' : ''}">${curStatus}</span>
                                 </td>
                                 <td style="text-align: right; white-space: nowrap;">
                                     <button class="dash-action-btn" onclick="openEditEventModal('${ev.id}')">Edit</button>
@@ -1912,21 +1964,191 @@
                     }).join('');
                 }
 
+                // Helper: Format YYYY-MM-DD to English readable format (e.g. Saturday, November 14, 2026)
+                function formatReadableDate(rawDate) {
+                    if (!rawDate) return '';
+                    const parts = rawDate.split('-');
+                    if (parts.length !== 3) return rawDate;
+                    const year = parseInt(parts[0], 10);
+                    const month = parseInt(parts[1], 10) - 1;
+                    const day = parseInt(parts[2], 10);
+                    const dt = new Date(year, month, day);
+                    if (isNaN(dt.getTime())) return rawDate;
+                    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                    return `${days[dt.getDay()]}, ${months[dt.getMonth()]} ${day}, ${year}`;
+                }
+
+                // Helper: Convert formatted readable date or any date to YYYY-MM-DD
+                function extractRawDate(dateStr) {
+                    if (!dateStr) {
+                        const today = new Date();
+                        const y = today.getFullYear();
+                        const m = String(today.getMonth() + 1).padStart(2, '0');
+                        const d = String(today.getDate()).padStart(2, '0');
+                        return `${y}-${m}-${d}`;
+                    }
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+                    const parsed = new Date(dateStr);
+                    if (!isNaN(parsed.getTime())) {
+                        const y = parsed.getFullYear();
+                        const m = String(parsed.getMonth() + 1).padStart(2, '0');
+                        const d = String(parsed.getDate()).padStart(2, '0');
+                        return `${y}-${m}-${d}`;
+                    }
+                    return '';
+                }
+
+                // Helper: Extract raw time HH:mm from time string like "13.00 WITA - Finish" or "13:00"
+                function extractRawTime(timeStr) {
+                    if (!timeStr) return '13:00';
+                    const match = timeStr.match(/(\d{1,2})[:.](\d{2})/);
+                    if (match) {
+                        return `${match[1].padStart(2, '0')}:${match[2]}`;
+                    }
+                    return '13:00';
+                }
+
+                // Helper: Extract time suffix
+                function extractTimeSuffix(timeStr) {
+                    if (!timeStr) return 'WITA - Finish';
+                    if (timeStr.includes('WITA - Finish') || timeStr.includes('WITA - Selesai')) return 'WITA - Finish';
+                    if (timeStr.includes('WITA')) return 'WITA';
+                    if (timeStr.includes('WIB - Finish') || timeStr.includes('WIB - Selesai')) return 'WIB - Finish';
+                    if (timeStr.includes('WIB')) return 'WIB';
+                    if (timeStr.includes('WIT - Finish') || timeStr.includes('WIT - Selesai')) return 'WIT - Finish';
+                    if (timeStr.includes('Online')) return 'Online';
+                    return 'WITA - Finish';
+                }
+
+                // Live update when date or time changes
+                window.onEventDateTimeInputChanged = function () {
+                    const rawDate = document.getElementById('eventFormDateInput')?.value || '';
+                    const rawTime = document.getElementById('eventFormTimeInput')?.value || '13:00';
+                    const suffix = document.getElementById('eventFormTimeSuffix')?.value || 'WITA - Finish';
+
+                    const formattedDate = formatReadableDate(rawDate);
+                    const formattedTime = `${rawTime.replace(':', '.')} ${suffix}`;
+
+                    if (document.getElementById('eventFormDate')) document.getElementById('eventFormDate').value = formattedDate;
+                    if (document.getElementById('eventFormTime')) document.getElementById('eventFormTime').value = formattedTime;
+
+                    const datePreview = document.getElementById('eventDateFormattedPreview');
+                    if (datePreview) datePreview.textContent = formattedDate ? `Preview: ${formattedDate}` : '';
+
+                    const timePreview = document.getElementById('eventTimeFormattedPreview');
+                    if (timePreview) timePreview.textContent = formattedTime ? `Preview: ${formattedTime}` : '';
+
+                    // Auto Status evaluation
+                    let autoStatus = 'Upcoming';
+                    if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.getEventAutoStatus === 'function') {
+                        autoStatus = window.GDG_SUPABASE.getEventAutoStatus({ raw_date: rawDate, raw_time: rawTime, date: formattedDate });
+                    } else if (rawDate) {
+                        const dt = new Date(`${rawDate}T${rawTime}:00`);
+                        if (!isNaN(dt.getTime())) {
+                            autoStatus = dt >= new Date() ? 'Upcoming' : 'Completed';
+                        }
+                    }
+
+                    if (document.getElementById('eventFormStatus')) document.getElementById('eventFormStatus').value = autoStatus;
+                    const badge = document.getElementById('eventAutoStatusBadge');
+                    if (badge) {
+                        badge.textContent = autoStatus.toUpperCase();
+                        if (autoStatus.toLowerCase() === 'upcoming') {
+                            badge.className = 'dash-badge badge-valid';
+                        } else {
+                            badge.className = 'dash-badge';
+                        }
+                    }
+                };
+
+                // Populate Core Team dropdown for Speaker & Moderator
+                window.populateEventSpeakerModeratorSelects = function () {
+                    const speakerSel = document.getElementById('eventSpeakerSelect');
+                    const modSel = document.getElementById('eventModeratorSelect');
+                    if (!speakerSel || !modSel) return;
+
+                    const team = (allTeam && allTeam.length > 0) ? allTeam : ((window.GDG_DATA && window.GDG_DATA.teamMembers) || []);
+
+                    const teamOptions = team.map(m => {
+                        const divOrRole = m.division || m.role || 'Core Team';
+                        const val = `${m.name.replace(/"/g, '&quot;')}|${divOrRole.replace(/"/g, '&quot;')}`;
+                        return `<option value="${val}">${m.name} (${divOrRole})</option>`;
+                    }).join('');
+
+                    speakerSel.innerHTML = `
+                        <option value="">-- Pilih dari Core Team --</option>
+                        ${teamOptions}
+                        <option value="__custom__">+ Ketik Manual (Guest Speaker / Pembicara Luar)...</option>
+                    `;
+
+                    modSel.innerHTML = `
+                        <option value="">-- Pilih dari Core Team --</option>
+                        ${teamOptions}
+                        <option value="__custom__">+ Ketik Manual (Guest Moderator / Moderator Luar)...</option>
+                    `;
+                };
+
+                window.handleSelectSpeaker = function (val) {
+                    if (!val) return;
+                    if (val === '__custom__') {
+                        const spk = document.getElementById('eventFormSpeaker');
+                        if (spk) {
+                            spk.focus();
+                            spk.select();
+                        }
+                        return;
+                    }
+                    const [name, role] = val.split('|');
+                    if (name) document.getElementById('eventFormSpeaker').value = name;
+                    if (role) document.getElementById('eventFormSpeakerRole').value = role;
+                };
+
+                window.handleSelectModerator = function (val) {
+                    if (!val) return;
+                    if (val === '__custom__') {
+                        const mod = document.getElementById('eventFormModerator');
+                        if (mod) {
+                            mod.focus();
+                            mod.select();
+                        }
+                        return;
+                    }
+                    const [name, role] = val.split('|');
+                    if (name) document.getElementById('eventFormModerator').value = name;
+                    if (role) document.getElementById('eventFormModeratorRole').value = role;
+                };
+
                 window.openAddEventModal = function () {
                     document.getElementById('eventModalTitle').textContent = 'Create New Event';
                     document.getElementById('eventFormId').value = '';
                     document.getElementById('eventOriginalId').value = '';
                     document.getElementById('eventFormTitle').value = '';
                     document.getElementById('eventFormCategory').value = 'Weekly Class';
-                    document.getElementById('eventFormStatus').value = 'Upcoming';
                     document.getElementById('eventFormLocation').value = 'Offline: Telkom AI Connect Makassar (*Limited for 30 Participants)';
-                    document.getElementById('eventFormDate').value = '';
-                    document.getElementById('eventFormTime').value = '13.00 WITA - Finish';
+                    document.getElementById('eventFormRegUrl').value = 'https://s.id/gdgoc-unm';
+
+                    // Default to next Saturday
+                    const nextSat = new Date();
+                    nextSat.setDate(nextSat.getDate() + ((6 - nextSat.getDay() + 7) % 7 || 7));
+                    const y = nextSat.getFullYear();
+                    const m = String(nextSat.getMonth() + 1).padStart(2, '0');
+                    const d = String(nextSat.getDate()).padStart(2, '0');
+                    const defaultDateStr = `${y}-${m}-${d}`;
+
+                    document.getElementById('eventFormDateInput').value = defaultDateStr;
+                    document.getElementById('eventFormTimeInput').value = '13:00';
+                    document.getElementById('eventFormTimeSuffix').value = 'WITA - Finish';
+
+                    populateEventSpeakerModeratorSelects();
+                    document.getElementById('eventSpeakerSelect').value = '';
+                    document.getElementById('eventModeratorSelect').value = '';
                     document.getElementById('eventFormSpeaker').value = '';
                     document.getElementById('eventFormSpeakerRole').value = 'Research & Development';
                     document.getElementById('eventFormModerator').value = '';
                     document.getElementById('eventFormModeratorRole').value = 'Relation & Communication';
-                    document.getElementById('eventFormRegUrl').value = 'https://s.id/gdgoc-unm';
+
+                    onEventDateTimeInputChanged();
 
                     selectedEventPosterFile = null;
                     if (document.getElementById('eventPosterFileInput')) document.getElementById('eventPosterFileInput').value = '';
@@ -1947,15 +2169,54 @@
                     document.getElementById('eventOriginalId').value = ev.id || '';
                     document.getElementById('eventFormTitle').value = ev.title || '';
                     document.getElementById('eventFormCategory').value = ev.category || 'Weekly Class';
-                    document.getElementById('eventFormStatus').value = ev.status || 'Upcoming';
                     document.getElementById('eventFormLocation').value = ev.location || '';
-                    document.getElementById('eventFormDate').value = ev.date || '';
-                    document.getElementById('eventFormTime').value = ev.time || '';
+                    document.getElementById('eventFormRegUrl').value = ev.registrationUrl || '';
+
+                    // Dates and times
+                    const rawDate = ev.rawDate || ev.raw_date || extractRawDate(ev.date);
+                    const rawTime = ev.rawTime || ev.raw_time || extractRawTime(ev.time);
+                    const suffix = extractTimeSuffix(ev.time);
+
+                    document.getElementById('eventFormDateInput').value = rawDate;
+                    document.getElementById('eventFormTimeInput').value = rawTime;
+                    document.getElementById('eventFormTimeSuffix').value = suffix;
+
+                    populateEventSpeakerModeratorSelects();
+
                     document.getElementById('eventFormSpeaker').value = ev.speaker || '';
                     document.getElementById('eventFormSpeakerRole').value = ev.speakerRole || '';
                     document.getElementById('eventFormModerator').value = ev.moderator || '';
                     document.getElementById('eventFormModeratorRole').value = ev.moderatorRole || '';
-                    document.getElementById('eventFormRegUrl').value = ev.registrationUrl || '';
+
+                    // Match speaker select if from core team
+                    const spkSelect = document.getElementById('eventSpeakerSelect');
+                    if (spkSelect && ev.speaker) {
+                        let matched = false;
+                        for (let opt of spkSelect.options) {
+                            if (opt.value && opt.value.split('|')[0] === ev.speaker) {
+                                spkSelect.value = opt.value;
+                                matched = true;
+                                break;
+                            }
+                        }
+                        if (!matched) spkSelect.value = '__custom__';
+                    }
+
+                    // Match moderator select if from core team
+                    const modSelect = document.getElementById('eventModeratorSelect');
+                    if (modSelect && ev.moderator) {
+                        let matched = false;
+                        for (let opt of modSelect.options) {
+                            if (opt.value && opt.value.split('|')[0] === ev.moderator) {
+                                modSelect.value = opt.value;
+                                matched = true;
+                                break;
+                            }
+                        }
+                        if (!matched) modSelect.value = '__custom__';
+                    }
+
+                    onEventDateTimeInputChanged();
 
                     selectedEventPosterFile = null;
                     if (document.getElementById('eventPosterFileInput')) document.getElementById('eventPosterFileInput').value = '';
@@ -2009,14 +2270,23 @@
                             finalPoster = await window.GDG_SUPABASE.uploadImage(selectedEventPosterFile, 'events');
                         }
 
+                        const rawDate = document.getElementById('eventFormDateInput').value;
+                        const rawTime = document.getElementById('eventFormTimeInput').value || '13:00';
+                        const formattedDate = document.getElementById('eventFormDate').value || formatReadableDate(rawDate);
+                        const formattedTime = document.getElementById('eventFormTime').value;
+
                         const eventData = {
                             id: document.getElementById('eventFormId').value || undefined,
                             title: document.getElementById('eventFormTitle').value.trim(),
                             category: document.getElementById('eventFormCategory').value.trim(),
                             poster: finalPoster || 'assets/images/events/weekly-class-2.jpg',
                             location: document.getElementById('eventFormLocation').value.trim(),
-                            date: document.getElementById('eventFormDate').value.trim(),
-                            time: document.getElementById('eventFormTime').value.trim(),
+                            date: formattedDate,
+                            time: formattedTime,
+                            raw_date: rawDate,
+                            raw_time: rawTime,
+                            rawDate: rawDate,
+                            rawTime: rawTime,
                             speaker: document.getElementById('eventFormSpeaker').value.trim(),
                             speakerRole: document.getElementById('eventFormSpeakerRole').value.trim(),
                             moderator: document.getElementById('eventFormModerator').value.trim(),

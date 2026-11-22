@@ -155,6 +155,8 @@ CREATE TABLE IF NOT EXISTS events (
     location VARCHAR(200) NOT NULL,
     date VARCHAR(100) NOT NULL,
     time VARCHAR(100) NOT NULL,
+    raw_date VARCHAR(50),
+    raw_time VARCHAR(50),
     speaker VARCHAR(150) NOT NULL,
     speaker_role VARCHAR(100) DEFAULT 'Speaker',
     moderator VARCHAR(150) NOT NULL,
