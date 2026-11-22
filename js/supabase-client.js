@@ -69,17 +69,59 @@
         try {
             const cached = localStorage.getItem('GDG_LOCAL_TRACKS');
             if (cached) {
-                return JSON.parse(cached);
+                const parsed = JSON.parse(cached);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    return parsed;
+                }
             }
         } catch (e) {}
 
-        if (window.LEARNING_PATHS && Array.isArray(window.LEARNING_PATHS)) {
-            return JSON.parse(JSON.stringify(window.LEARNING_PATHS));
+        const globalData = (typeof GDG_DATA !== 'undefined') ? GDG_DATA : (typeof window !== 'undefined' ? window.GDG_DATA : null);
+        let rawTracks = [];
+
+        if (globalData && Array.isArray(globalData.tracks) && globalData.tracks.length > 0) {
+            rawTracks = globalData.tracks;
+        } else if (typeof window !== 'undefined' && window.LEARNING_PATHS && Array.isArray(window.LEARNING_PATHS) && window.LEARNING_PATHS.length > 0) {
+            rawTracks = window.LEARNING_PATHS;
         }
-        if (window.GDG_DATA && Array.isArray(window.GDG_DATA.tracks)) {
-            return JSON.parse(JSON.stringify(window.GDG_DATA.tracks));
-        }
-        return [];
+
+        const normalized = JSON.parse(JSON.stringify(rawTracks));
+        normalized.forEach((track, idx) => {
+            if (!track.timeline || !Array.isArray(track.timeline) || track.timeline.length === 0) {
+                if (track.syllabus && Array.isArray(track.syllabus)) {
+                    track.timeline = track.syllabus.map((s, sIdx) => ({
+                        num: '0' + (sIdx + 1),
+                        title: typeof s === 'string' ? s : (s.title || `Session #${sIdx + 1}`),
+                        objectives: typeof s === 'object' && s.objectives ? s.objectives : `Master core competencies in ${track.title}`,
+                        materials: typeof s === 'object' && s.materials ? s.materials : 'Hands-on practice & guidelines',
+                        assignment: typeof s === 'object' && s.assignment ? s.assignment : 'Mini project milestone'
+                    }));
+                } else {
+                    track.timeline = [
+                        { num: '01', title: 'Foundations & Tooling', objectives: 'Introduction & Environment Setup', materials: 'Tooling & core basics', assignment: 'Setup verification' }
+                    ];
+                }
+            }
+            const defaultLeads = {
+                'uiux': { name: 'Andi Muh. Yusran Haris', role: 'UI/UX Tech Lead', division: 'Research & Development' },
+                'frontend': { name: 'Muhammad Ghazi Saputra', role: 'Front-End Tech Lead', division: 'Research & Development' },
+                'backend': { name: 'Muh Raihan Nur Taufiq', role: 'Back-End Tech Lead', division: 'Research & Development' },
+                'data-science': { name: 'Namira Sarip', role: 'Data Science Tech Lead', division: 'Research & Development' },
+                'ai-ml': { name: 'Raynato Lienardy', role: 'AI / ML Tech Lead', division: 'Research & Development' },
+                'cyber-security': { name: 'Shaquille Rashaun Sahl Tamrin', role: 'Cybersecurity Tech Lead', division: 'Research & Development' },
+                'robotics': { name: 'Alfira Resky Pratiwi', role: 'Robotics Tech Lead', division: 'Research & Development' }
+            };
+            if (!track.instructor || !track.instructor.name || track.instructor.name === 'GDGoC UNM Tech Lead') {
+                track.instructor = defaultLeads[track.id] || {
+                    name: 'GDGoC UNM Tech Lead',
+                    role: `${track.title} Lead`,
+                    division: 'Research & Development',
+                    quote: 'Guided peer-to-peer cohorts for real-world tech readiness.'
+                };
+            }
+        });
+
+        return normalized;
     }
 
     function saveLocalTracks(tracks) {
@@ -95,13 +137,18 @@
         try {
             const cached = localStorage.getItem('GDG_LOCAL_TEAM');
             if (cached) {
-                return JSON.parse(cached);
+                const parsed = JSON.parse(cached);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    return parsed;
+                }
             }
         } catch (e) {}
 
-        if (window.GDG_DATA && Array.isArray(window.GDG_DATA.team)) {
-            return JSON.parse(JSON.stringify(window.GDG_DATA.team));
+        const globalData = (typeof GDG_DATA !== 'undefined') ? GDG_DATA : (typeof window !== 'undefined' ? window.GDG_DATA : null);
+        if (globalData && Array.isArray(globalData.team) && globalData.team.length > 0) {
+            return JSON.parse(JSON.stringify(globalData.team));
         }
+
         return [];
     }
 

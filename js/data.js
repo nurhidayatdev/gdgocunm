@@ -845,3 +845,11 @@ const GDG_DATA = {
         },
     ],
 };
+
+// Global Browser Export
+if (typeof window !== "undefined") {
+    window.GDG_DATA = GDG_DATA;
+    if (GDG_DATA.tracks) {
+        window.LEARNING_PATHS = GDG_DATA.tracks;
+    }
+}

@@ -592,7 +592,7 @@
                         <div class="dash-header-bar">
                             <div style="display: flex; align-items: center; gap: 14px;">
                                 <a href="index.html" style="text-decoration: none; display: flex; align-items: center;" title="GDGoC UNM">
-                                    <img src="assets/logo/logo-gdgoc.png" alt="GDGoC Logo" style="width: 38px; height: auto;" />
+                                    <img src="assets/logo/GDGoC-Logo.png" alt="GDGoC UNM Logo" style="width: 38px; height: auto;" />
                                 </a>
                                 <div class="dash-title-group">
                                     <h1>Management Dashboard</h1>
@@ -1631,6 +1631,14 @@
 
                 // Initialize dashboard on load
                 async function initDashboard() {
+                    // Clear stale empty local cache if present
+                    try {
+                        const ct = localStorage.getItem('GDG_LOCAL_TRACKS');
+                        if (ct && (ct === '[]' || JSON.parse(ct).length === 0)) localStorage.removeItem('GDG_LOCAL_TRACKS');
+                        const cm = localStorage.getItem('GDG_LOCAL_TEAM');
+                        if (cm && (cm === '[]' || JSON.parse(cm).length === 0)) localStorage.removeItem('GDG_LOCAL_TEAM');
+                    } catch (e) {}
+
                     // Populate current config if any
                     const cfg = window.GDG_SUPABASE.getConfig();
                     if (cfg.url) document.getElementById('inputSupabaseUrl').value = cfg.url;
