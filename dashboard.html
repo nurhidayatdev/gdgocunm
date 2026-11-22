@@ -531,6 +531,63 @@
                 border-top: 1px solid rgba(255, 255, 255, 0.08);
             }
 
+            /* Direct Upload Zone Component */
+            .dash-upload-zone {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                padding: 14px 18px;
+                background: rgba(255, 255, 255, 0.03);
+                border: 1.5px dashed rgba(255, 255, 255, 0.16);
+                border-radius: var(--radius-md);
+                transition: border-color var(--transition-fast), background var(--transition-fast);
+            }
+
+            .dash-upload-zone:hover {
+                border-color: rgba(66, 133, 244, 0.5);
+                background: rgba(255, 255, 255, 0.05);
+            }
+
+            .dash-upload-preview-wrapper {
+                position: relative;
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                overflow: hidden;
+                background: #11141c;
+                border: 2px solid rgba(255, 255, 255, 0.14);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+            }
+
+            .dash-upload-preview {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+
+            .dash-upload-info {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                flex-grow: 1;
+            }
+
+            .dash-upload-actions {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .dash-upload-hint {
+                font-size: 0.74rem;
+                color: var(--text-muted);
+            }
+
             /* Toast Notification */
             .dash-toast {
                 position: fixed;
@@ -967,6 +1024,32 @@
                             <label class="dash-form-label">Tech Lead Role</label>
                             <input type="text" id="trackFormLeadRole" class="dash-form-input" required />
                         </div>
+                        <div class="dash-form-group dash-form-full">
+                            <label class="dash-form-label">Tech Lead Photo</label>
+                            <div class="dash-upload-zone" id="trackLeadUploadZone">
+                                <div class="dash-upload-preview-wrapper">
+                                    <img id="trackLeadImagePreview" src="" alt="Preview" class="dash-upload-preview" />
+                                </div>
+                                <div class="dash-upload-info">
+                                    <div class="dash-upload-actions">
+                                        <input type="file" id="trackLeadFileInput" accept="image/*" style="display: none;" />
+                                        <button type="button" class="btn-secondary" onclick="document.getElementById('trackLeadFileInput').click()">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                                <polyline points="17 8 12 3 7 8"></polyline>
+                                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                                            </svg>
+                                            <span>Choose Photo File</span>
+                                        </button>
+                                        <button type="button" class="btn-secondary" id="trackLeadRemoveImgBtn" style="display: none;" onclick="clearTrackLeadPhoto()">
+                                            <span>Reset Photo</span>
+                                        </button>
+                                    </div>
+                                    <div class="dash-upload-hint" id="trackLeadUploadStatus">Select an image from your computer (auto-uploaded to Supabase Storage).</div>
+                                    <input type="hidden" id="trackFormLeadImage" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="dash-modal-footer">
                         <button type="button" class="btn-secondary" onclick="closeModal('trackModalBackdrop')">Cancel</button>
@@ -1068,8 +1151,30 @@
                             </select>
                         </div>
                         <div class="dash-form-group dash-form-full">
-                            <label class="dash-form-label">Photo Asset Path / Storage URL</label>
-                            <input type="text" id="memberFormImage" class="dash-form-input" placeholder="assets/images/team/rd-yusran.png" />
+                            <label class="dash-form-label">Member Photo</label>
+                            <div class="dash-upload-zone" id="memberUploadZone">
+                                <div class="dash-upload-preview-wrapper">
+                                    <img id="memberImagePreview" src="" alt="Preview" class="dash-upload-preview" />
+                                </div>
+                                <div class="dash-upload-info">
+                                    <div class="dash-upload-actions">
+                                        <input type="file" id="memberFileInput" accept="image/*" style="display: none;" />
+                                        <button type="button" class="btn-secondary" onclick="document.getElementById('memberFileInput').click()">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                                <polyline points="17 8 12 3 7 8"></polyline>
+                                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                                            </svg>
+                                            <span>Choose Photo File</span>
+                                        </button>
+                                        <button type="button" class="btn-secondary" id="memberRemoveImgBtn" style="display: none;" onclick="clearMemberPhoto()">
+                                            <span>Reset Photo</span>
+                                        </button>
+                                    </div>
+                                    <div class="dash-upload-hint" id="memberUploadStatus">Select an image from your computer (auto-uploaded to Supabase Storage).</div>
+                                    <input type="hidden" id="memberFormImage" />
+                                </div>
+                            </div>
                         </div>
                         <div class="dash-form-group">
                             <label class="dash-form-label">LinkedIn URL</label>
@@ -1109,6 +1214,10 @@
                 let allTracks = [];
                 let allTeam = [];
                 let allCerts = [];
+                let selectedMemberFile = null;
+                let selectedTrackLeadFile = null;
+
+                const DEFAULT_AVATAR_PLACEHOLDER = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 24 24' fill='none' stroke='%2380868b' stroke-width='1.5'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E";
 
                 // Toast helper
                 function showToast(msg) {
@@ -1235,7 +1344,15 @@
                     tbody.innerHTML = team.map(m => `
                         <tr>
                             <td>
-                                <strong style="color: #ffffff;">${m.name}</strong>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: #151923; flex-shrink: 0; border: 1.5px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center;">
+                                        ${m.image 
+                                            ? `<img src="${m.image}" alt="${m.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='${DEFAULT_AVATAR_PLACEHOLDER}'" />` 
+                                            : `<img src="${DEFAULT_AVATAR_PLACEHOLDER}" style="width: 20px; height: 20px; opacity: 0.5;" />`
+                                        }
+                                    </div>
+                                    <strong style="color: #ffffff;">${m.name}</strong>
+                                </div>
                             </td>
                             <td>${m.role}</td>
                             <td><span class="dash-badge">${m.division}</span></td>
@@ -1318,6 +1435,14 @@
                     document.getElementById('trackFormWa').value = 'https://chat.whatsapp.com/';
                     document.getElementById('trackFormLeadName').value = '';
                     document.getElementById('trackFormLeadRole').value = 'Tech Lead';
+
+                    selectedTrackLeadFile = null;
+                    if (document.getElementById('trackLeadFileInput')) document.getElementById('trackLeadFileInput').value = '';
+                    document.getElementById('trackFormLeadImage').value = '';
+                    document.getElementById('trackLeadImagePreview').src = DEFAULT_AVATAR_PLACEHOLDER;
+                    document.getElementById('trackLeadRemoveImgBtn').style.display = 'none';
+                    document.getElementById('trackLeadUploadStatus').textContent = 'Select an image from your computer (auto-uploaded to Supabase Storage).';
+
                     openModal('trackModalBackdrop');
                 };
 
@@ -1336,33 +1461,64 @@
                     document.getElementById('trackFormWa').value = track.whatsappUrl || 'https://chat.whatsapp.com/';
                     document.getElementById('trackFormLeadName').value = track.instructor?.name || '';
                     document.getElementById('trackFormLeadRole').value = track.instructor?.role || '';
+
+                    selectedTrackLeadFile = null;
+                    if (document.getElementById('trackLeadFileInput')) document.getElementById('trackLeadFileInput').value = '';
+                    const leadImg = track.instructor?.image || '';
+                    document.getElementById('trackFormLeadImage').value = leadImg;
+                    if (leadImg) {
+                        document.getElementById('trackLeadImagePreview').src = leadImg;
+                        document.getElementById('trackLeadRemoveImgBtn').style.display = 'inline-flex';
+                        document.getElementById('trackLeadUploadStatus').textContent = 'Current photo active. Choose a file to replace it.';
+                    } else {
+                        document.getElementById('trackLeadImagePreview').src = DEFAULT_AVATAR_PLACEHOLDER;
+                        document.getElementById('trackLeadRemoveImgBtn').style.display = 'none';
+                        document.getElementById('trackLeadUploadStatus').textContent = 'No photo set. Choose an image file.';
+                    }
+
                     openModal('trackModalBackdrop');
                 };
 
                 window.handleSaveTrack = async function (e) {
                     e.preventDefault();
+                    const submitBtn = e.target.querySelector('button[type="submit"]');
+                    const origBtnText = submitBtn.innerHTML;
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span>Saving Track...</span>';
+
                     const trackId = document.getElementById('trackFormSlug').value.trim();
                     const originalId = document.getElementById('trackOriginalId').value.trim();
-                    const trackData = {
-                        id: trackId,
-                        title: document.getElementById('trackFormTitle').value.trim(),
-                        category: document.getElementById('trackFormCategory').value.trim(),
-                        color: document.getElementById('trackFormColor').value,
-                        desc: document.getElementById('trackFormDesc').value.trim(),
-                        whatsappUrl: document.getElementById('trackFormWa').value.trim(),
-                        instructor: {
-                            name: document.getElementById('trackFormLeadName').value.trim(),
-                            role: document.getElementById('trackFormLeadRole').value.trim()
-                        }
-                    };
 
                     try {
+                        let finalLeadImg = document.getElementById('trackFormLeadImage').value.trim();
+                        if (selectedTrackLeadFile) {
+                            document.getElementById('trackLeadUploadStatus').textContent = 'Uploading photo to Supabase Storage...';
+                            finalLeadImg = await window.GDG_SUPABASE.uploadImage(selectedTrackLeadFile, 'tracks');
+                        }
+
+                        const trackData = {
+                            id: trackId,
+                            title: document.getElementById('trackFormTitle').value.trim(),
+                            category: document.getElementById('trackFormCategory').value.trim(),
+                            color: document.getElementById('trackFormColor').value,
+                            desc: document.getElementById('trackFormDesc').value.trim(),
+                            whatsappUrl: document.getElementById('trackFormWa').value.trim(),
+                            instructor: {
+                                name: document.getElementById('trackFormLeadName').value.trim(),
+                                role: document.getElementById('trackFormLeadRole').value.trim(),
+                                image: finalLeadImg
+                            }
+                        };
+
                         await window.GDG_SUPABASE.saveLearningPath(trackData, originalId);
                         closeModal('trackModalBackdrop');
                         showToast('Learning Path saved successfully.');
                         await loadTracks();
                     } catch (err) {
                         alert('Error saving track: ' + err.message);
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = origBtnText;
                     }
                 };
 
@@ -1456,9 +1612,16 @@
                     document.getElementById('memberFormRole').value = '';
                     document.getElementById('memberFormDivision').value = 'Organizer';
                     document.getElementById('memberFormColor').value = 'blue';
-                    document.getElementById('memberFormImage').value = '';
                     document.getElementById('memberFormLinkedin').value = '#';
                     document.getElementById('memberFormInstagram').value = '#';
+
+                    selectedMemberFile = null;
+                    if (document.getElementById('memberFileInput')) document.getElementById('memberFileInput').value = '';
+                    document.getElementById('memberFormImage').value = '';
+                    document.getElementById('memberImagePreview').src = DEFAULT_AVATAR_PLACEHOLDER;
+                    document.getElementById('memberRemoveImgBtn').style.display = 'none';
+                    document.getElementById('memberUploadStatus').textContent = 'Select an image from your computer (auto-uploaded to Supabase Storage).';
+
                     openModal('memberModalBackdrop');
                 };
 
@@ -1472,35 +1635,103 @@
                     document.getElementById('memberFormRole').value = member.role;
                     document.getElementById('memberFormDivision').value = member.division;
                     document.getElementById('memberFormColor').value = member.color || 'blue';
-                    document.getElementById('memberFormImage').value = member.image || '';
                     document.getElementById('memberFormLinkedin').value = member.socials?.linkedin || '#';
                     document.getElementById('memberFormInstagram').value = member.socials?.instagram || '#';
+
+                    selectedMemberFile = null;
+                    if (document.getElementById('memberFileInput')) document.getElementById('memberFileInput').value = '';
+                    const curImg = member.image || '';
+                    document.getElementById('memberFormImage').value = curImg;
+                    if (curImg) {
+                        document.getElementById('memberImagePreview').src = curImg;
+                        document.getElementById('memberRemoveImgBtn').style.display = 'inline-flex';
+                        document.getElementById('memberUploadStatus').textContent = 'Current photo active. Choose a file to replace it.';
+                    } else {
+                        document.getElementById('memberImagePreview').src = DEFAULT_AVATAR_PLACEHOLDER;
+                        document.getElementById('memberRemoveImgBtn').style.display = 'none';
+                        document.getElementById('memberUploadStatus').textContent = 'No photo set. Choose an image file.';
+                    }
+
                     openModal('memberModalBackdrop');
                 };
 
+                window.clearMemberPhoto = function () {
+                    selectedMemberFile = null;
+                    if (document.getElementById('memberFileInput')) document.getElementById('memberFileInput').value = '';
+                    document.getElementById('memberFormImage').value = '';
+                    document.getElementById('memberImagePreview').src = DEFAULT_AVATAR_PLACEHOLDER;
+                    document.getElementById('memberRemoveImgBtn').style.display = 'none';
+                    document.getElementById('memberUploadStatus').textContent = 'Photo cleared. Select a file or save without photo.';
+                };
+
+                window.clearTrackLeadPhoto = function () {
+                    selectedTrackLeadFile = null;
+                    if (document.getElementById('trackLeadFileInput')) document.getElementById('trackLeadFileInput').value = '';
+                    document.getElementById('trackFormLeadImage').value = '';
+                    document.getElementById('trackLeadImagePreview').src = DEFAULT_AVATAR_PLACEHOLDER;
+                    document.getElementById('trackLeadRemoveImgBtn').style.display = 'none';
+                    document.getElementById('trackLeadUploadStatus').textContent = 'Photo cleared.';
+                };
+
+                // File input event listeners
+                document.getElementById('memberFileInput')?.addEventListener('change', function (e) {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    selectedMemberFile = file;
+                    const previewUrl = URL.createObjectURL(file);
+                    document.getElementById('memberImagePreview').src = previewUrl;
+                    document.getElementById('memberRemoveImgBtn').style.display = 'inline-flex';
+                    document.getElementById('memberUploadStatus').textContent = `Ready: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                });
+
+                document.getElementById('trackLeadFileInput')?.addEventListener('change', function (e) {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    selectedTrackLeadFile = file;
+                    const previewUrl = URL.createObjectURL(file);
+                    document.getElementById('trackLeadImagePreview').src = previewUrl;
+                    document.getElementById('trackLeadRemoveImgBtn').style.display = 'inline-flex';
+                    document.getElementById('trackLeadUploadStatus').textContent = `Ready: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                });
+
                 window.handleSaveMember = async function (e) {
                     e.preventDefault();
+                    const submitBtn = e.target.querySelector('button[type="submit"]');
+                    const origBtnText = submitBtn.innerHTML;
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span>Saving Member...</span>';
+
                     const originalName = document.getElementById('memberOriginalName').value.trim();
-                    const memberData = {
-                        id: document.getElementById('memberFormId').value || undefined,
-                        name: document.getElementById('memberFormName').value.trim(),
-                        role: document.getElementById('memberFormRole').value.trim(),
-                        division: document.getElementById('memberFormDivision').value,
-                        color: document.getElementById('memberFormColor').value,
-                        image: document.getElementById('memberFormImage').value.trim(),
-                        socials: {
-                            linkedin: document.getElementById('memberFormLinkedin').value.trim() || '#',
-                            instagram: document.getElementById('memberFormInstagram').value.trim() || '#'
-                        }
-                    };
 
                     try {
+                        let finalImageUrl = document.getElementById('memberFormImage').value.trim();
+                        if (selectedMemberFile) {
+                            document.getElementById('memberUploadStatus').textContent = 'Uploading photo to Supabase Storage...';
+                            finalImageUrl = await window.GDG_SUPABASE.uploadImage(selectedMemberFile, 'team');
+                        }
+
+                        const memberData = {
+                            id: document.getElementById('memberFormId').value || undefined,
+                            name: document.getElementById('memberFormName').value.trim(),
+                            role: document.getElementById('memberFormRole').value.trim(),
+                            division: document.getElementById('memberFormDivision').value,
+                            color: document.getElementById('memberFormColor').value,
+                            image: finalImageUrl,
+                            socials: {
+                                linkedin: document.getElementById('memberFormLinkedin').value.trim() || '#',
+                                instagram: document.getElementById('memberFormInstagram').value.trim() || '#'
+                            }
+                        };
+
                         await window.GDG_SUPABASE.saveTeamMember(memberData, originalName);
                         closeModal('memberModalBackdrop');
                         showToast(`Member '${memberData.name}' saved.`);
                         await loadTeam();
                     } catch (err) {
                         alert('Error saving team member: ' + err.message);
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = origBtnText;
                     }
                 };
 

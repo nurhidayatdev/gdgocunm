@@ -514,6 +514,54 @@
             });
             saveLocalTeam(team);
             return true;
+        },
+
+        // --------------------------------------------------------------------
+        // FILE / IMAGE UPLOAD (Supabase Storage + Base64 Fallback)
+        // --------------------------------------------------------------------
+        async uploadImage(file, folder = 'team') {
+            if (!file) return '';
+
+            const client = initSupabase();
+
+            // 1. Attempt upload to Supabase Storage 'team-avatars' bucket
+            if (client && client.storage) {
+                try {
+                    const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+                    const cleanBase = file.name.substring(0, file.name.lastIndexOf('.')) || 'image';
+                    const safeName = cleanBase.replace(/[^a-zA-Z0-9_-]/g, '_');
+                    const fileName = `${folder}/${Date.now()}_${safeName}.${ext}`;
+
+                    const { data, error } = await client.storage
+                        .from('team-avatars')
+                        .upload(fileName, file, {
+                            cacheControl: '3600',
+                            upsert: true
+                        });
+
+                    if (!error && data) {
+                        const { data: publicData } = client.storage
+                            .from('team-avatars')
+                            .getPublicUrl(fileName);
+
+                        if (publicData && publicData.publicUrl) {
+                            return publicData.publicUrl;
+                        }
+                    } else if (error) {
+                        console.warn('[Supabase Storage] Upload to bucket returned warning:', error.message);
+                    }
+                } catch (storageErr) {
+                    console.warn('[Supabase Storage] Upload error, falling back to data URL:', storageErr);
+                }
+            }
+
+            // 2. Fallback: Base64 Data URL (ensures image is stored directly in database with zero friction)
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = (err) => reject(err);
+                reader.readAsDataURL(file);
+            });
         }
     };
 
