@@ -3,8 +3,22 @@
  * Interactive Logic (English Edition matching gdgoc-unm.vercel.app)
  */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     initNavbar();
+
+    // Hydrate dynamically from Supabase if configured, with instant fallback to GDG_DATA
+    if (window.GDG_SUPABASE && window.GDG_SUPABASE.isConfigured()) {
+        try {
+            const [dynamicTracks, dynamicTeam] = await Promise.all([
+                window.GDG_SUPABASE.getLearningPaths(),
+                window.GDG_SUPABASE.getCoreTeam()
+            ]);
+            if (dynamicTracks && dynamicTracks.length > 0) GDG_DATA.tracks = dynamicTracks;
+            if (dynamicTeam && dynamicTeam.length > 0) GDG_DATA.team = dynamicTeam;
+        } catch (err) {
+            console.warn('[Landing Page] Dynamic data fallback to local configuration:', err);
+        }
+    }
 
     renderActivities();
     initTracksSection();

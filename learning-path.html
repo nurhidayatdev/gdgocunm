@@ -1026,6 +1026,10 @@
             </footer>
         </div>
 
+        <!-- Supabase SDK & Integration Client -->
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="js/supabase-client.js"></script>
+
         <!-- ========================================================================
            Comprehensive Learning Path Script
            ======================================================================== -->
@@ -1034,7 +1038,7 @@
                 'use strict';
 
                 // Master Learning Paths Data (Official Curriculum GDGoC UNM 2026/2027)
-                const LEARNING_PATHS = [
+                let LEARNING_PATHS = [
                     {
                         id: 'uiux',
                         title: 'UI/UX Design',
@@ -1913,11 +1917,25 @@
                     }
                 }
 
-                // Initialize Page
-                checkUrlParams();
-                renderTracksGrid();
-                renderTrackDetail();
-                initMobileNav();
+                // Initialize Page (with dynamic Supabase support & static fallback)
+                async function initPage() {
+                    checkUrlParams();
+                    if (window.GDG_SUPABASE && window.GDG_SUPABASE.isConfigured()) {
+                        try {
+                            const dynamicTracks = await window.GDG_SUPABASE.getLearningPaths();
+                            if (dynamicTracks && dynamicTracks.length > 0) {
+                                LEARNING_PATHS = dynamicTracks;
+                            }
+                        } catch (err) {
+                            console.warn('[Learning Path] Dynamic fetch fallback to static curriculum:', err);
+                        }
+                    }
+                    renderTracksGrid();
+                    renderTrackDetail();
+                    initMobileNav();
+                }
+
+                initPage();
             })();
         </script>
     </body>

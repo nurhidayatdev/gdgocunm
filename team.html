@@ -744,8 +744,10 @@
             </footer>
         </div>
 
-        <!-- Master Data & Team Directory Controller Script -->
+        <!-- Master Data, Supabase SDK & Integration Client -->
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
         <script src="js/data.js"></script>
+        <script src="js/supabase-client.js"></script>
         <script>
             (function () {
                 'use strict';
@@ -763,7 +765,7 @@
                 // State
                 let currentDivision = 'all';
                 let currentSearchQuery = '';
-                const allMembers = (typeof GDG_DATA !== 'undefined' && Array.isArray(GDG_DATA.team)) ? GDG_DATA.team : [];
+                let allMembers = (typeof GDG_DATA !== 'undefined' && Array.isArray(GDG_DATA.team)) ? GDG_DATA.team : [];
 
                 // Initialize counts in filter buttons
                 function updateTabCounts() {
@@ -1015,10 +1017,24 @@
                     }
                 }
 
-                // Bootstrap
-                updateTabCounts();
-                checkUrlParams();
-                renderGrid();
+                // Bootstrap (with dynamic Supabase support & static fallback)
+                async function initTeam() {
+                    if (window.GDG_SUPABASE && window.GDG_SUPABASE.isConfigured()) {
+                        try {
+                            const dynamicTeam = await window.GDG_SUPABASE.getCoreTeam();
+                            if (dynamicTeam && dynamicTeam.length > 0) {
+                                allMembers = dynamicTeam;
+                            }
+                        } catch (err) {
+                            console.warn('[Team Directory] Dynamic fetch fallback to static data:', err);
+                        }
+                    }
+                    updateTabCounts();
+                    checkUrlParams();
+                    renderGrid();
+                }
+
+                initTeam();
             })();
         </script>
     </body>
