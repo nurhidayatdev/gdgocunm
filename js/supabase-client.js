@@ -1,8 +1,8 @@
 /**
  * Google Developer Groups On Campus - Universitas Negeri Makassar (GDGoC UNM)
- * Supabase Client Integration Module
+ * Supabase Client Integration Module (with Full CRUD Support)
  * 
- * Provides dynamic data fetching with automatic local fallback for zero downtime.
+ * Provides dynamic data fetching and mutation with automatic fallback for zero downtime.
  */
 
 (function (window) {
@@ -10,17 +10,30 @@
 
     // ========================================================================
     // Supabase Project Configuration
-    // Paste your Supabase Project URL and Public Anon Key below
     // ========================================================================
-    const SUPABASE_CONFIG = {
+    let SUPABASE_CONFIG = {
         url: '', // e.g. 'https://xyzcompany.supabase.co'
         anonKey: '' // e.g. 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
     };
 
+    // Load persisted credentials from localStorage if available
+    try {
+        const stored = localStorage.getItem('GDG_SUPABASE_CONFIG');
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed.url && parsed.anonKey) {
+                SUPABASE_CONFIG.url = parsed.url;
+                SUPABASE_CONFIG.anonKey = parsed.anonKey;
+            }
+        }
+    } catch (e) {
+        // Ignore localStorage error
+    }
+
     let supabaseClient = null;
 
     /**
-     * Initialize Supabase SDK client if credentials are configured
+     * Initialize Supabase SDK client
      */
     function initSupabase() {
         if (supabaseClient) return supabaseClient;
@@ -53,23 +66,49 @@
      * Fallback to static tracks from window.GDG_DATA or window.LEARNING_PATHS
      */
     function getLocalTracks() {
+        try {
+            const cached = localStorage.getItem('GDG_LOCAL_TRACKS');
+            if (cached) {
+                return JSON.parse(cached);
+            }
+        } catch (e) {}
+
         if (window.LEARNING_PATHS && Array.isArray(window.LEARNING_PATHS)) {
-            return window.LEARNING_PATHS;
+            return JSON.parse(JSON.stringify(window.LEARNING_PATHS));
         }
         if (window.GDG_DATA && Array.isArray(window.GDG_DATA.tracks)) {
-            return window.GDG_DATA.tracks;
+            return JSON.parse(JSON.stringify(window.GDG_DATA.tracks));
         }
         return [];
+    }
+
+    function saveLocalTracks(tracks) {
+        try {
+            localStorage.setItem('GDG_LOCAL_TRACKS', JSON.stringify(tracks));
+        } catch (e) {}
     }
 
     /**
      * Fallback to static team from window.GDG_DATA
      */
     function getLocalTeam() {
+        try {
+            const cached = localStorage.getItem('GDG_LOCAL_TEAM');
+            if (cached) {
+                return JSON.parse(cached);
+            }
+        } catch (e) {}
+
         if (window.GDG_DATA && Array.isArray(window.GDG_DATA.team)) {
-            return window.GDG_DATA.team;
+            return JSON.parse(JSON.stringify(window.GDG_DATA.team));
         }
         return [];
+    }
+
+    function saveLocalTeam(team) {
+        try {
+            localStorage.setItem('GDG_LOCAL_TEAM', JSON.stringify(team));
+        } catch (e) {}
     }
 
     /**
@@ -110,6 +149,7 @@
                 socials: row.instructor_socials || { linkedin: '#', instagram: '#', github: '#' }
             },
             timeline: sortedModules.map(m => ({
+                id: m.id,
                 num: m.session_num,
                 title: m.title,
                 objectives: m.objectives,
@@ -137,13 +177,50 @@
     }
 
     // ========================================================================
-    // Public API Methods
+    // Service API
     // ========================================================================
     const SupabaseService = {
-        /**
-         * Fetch all active learning paths with their timeline modules
-         * @returns {Promise<Array>} List of learning path objects
-         */
+        getConfig() {
+            return { ...SUPABASE_CONFIG };
+        },
+
+        saveConfig(url, anonKey) {
+            SUPABASE_CONFIG.url = (url || '').trim();
+            SUPABASE_CONFIG.anonKey = (anonKey || '').trim();
+            try {
+                localStorage.setItem('GDG_SUPABASE_CONFIG', JSON.stringify(SUPABASE_CONFIG));
+            } catch (e) {}
+            supabaseClient = null;
+            return initSupabase();
+        },
+
+        isConfigured() {
+            return Boolean(
+                SUPABASE_CONFIG.url &&
+                SUPABASE_CONFIG.anonKey &&
+                SUPABASE_CONFIG.url !== 'YOUR_SUPABASE_URL'
+            );
+        },
+
+        async testConnection() {
+            const client = initSupabase();
+            if (!client) {
+                return { success: false, message: 'Supabase credentials are not configured.' };
+            }
+            try {
+                const { data, error } = await client.from('core_team').select('count', { count: 'exact', head: true });
+                if (error) {
+                    return { success: false, message: error.message };
+                }
+                return { success: true, message: 'Connection successful!' };
+            } catch (err) {
+                return { success: false, message: err.message || 'Unknown network error' };
+            }
+        },
+
+        // --------------------------------------------------------------------
+        // LEARNING PATHS CRUD
+        // --------------------------------------------------------------------
         async getLearningPaths() {
             const client = initSupabase();
             if (!client) {
@@ -151,7 +228,6 @@
             }
 
             try {
-                // Fetch tracks and modules
                 const [tracksRes, modulesRes] = await Promise.all([
                     client
                         .from('learning_paths')
@@ -165,7 +241,7 @@
                 ]);
 
                 if (tracksRes.error || !tracksRes.data || tracksRes.data.length === 0) {
-                    console.warn('[GDG Supabase] Tracks fetch failed or empty, using local data fallback.');
+                    console.warn('[GDG Supabase] Fallback to local tracks.');
                     return getLocalTracks();
                 }
 
@@ -179,25 +255,129 @@
 
                 return tracksRes.data.map(row => mapTrackRow(row, modulesByTrack[row.id] || []));
             } catch (err) {
-                console.warn('[GDG Supabase] Query error, falling back to local tracks:', err);
+                console.warn('[GDG Supabase] Fallback to local tracks:', err);
                 return getLocalTracks();
             }
         },
 
-        /**
-         * Fetch detail of a single track by ID
-         * @param {string} trackId 
-         * @returns {Promise<Object|null>}
-         */
-        async getLearningPathDetail(trackId) {
-            const allTracks = await this.getLearningPaths();
-            return allTracks.find(t => t.id.toLowerCase() === trackId.toLowerCase()) || null;
+        async saveLearningPath(trackData) {
+            const client = initSupabase();
+            const payload = {
+                id: trackData.id,
+                title: trackData.title,
+                short_title: trackData.shortTitle || trackData.title,
+                category: trackData.category,
+                color: trackData.color || 'blue',
+                whatsapp_url: trackData.whatsappUrl,
+                image_url: trackData.image,
+                description: trackData.desc,
+                objective: trackData.objective,
+                long_description: trackData.longDesc,
+                tech_stack: trackData.techStack || [],
+                capstone_title: trackData.outcomes?.capstone || '',
+                capstone_description: trackData.outcomes?.capstone || '',
+                outcomes_learn: trackData.outcomes?.learn || '',
+                outcomes_prereq: trackData.outcomes?.prereq || '',
+                spec_sessions: trackData.specs?.sessions || '5 Sessions',
+                spec_level: trackData.specs?.level || 'Beginner Friendly',
+                spec_duration: trackData.specs?.duration || '5 Weeks',
+                spec_cohort: trackData.specs?.cohort || 'Cohort 2026/2027',
+                instructor_name: trackData.instructor?.name || '',
+                instructor_role: trackData.instructor?.role || '',
+                instructor_division: trackData.instructor?.division || '',
+                instructor_image_url: trackData.instructor?.image || '',
+                instructor_quote: trackData.instructor?.quote || '',
+                instructor_socials: trackData.instructor?.socials || { linkedin: '#', instagram: '#', github: '#' },
+                order_index: trackData.order_index || 99,
+                is_active: true
+            };
+
+            if (client) {
+                const { error } = await client.from('learning_paths').upsert(payload);
+                if (error) throw error;
+            }
+
+            // Also update local cache
+            const tracks = getLocalTracks();
+            const existingIdx = tracks.findIndex(t => t.id === trackData.id);
+            if (existingIdx >= 0) {
+                tracks[existingIdx] = { ...tracks[existingIdx], ...trackData };
+            } else {
+                tracks.push(trackData);
+            }
+            saveLocalTracks(tracks);
+            return trackData;
         },
 
-        /**
-         * Fetch all active core team members ordered by order_index
-         * @returns {Promise<Array>} List of team member objects
-         */
+        async deleteLearningPath(trackId) {
+            const client = initSupabase();
+            if (client) {
+                const { error } = await client.from('learning_paths').delete().eq('id', trackId);
+                if (error) throw error;
+            }
+            const tracks = getLocalTracks().filter(t => t.id !== trackId);
+            saveLocalTracks(tracks);
+            return true;
+        },
+
+        // --------------------------------------------------------------------
+        // MODULES (SYLLABUS SESSIONS) CRUD
+        // --------------------------------------------------------------------
+        async saveModule(trackId, moduleData) {
+            const client = initSupabase();
+            if (client) {
+                const payload = {
+                    track_id: trackId,
+                    session_num: moduleData.num,
+                    title: moduleData.title,
+                    objectives: moduleData.objectives,
+                    materials: moduleData.materials,
+                    assignment: moduleData.assignment,
+                    order_index: parseInt(moduleData.num, 10) || 1
+                };
+                if (moduleData.id) payload.id = moduleData.id;
+                const { error } = await client.from('learning_path_modules').upsert(payload);
+                if (error) throw error;
+            }
+
+            // Update local tracks cache
+            const tracks = getLocalTracks();
+            const track = tracks.find(t => t.id === trackId);
+            if (track) {
+                if (!track.timeline) track.timeline = [];
+                const mIdx = track.timeline.findIndex(m => m.num === moduleData.num);
+                if (mIdx >= 0) {
+                    track.timeline[mIdx] = { ...track.timeline[mIdx], ...moduleData };
+                } else {
+                    track.timeline.push(moduleData);
+                }
+                saveLocalTracks(tracks);
+            }
+            return moduleData;
+        },
+
+        async deleteModule(trackId, sessionNum) {
+            const client = initSupabase();
+            if (client) {
+                const { error } = await client
+                    .from('learning_path_modules')
+                    .delete()
+                    .eq('track_id', trackId)
+                    .eq('session_num', sessionNum);
+                if (error) throw error;
+            }
+            const tracks = getLocalTracks();
+            const track = tracks.find(t => t.id === trackId);
+            if (track && track.timeline) {
+                track.timeline = track.timeline.filter(m => m.num !== sessionNum);
+                saveLocalTracks(tracks);
+            }
+            return true;
+        },
+
+        // --------------------------------------------------------------------
+        // CORE TEAM CRUD
+        // --------------------------------------------------------------------
         async getCoreTeam() {
             const client = initSupabase();
             if (!client) {
@@ -212,40 +392,68 @@
                     .order('order_index', { ascending: true });
 
                 if (error || !data || data.length === 0) {
-                    console.warn('[GDG Supabase] Core Team fetch failed or empty, using local data fallback.');
                     return getLocalTeam();
                 }
 
                 return data.map(mapTeamRow);
             } catch (err) {
-                console.warn('[GDG Supabase] Query error, falling back to local team:', err);
                 return getLocalTeam();
             }
         },
 
-        /**
-         * Check if Supabase connection is currently active
-         */
-        isConfigured() {
-            return Boolean(
-                SUPABASE_CONFIG.url &&
-                SUPABASE_CONFIG.anonKey &&
-                SUPABASE_CONFIG.url !== 'YOUR_SUPABASE_URL'
-            );
+        async saveTeamMember(memberData) {
+            const client = initSupabase();
+            const isLead = memberData.role === 'Lead' || memberData.role === 'Co-Lead' || memberData.isLead === true || memberData.subRole === 'Lead Organizer';
+
+            const payload = {
+                name: memberData.name,
+                role: memberData.role,
+                division: memberData.division,
+                sub_role: memberData.subRole || 'Member',
+                badge_color: memberData.color || 'blue',
+                image_url: memberData.image || '',
+                is_lead: isLead,
+                socials: memberData.socials || { linkedin: '#', github: '#', instagram: '#' },
+                is_active: memberData.isActive !== false
+            };
+            if (memberData.id) payload.id = memberData.id;
+
+            let savedId = memberData.id;
+            if (client) {
+                const { data, error } = await client.from('core_team').upsert(payload).select().single();
+                if (error) throw error;
+                if (data && data.id) savedId = data.id;
+            }
+
+            // Update local team
+            const team = getLocalTeam();
+            const newMember = { ...memberData, id: savedId || 'temp-' + Date.now() };
+            const mIdx = team.findIndex(m => (m.id && m.id === memberData.id) || (m.name === memberData.name && m.role === memberData.role));
+            if (mIdx >= 0) {
+                team[mIdx] = { ...team[mIdx], ...newMember };
+            } else {
+                team.push(newMember);
+            }
+            saveLocalTeam(team);
+            return newMember;
         },
 
-        /**
-         * Configure credentials dynamically
-         */
-        configure(url, anonKey) {
-            SUPABASE_CONFIG.url = url;
-            SUPABASE_CONFIG.anonKey = anonKey;
-            supabaseClient = null;
-            return initSupabase();
+        async deleteTeamMember(memberId, memberName = '') {
+            const client = initSupabase();
+            if (client && memberId && !String(memberId).startsWith('temp-')) {
+                const { error } = await client.from('core_team').delete().eq('id', memberId);
+                if (error) throw error;
+            }
+            const team = getLocalTeam().filter(m => {
+                if (memberId && m.id === memberId) return false;
+                if (memberName && m.name === memberName) return false;
+                return true;
+            });
+            saveLocalTeam(team);
+            return true;
         }
     };
 
-    // Expose to global window
     window.GDG_SUPABASE = SupabaseService;
 
 })(window);
