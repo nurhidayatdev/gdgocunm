@@ -145,6 +145,46 @@
     }
 
     /**
+     * Fallback to static gallery from window.GDG_DATA.gallery or localStorage
+     */
+    function getLocalGallery() {
+        try {
+            const cached = localStorage.getItem('GDG_LOCAL_GALLERY');
+            if (cached) {
+                const parsed = JSON.parse(cached);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    return parsed;
+                }
+            }
+        } catch (e) {}
+
+        const globalData = (typeof GDG_DATA !== 'undefined') ? GDG_DATA : (typeof window !== 'undefined' ? window.GDG_DATA : null);
+        if (globalData && Array.isArray(globalData.gallery) && globalData.gallery.length > 0) {
+            return JSON.parse(JSON.stringify(globalData.gallery));
+        }
+
+        return [];
+    }
+
+    function saveLocalGallery(gallery) {
+        try {
+            localStorage.setItem('GDG_LOCAL_GALLERY', JSON.stringify(gallery));
+        } catch (e) {}
+    }
+
+    function mapGalleryRow(row) {
+        return {
+            id: row.id,
+            title: row.title || 'GDGoC UNM Activity',
+            category: row.category || 'Activity',
+            image: row.image_url || '',
+            desc: row.description || '',
+            color: row.color || 'blue',
+            createdAt: row.created_at
+        };
+    }
+
+    /**
      * Map Supabase learning_paths row + modules to frontend format
      */
     function mapTrackRow(row, modules = []) {
@@ -647,6 +687,175 @@
                 reader.onerror = (err) => reject(err);
                 reader.readAsDataURL(file);
             });
+        },
+
+        // --------------------------------------------------------------------
+        // ACTIVITY GALLERY CRUD (Batch Multi-Upload & Auto-Cleanup)
+        // --------------------------------------------------------------------
+        async getGallery() {
+            const client = initSupabase();
+            if (!client) {
+                return getLocalGallery();
+            }
+
+            try {
+                const { data, error } = await client
+                    .from('activity_gallery')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error || !data || data.length === 0) {
+                    return getLocalGallery();
+                }
+
+                return data.map(mapGalleryRow);
+            } catch (err) {
+                console.warn('[GDG Supabase] getGallery error, falling back to local:', err);
+                return getLocalGallery();
+            }
+        },
+
+        async uploadGalleryImages(files, metadata = {}, onProgress = null) {
+            if (!files || files.length === 0) return [];
+
+            const client = initSupabase();
+            const results = [];
+            const localGallery = getLocalGallery();
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (typeof onProgress === 'function') {
+                    onProgress(i + 1, files.length, file.name);
+                }
+
+                try {
+                    // Upload file to Supabase Storage in 'gallery' folder
+                    const imageUrl = await this.uploadImage(file, 'gallery');
+
+                    const rawName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+                    const cleanName = rawName.replace(/[-_]/g, ' ');
+                    const title = metadata.title ? (files.length > 1 ? `${metadata.title} #${i + 1}` : metadata.title) : cleanName;
+                    const category = metadata.category || 'Activity';
+                    const desc = metadata.desc || '';
+                    const color = metadata.color || ['blue', 'yellow', 'green', 'red'][i % 4];
+
+                    const payload = {
+                        title: title,
+                        category: category,
+                        image_url: imageUrl,
+                        description: desc,
+                        color: color
+                    };
+
+                    let savedItem = {
+                        id: 'temp-' + Date.now() + '-' + i,
+                        title,
+                        category,
+                        image: imageUrl,
+                        desc,
+                        color,
+                        createdAt: new Date().toISOString()
+                    };
+
+                    if (client) {
+                        try {
+                            const { data, error } = await client
+                                .from('activity_gallery')
+                                .insert(payload)
+                                .select()
+                                .single();
+
+                            if (data && data.id) {
+                                savedItem = mapGalleryRow(data);
+                            }
+                        } catch (dbErr) {
+                            console.warn('[Supabase Gallery Insert]', dbErr);
+                        }
+                    }
+
+                    results.push(savedItem);
+                    localGallery.unshift(savedItem);
+                } catch (err) {
+                    console.error('[Gallery Upload Error] File:', file.name, err);
+                }
+            }
+
+            saveLocalGallery(localGallery);
+            return results;
+        },
+
+        async saveGalleryItem(itemData) {
+            const client = initSupabase();
+            const payload = {
+                title: itemData.title,
+                category: itemData.category || 'Activity',
+                image_url: itemData.image || '',
+                description: itemData.desc || '',
+                color: itemData.color || 'blue'
+            };
+            if (itemData.id && !String(itemData.id).startsWith('temp-')) {
+                payload.id = itemData.id;
+            }
+
+            let savedId = itemData.id;
+            if (client) {
+                try {
+                    if (itemData.id && !String(itemData.id).startsWith('temp-')) {
+                        const { data } = await client.from('activity_gallery').update(payload).eq('id', itemData.id).select().single();
+                        if (data) savedId = data.id;
+                    } else {
+                        const { data } = await client.from('activity_gallery').insert(payload).select().single();
+                        if (data) savedId = data.id;
+                    }
+                } catch (err) {
+                    console.warn('[Supabase Gallery Save]', err);
+                }
+            }
+
+            const gallery = getLocalGallery();
+            const newItem = { ...itemData, id: savedId || itemData.id || 'temp-' + Date.now() };
+            const idx = gallery.findIndex(g => g.id === itemData.id);
+            if (idx >= 0) {
+                gallery[idx] = { ...gallery[idx], ...newItem };
+            } else {
+                gallery.unshift(newItem);
+            }
+            saveLocalGallery(gallery);
+            return newItem;
+        },
+
+        async deleteGalleryItem(id) {
+            const client = initSupabase();
+            let imageUrlToDelete = '';
+
+            const localGallery = getLocalGallery();
+            const target = localGallery.find(g => g.id === id);
+            if (target && target.image) {
+                imageUrlToDelete = target.image;
+            }
+
+            if (client) {
+                try {
+                    if (!imageUrlToDelete && id && !String(id).startsWith('temp-')) {
+                        const { data } = await client.from('activity_gallery').select('image_url').eq('id', id).single();
+                        if (data && data.image_url) imageUrlToDelete = data.image_url;
+                    }
+                } catch (e) {}
+
+                if (id && !String(id).startsWith('temp-')) {
+                    const { error } = await client.from('activity_gallery').delete().eq('id', id);
+                    if (error) console.warn('[Supabase Gallery Delete DB]', error.message);
+                }
+            }
+
+            // Cleanup from Supabase Storage
+            if (imageUrlToDelete) {
+                await this.deleteImageFromStorage(imageUrlToDelete);
+            }
+
+            const updatedGallery = localGallery.filter(g => g.id !== id);
+            saveLocalGallery(updatedGallery);
+            return true;
         }
     };
 

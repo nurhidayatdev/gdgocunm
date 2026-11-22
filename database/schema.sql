@@ -121,3 +121,26 @@ CREATE POLICY "Anon Full Access Paths" ON learning_paths
 
 CREATE POLICY "Anon Full Access Modules" ON learning_path_modules 
     FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
+
+-- ------------------------------------------------------------------------
+-- 4. Table: activity_gallery
+-- ------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS activity_gallery (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(200) NOT NULL,
+    category VARCHAR(100) DEFAULT 'Activity',
+    image_url TEXT NOT NULL,
+    description TEXT,
+    color VARCHAR(20) DEFAULT 'blue',
+    order_index INT DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE activity_gallery ENABLE ROW LEVEL SECURITY;
+GRANT ALL ON TABLE activity_gallery TO anon, authenticated;
+
+DROP POLICY IF EXISTS "Anon Full Access Gallery" ON activity_gallery;
+CREATE POLICY "Anon Full Access Gallery" ON activity_gallery 
+    FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
+

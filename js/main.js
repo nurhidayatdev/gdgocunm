@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     initTracksSection();
     renderEvents();
     renderTeam();
-    // renderGallery(); // Gallery temporarily hidden
+    renderGallery();
     renderTestimonials();
     initFAQAccordion();
     initTrackModal();
@@ -665,9 +665,20 @@ let galleryRafId = null;
 let galleryScrollPos = 0;
 let galleryScrollPaused = false;
 
-function renderGallery() {
+async function renderGallery() {
     const viewport = document.getElementById("gallery-grid");
-    if (!viewport || !GDG_DATA.gallery) return;
+    if (!viewport) return;
+
+    let galleryItems = [];
+    if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.getGallery === 'function') {
+        try {
+            galleryItems = await window.GDG_SUPABASE.getGallery();
+        } catch (e) {}
+    }
+    if (!galleryItems || galleryItems.length === 0) {
+        galleryItems = (window.GDG_DATA && window.GDG_DATA.gallery) || [];
+    }
+    if (galleryItems.length === 0) return;
 
     const colorMap = {
         blue: "#4285F4",
@@ -681,6 +692,7 @@ function renderGallery() {
         return `
       <div class="gallery-card">
         <div class="gallery-media">
+          <span class="gallery-tag-pill" style="border-left: 3px solid ${col};">${item.category || "Activity"}</span>
           ${
               item.image
                   ? `
@@ -707,12 +719,20 @@ function renderGallery() {
             </svg>
           </div>
         </div>
+        <div class="gallery-body">
+          <h4>${item.title || "GDGoC UNM Activity"}</h4>
+          ${item.desc ? `<p>${item.desc}</p>` : ""}
+        </div>
       </div>
     `;
     };
 
-    // Build track inside viewport
-    const allCards = GDG_DATA.gallery.map(makeCard).join("");
+    // Build track with duplicate cards for infinite auto-scroll
+    let renderList = [...galleryItems];
+    while (renderList.length < 6) {
+        renderList = renderList.concat(galleryItems);
+    }
+    const allCards = renderList.map(makeCard).join("");
     viewport.innerHTML = `<div class="gallery-track" id="gallery-track">${allCards}${allCards}</div>`;
 
     const track = document.getElementById("gallery-track");
@@ -755,7 +775,7 @@ function renderGallery() {
 
     requestAnimationFrame(() =>
         requestAnimationFrame(() => {
-            _startGalleryRaf(track, GDG_DATA.gallery.length);
+            _startGalleryRaf(track, renderList.length);
         }),
     );
 }

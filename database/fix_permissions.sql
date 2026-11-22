@@ -75,3 +75,30 @@ CREATE POLICY "Anon Update Objects" ON storage.objects
 CREATE POLICY "Anon Delete Objects" ON storage.objects 
     FOR DELETE TO anon, authenticated 
     USING (bucket_id = 'team-avatars');
+
+-- ------------------------------------------------------------------------
+-- 6. Table: activity_gallery & Full CRUD Policies
+-- ------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS activity_gallery (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(200) NOT NULL,
+    category VARCHAR(100) DEFAULT 'Activity',
+    image_url TEXT NOT NULL,
+    description TEXT,
+    color VARCHAR(20) DEFAULT 'blue',
+    order_index INT DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+GRANT ALL ON TABLE activity_gallery TO anon, authenticated;
+
+ALTER TABLE activity_gallery ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Anon Full Access Gallery" ON activity_gallery;
+
+CREATE POLICY "Anon Full Access Gallery" ON activity_gallery
+    FOR ALL TO anon, authenticated
+    USING (true)
+    WITH CHECK (true);
+

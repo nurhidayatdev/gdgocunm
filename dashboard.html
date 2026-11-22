@@ -613,6 +613,163 @@
                 opacity: 1;
             }
 
+            /* Multi-file Upload Zone & Gallery Admin */
+            .dash-upload-multi-zone {
+                border: 1.5px dashed rgba(255, 255, 255, 0.2);
+                border-radius: var(--radius-md);
+                background: rgba(255, 255, 255, 0.02);
+                padding: 24px 20px;
+                text-align: center;
+                cursor: pointer;
+                transition: all var(--transition-fast);
+            }
+
+            .dash-upload-multi-zone:hover,
+            .dash-upload-multi-zone.dragover {
+                border-color: var(--google-blue);
+                background: rgba(66, 133, 244, 0.06);
+            }
+
+            .dash-upload-multi-icon {
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.06);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--google-blue);
+            }
+
+            .gallery-preview-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+                gap: 10px;
+                max-height: 200px;
+                overflow-y: auto;
+                padding: 10px;
+                background: rgba(0, 0, 0, 0.25);
+                border-radius: var(--radius-sm);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+            }
+
+            .gallery-preview-item {
+                position: relative;
+                border-radius: 6px;
+                overflow: hidden;
+                height: 80px;
+                background: #11141c;
+                border: 1px solid rgba(255, 255, 255, 0.12);
+            }
+
+            .gallery-preview-img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .gallery-preview-remove {
+                position: absolute;
+                top: 4px;
+                right: 4px;
+                background: rgba(10, 12, 18, 0.85);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                color: #ff6b6b;
+                border-radius: 50%;
+                width: 20px;
+                height: 20px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 11px;
+                padding: 0;
+            }
+
+            .dash-gallery-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+                gap: 18px;
+            }
+
+            .dash-gallery-card {
+                background: rgba(255, 255, 255, 0.03);
+                border: 1.5px solid rgba(255, 255, 255, 0.08);
+                border-radius: var(--radius-md);
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                transition: transform var(--transition-fast), border-color var(--transition-fast);
+            }
+
+            .dash-gallery-card:hover {
+                border-color: rgba(66, 133, 244, 0.4);
+                transform: translateY(-2px);
+            }
+
+            .dash-gallery-img-wrap {
+                height: 170px;
+                position: relative;
+                background: #11141c;
+                overflow: hidden;
+            }
+
+            .dash-gallery-img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+
+            .dash-gallery-card:hover .dash-gallery-img {
+                transform: scale(1.03);
+            }
+
+            .dash-gallery-tag {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                font-size: 0.7rem;
+                font-weight: 600;
+                padding: 3px 8px;
+                border-radius: 20px;
+                background: rgba(14, 16, 24, 0.85);
+                backdrop-filter: blur(6px);
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                color: #fff;
+            }
+
+            .dash-gallery-info {
+                padding: 14px 16px;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                flex-grow: 1;
+            }
+
+            .dash-gallery-title {
+                font-size: 0.95rem;
+                font-weight: 600;
+                color: #ffffff;
+                margin: 0;
+            }
+
+            .dash-gallery-desc {
+                font-size: 0.78rem;
+                color: var(--text-secondary);
+                line-height: 1.4;
+                margin: 0;
+            }
+
+            .dash-gallery-footer {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 10px 16px;
+                border-top: 1px solid rgba(255, 255, 255, 0.06);
+                background: rgba(0, 0, 0, 0.15);
+            }
+
             /* Responsive */
             @media (max-width: 1024px) {
                 .dash-metrics-grid {
@@ -699,6 +856,14 @@
                             </svg>
                             <span>Core Team (29)</span>
                         </button>
+                        <button class="dash-tab-btn" data-tab="tab-gallery" role="tab" aria-selected="false">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                            <span id="tabGalleryLabel">Activity Gallery</span>
+                        </button>
                         <button class="dash-tab-btn" data-tab="tab-certificates" role="tab" aria-selected="false">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="8" r="7"></circle>
@@ -760,6 +925,19 @@
                                 <div class="metric-label">Valid Credentials</div>
                                 <div class="metric-sub">Status VALID in Database</div>
                             </div>
+
+                            <div class="metric-card">
+                                <div class="metric-icon-wrap" style="color: var(--google-yellow);">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                        <polyline points="21 15 16 10 5 21"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="metric-value" id="statGalleryCount">...</div>
+                                <div class="metric-label">Gallery Photos</div>
+                                <div class="metric-sub">Event & Activity Moments</div>
+                            </div>
                         </div>
 
                         <!-- Quick Action Panels -->
@@ -784,6 +962,14 @@
                                         <line x1="5" y1="12" x2="19" y2="12"></line>
                                     </svg>
                                     <span>Add Team Member</span>
+                                </button>
+                                <button class="btn-primary" onclick="switchTab('tab-gallery'); openUploadGalleryModal();">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                        <polyline points="21 15 16 10 5 21"></polyline>
+                                    </svg>
+                                    <span>Upload Activity Photos</span>
                                 </button>
                                 <a href="https://docs.google.com/spreadsheets/d/1wxe4WThXlGSj2iocQ4NPnqmZRcJvYl3sMDLJLwQRTM8/edit" target="_blank" rel="noopener" class="btn-secondary">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -960,6 +1146,50 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ====================================================================
+                       TAB 5: ACTIVITY GALLERY (BATCH MULTI-UPLOAD & MANAGEMENT)
+                       ==================================================================== -->
+                    <div class="dash-section-pane" id="tab-gallery">
+                        <div class="dash-panel">
+                            <div class="dash-panel-header">
+                                <div>
+                                    <h2 class="dash-panel-title">Activity & Event Gallery</h2>
+                                    <p class="dash-panel-desc">Manage photos of GDGoC UNM workshops, hackathons, and community sessions on landing page</p>
+                                </div>
+                                <div class="dash-panel-actions">
+                                    <select class="dash-form-select" id="galleryCategoryFilter" style="padding: 8px 14px; border-radius: var(--radius-pill);">
+                                        <option value="all">All Categories</option>
+                                        <option value="Workshop">Workshop</option>
+                                        <option value="Info Session">Info Session</option>
+                                        <option value="Weekly Class">Weekly Class</option>
+                                        <option value="Hackathon">Hackathon</option>
+                                        <option value="Community">Community</option>
+                                        <option value="Robotics">Robotics</option>
+                                        <option value="Tech Talk">Tech Talk</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <input
+                                        type="text"
+                                        class="dash-search-input"
+                                        id="searchGalleryInput"
+                                        placeholder="Search photo title..."
+                                    />
+                                    <button class="btn-primary" onclick="openUploadGalleryModal()">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        </svg>
+                                        <span>Upload Photos (Batch)</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="dash-gallery-grid" id="galleryGridContainer">
+                                <!-- Dynamically populated -->
                             </div>
                         </div>
                     </div>
@@ -1193,6 +1423,99 @@
             </div>
         </div>
 
+        <!-- Modal: Upload Activity Gallery Photos (Supports Multi-File Upload) -->
+        <div class="dash-modal-backdrop" id="galleryUploadModalBackdrop">
+            <div class="dash-modal" style="max-width: 680px;">
+                <div class="dash-modal-header">
+                    <h3 class="dash-modal-title">Upload Activity Photos (Batch)</h3>
+                    <button class="dash-modal-close" onclick="closeModal('galleryUploadModalBackdrop')" aria-label="Close modal">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <form id="galleryUploadForm" onsubmit="handleBatchGalleryUpload(event)">
+                    <div class="dash-form-grid">
+                        <div class="dash-form-group">
+                            <label class="dash-form-label">Activity / Event Title</label>
+                            <input type="text" id="galleryFormTitle" class="dash-form-input" placeholder="e.g. Hands-on Workshop: Gemini API" required />
+                        </div>
+                        <div class="dash-form-group">
+                            <label class="dash-form-label">Category</label>
+                            <select id="galleryFormCategory" class="dash-form-select" required>
+                                <option value="Workshop">Workshop</option>
+                                <option value="Info Session">Info Session</option>
+                                <option value="Weekly Class">Weekly Class</option>
+                                <option value="Hackathon">Hackathon</option>
+                                <option value="Community">Community</option>
+                                <option value="Robotics">Robotics</option>
+                                <option value="Tech Talk">Tech Talk</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="dash-form-group">
+                            <label class="dash-form-label">Color Accent</label>
+                            <select id="galleryFormColor" class="dash-form-select">
+                                <option value="blue">Blue</option>
+                                <option value="yellow">Yellow</option>
+                                <option value="green">Green</option>
+                                <option value="red">Red</option>
+                            </select>
+                        </div>
+                        <div class="dash-form-group">
+                            <label class="dash-form-label">Caption / Short Description</label>
+                            <input type="text" id="galleryFormDesc" class="dash-form-input" placeholder="e.g. Live coding and building AI applications in UNM Lab" />
+                        </div>
+
+                        <!-- Multi-File Picker -->
+                        <div class="dash-form-group dash-form-full">
+                            <label class="dash-form-label">Choose Photos (Bisa Pilih Lebih dari 1 Sekaligus)</label>
+                            <div class="dash-upload-multi-zone" id="galleryMultiDropZone" onclick="document.getElementById('galleryMultiFileInput').click()">
+                                <input type="file" id="galleryMultiFileInput" multiple accept="image/*" style="display: none;" onchange="handleGalleryMultiFileSelect(event)" />
+                                <div class="dash-upload-multi-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                        <polyline points="21 15 16 10 5 21"></polyline>
+                                    </svg>
+                                </div>
+                                <div style="font-weight: 600; color: #ffffff; margin-top: 10px; font-size: 0.95rem;">
+                                    Klik di sini untuk Memilih Berkas Foto
+                                </div>
+                                <div class="dash-upload-hint" style="margin-top: 4px;">
+                                    Tahan Ctrl atau Shift untuk memilih banyak foto sekaligus (PNG, JPG, WEBP).
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Selected Files Preview Container -->
+                        <div class="dash-form-group dash-form-full" id="galleryPreviewContainer" style="display: none;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                                <label class="dash-form-label" id="gallerySelectedFilesCount">Selected Photos (0)</label>
+                                <button type="button" class="btn-secondary" style="font-size: 0.72rem; padding: 3px 8px;" onclick="clearAllSelectedGalleryFiles()">Clear All</button>
+                            </div>
+                            <div class="gallery-preview-grid" id="galleryPreviewList">
+                                <!-- Thumbnails populated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Upload Progress Bar -->
+                        <div class="dash-form-group dash-form-full" id="galleryUploadProgressWrap" style="display: none;">
+                            <div style="font-size: 0.8rem; color: #ffffff; margin-bottom: 6px;" id="galleryUploadStatusText">Uploading photos to Supabase Storage...</div>
+                            <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden;">
+                                <div id="galleryUploadProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #4285f4, #34a853); transition: width 0.3s ease;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dash-modal-footer">
+                        <button type="button" class="btn-secondary" onclick="closeModal('galleryUploadModalBackdrop')">Cancel</button>
+                        <button type="submit" class="btn-primary" id="gallerySubmitBtn" disabled>Upload All Photos</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- Toast Notification Alert -->
         <div class="dash-toast" id="dashToast" role="alert">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--google-green);">
@@ -1214,6 +1537,8 @@
                 let allTracks = [];
                 let allTeam = [];
                 let allCerts = [];
+                let allGallery = [];
+                let selectedGalleryFiles = [];
                 let selectedMemberFile = null;
                 let selectedTrackLeadFile = null;
 
@@ -1420,6 +1745,219 @@
                             </td>
                         </tr>
                     `).join('');
+                }
+
+                // --------------------------------------------------------------------
+                // Activity Gallery Management (Multi-File Batch Upload & Delete)
+                // --------------------------------------------------------------------
+                async function loadGallery() {
+                    if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.getGallery === 'function') {
+                        allGallery = await window.GDG_SUPABASE.getGallery();
+                    } else {
+                        allGallery = (window.GDG_DATA && window.GDG_DATA.gallery) || [];
+                    }
+                    const countEl = document.getElementById('statGalleryCount');
+                    if (countEl) countEl.textContent = allGallery.length;
+
+                    const labelEl = document.getElementById('tabGalleryLabel');
+                    if (labelEl) labelEl.textContent = `Activity Gallery (${allGallery.length})`;
+
+                    renderGalleryCards(allGallery);
+                }
+
+                function renderGalleryCards(items) {
+                    const container = document.getElementById('galleryGridContainer');
+                    if (!container) return;
+
+                    if (!items || items.length === 0) {
+                        container.innerHTML = `
+                            <div style="grid-column: 1 / -1; text-align: center; padding: 48px 20px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
+                                <div style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 14px;">No activity gallery photos uploaded yet.</div>
+                                <button class="btn-primary" onclick="openUploadGalleryModal()">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                    <span>Upload First Photos</span>
+                                </button>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    const colorMap = {
+                        blue: '#4285F4',
+                        yellow: '#FBBC04',
+                        green: '#34A853',
+                        red: '#EA4335'
+                    };
+
+                    container.innerHTML = items.map(item => {
+                        const col = colorMap[item.color] || '#4285F4';
+                        return `
+                            <div class="dash-gallery-card">
+                                <div class="dash-gallery-img-wrap">
+                                    <span class="dash-gallery-tag" style="border-left: 3px solid ${col};">${item.category || 'Activity'}</span>
+                                    ${item.image 
+                                        ? `<img src="${item.image}" alt="${item.title}" class="dash-gallery-img" onerror="this.src='${DEFAULT_AVATAR_PLACEHOLDER}'" />` 
+                                        : `<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-muted);">No Image</div>`
+                                    }
+                                </div>
+                                <div class="dash-gallery-info">
+                                    <h4 class="dash-gallery-title">${item.title || 'GDGoC UNM Activity'}</h4>
+                                    ${item.desc ? `<p class="dash-gallery-desc">${item.desc}</p>` : ''}
+                                </div>
+                                <div class="dash-gallery-footer">
+                                    <span style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono);">${item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Active'}</span>
+                                    <button class="dash-action-btn delete" onclick="confirmDeleteGalleryItem('${item.id}', '${(item.title || 'photo').replace(/'/g, "\\'")}')">
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+                window.openUploadGalleryModal = function () {
+                    selectedGalleryFiles = [];
+                    document.getElementById('galleryFormTitle').value = '';
+                    document.getElementById('galleryFormCategory').value = 'Workshop';
+                    document.getElementById('galleryFormColor').value = 'blue';
+                    document.getElementById('galleryFormDesc').value = '';
+                    document.getElementById('galleryMultiFileInput').value = '';
+
+                    document.getElementById('galleryPreviewContainer').style.display = 'none';
+                    document.getElementById('galleryPreviewList').innerHTML = '';
+                    document.getElementById('galleryUploadProgressWrap').style.display = 'none';
+                    document.getElementById('gallerySubmitBtn').disabled = true;
+
+                    openModal('galleryUploadModalBackdrop');
+                };
+
+                window.handleGalleryMultiFileSelect = function (e) {
+                    const files = Array.from(e.target.files || []);
+                    if (!files || files.length === 0) return;
+
+                    files.forEach(f => {
+                        const exists = selectedGalleryFiles.some(existing => existing.name === f.name && existing.size === f.size);
+                        if (!exists) {
+                            selectedGalleryFiles.push(f);
+                        }
+                    });
+
+                    renderSelectedGalleryPreviews();
+                };
+
+                function renderSelectedGalleryPreviews() {
+                    const container = document.getElementById('galleryPreviewContainer');
+                    const list = document.getElementById('galleryPreviewList');
+                    const countLabel = document.getElementById('gallerySelectedFilesCount');
+                    const submitBtn = document.getElementById('gallerySubmitBtn');
+
+                    if (selectedGalleryFiles.length === 0) {
+                        container.style.display = 'none';
+                        submitBtn.disabled = true;
+                        return;
+                    }
+
+                    container.style.display = 'block';
+                    submitBtn.disabled = false;
+
+                    const totalSizeMB = (selectedGalleryFiles.reduce((acc, f) => acc + f.size, 0) / (1024 * 1024)).toFixed(2);
+                    countLabel.textContent = `Selected: ${selectedGalleryFiles.length} photos (${totalSizeMB} MB)`;
+
+                    list.innerHTML = selectedGalleryFiles.map((file, idx) => {
+                        const previewUrl = URL.createObjectURL(file);
+                        return `
+                            <div class="gallery-preview-item" title="${file.name}">
+                                <img src="${previewUrl}" class="gallery-preview-img" alt="preview" />
+                                <button type="button" class="gallery-preview-remove" onclick="removeSelectedGalleryFile(${idx})" title="Remove photo">✕</button>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+                window.removeSelectedGalleryFile = function (index) {
+                    selectedGalleryFiles.splice(index, 1);
+                    renderSelectedGalleryPreviews();
+                };
+
+                window.clearAllSelectedGalleryFiles = function () {
+                    selectedGalleryFiles = [];
+                    document.getElementById('galleryMultiFileInput').value = '';
+                    renderSelectedGalleryPreviews();
+                };
+
+                window.handleBatchGalleryUpload = async function (e) {
+                    e.preventDefault();
+                    if (selectedGalleryFiles.length === 0) {
+                        alert('Silakan pilih minimal 1 foto untuk di-upload.');
+                        return;
+                    }
+
+                    const submitBtn = document.getElementById('gallerySubmitBtn');
+                    const progressWrap = document.getElementById('galleryUploadProgressWrap');
+                    const statusText = document.getElementById('galleryUploadStatusText');
+                    const progressBar = document.getElementById('galleryUploadProgressBar');
+
+                    submitBtn.disabled = true;
+                    progressWrap.style.display = 'block';
+
+                    const metadata = {
+                        title: document.getElementById('galleryFormTitle').value.trim(),
+                        category: document.getElementById('galleryFormCategory').value,
+                        color: document.getElementById('galleryFormColor').value,
+                        desc: document.getElementById('galleryFormDesc').value.trim()
+                    };
+
+                    try {
+                        await window.GDG_SUPABASE.uploadGalleryImages(
+                            selectedGalleryFiles,
+                            metadata,
+                            (current, total, filename) => {
+                                const percent = Math.round((current / total) * 100);
+                                progressBar.style.width = percent + '%';
+                                statusText.textContent = `Uploading photo ${current} of ${total}: ${filename}...`;
+                            }
+                        );
+
+                        closeModal('galleryUploadModalBackdrop');
+                        showToast(`Successfully uploaded ${selectedGalleryFiles.length} photos!`);
+                        selectedGalleryFiles = [];
+                        await loadGallery();
+                    } catch (err) {
+                        alert('Error uploading gallery photos: ' + err.message);
+                    } finally {
+                        submitBtn.disabled = false;
+                        progressWrap.style.display = 'none';
+                    }
+                };
+
+                window.confirmDeleteGalleryItem = async function (id, title) {
+                    if (confirm(`Hapus foto '${title}' dari galeri? Foto di Supabase Storage juga akan dibersihkan.`)) {
+                        try {
+                            await window.GDG_SUPABASE.deleteGalleryItem(id);
+                            showToast(`Foto '${title}' telah dihapus.`);
+                            await loadGallery();
+                        } catch (err) {
+                            alert('Error: ' + err.message);
+                        }
+                    }
+                };
+
+                document.getElementById('searchGalleryInput')?.addEventListener('input', applyGalleryFilters);
+                document.getElementById('galleryCategoryFilter')?.addEventListener('change', applyGalleryFilters);
+
+                function applyGalleryFilters() {
+                    const q = (document.getElementById('searchGalleryInput')?.value || '').toLowerCase();
+                    const cat = document.getElementById('galleryCategoryFilter')?.value || 'all';
+
+                    const filtered = allGallery.filter(item => {
+                        const matchCat = (cat === 'all') || (item.category === cat);
+                        const matchQ = (item.title && item.title.toLowerCase().includes(q)) || (item.desc && item.desc.toLowerCase().includes(q));
+                        return matchCat && matchQ;
+                    });
+                    renderGalleryCards(filtered);
                 }
 
                 // Track CRUD handlers
@@ -1792,7 +2330,8 @@
                     await Promise.all([
                         loadTracks(),
                         loadTeam(),
-                        loadCertificatesData()
+                        loadCertificatesData(),
+                        loadGallery()
                     ]);
                 }
 
