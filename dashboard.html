@@ -847,6 +847,15 @@
                             </svg>
                             <span>Learning Paths (7)</span>
                         </button>
+                        <button class="dash-tab-btn" data-tab="tab-events" role="tab" aria-selected="false">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <span id="tabEventsLabel">Events</span>
+                        </button>
                         <button class="dash-tab-btn" data-tab="tab-team" role="tab" aria-selected="false">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -938,6 +947,20 @@
                                 <div class="metric-label">Gallery Photos</div>
                                 <div class="metric-sub">Event & Activity Moments</div>
                             </div>
+
+                            <div class="metric-card">
+                                <div class="metric-icon-wrap" style="color: var(--google-blue);">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    </svg>
+                                </div>
+                                <div class="metric-value" id="statEventsCount">...</div>
+                                <div class="metric-label">Events & Workshops</div>
+                                <div class="metric-sub">Scheduled Sessions</div>
+                            </div>
                         </div>
 
                         <!-- Quick Action Panels -->
@@ -949,6 +972,15 @@
                                 </div>
                             </div>
                             <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+                                <button class="btn-primary" onclick="switchTab('tab-events'); openAddEventModal();">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    </svg>
+                                    <span>Create Event</span>
+                                </button>
                                 <button class="btn-primary" onclick="switchTab('tab-tracks'); openAddTrackModal();">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                         <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -1023,6 +1055,59 @@
                                         </tr>
                                     </thead>
                                     <tbody id="tracksTableBody">
+                                        <!-- Dynamically populated -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ====================================================================
+                       TAB: EVENTS & WORKSHOPS CRUD
+                       ==================================================================== -->
+                    <div class="dash-section-pane" id="tab-events">
+                        <div class="dash-panel">
+                            <div class="dash-panel-header">
+                                <div>
+                                    <h2 class="dash-panel-title">Events & Workshops Roster</h2>
+                                    <p class="dash-panel-desc">Manage posters, schedule, speakers, and moderators for GDGoC UNM sessions</p>
+                                </div>
+                                <div class="dash-panel-actions">
+                                    <select class="dash-form-select" id="eventStatusFilter" style="padding: 8px 14px; border-radius: var(--radius-pill);">
+                                        <option value="all">All Status</option>
+                                        <option value="Upcoming">Upcoming</option>
+                                        <option value="Completed">Completed</option>
+                                    </select>
+                                    <input
+                                        type="text"
+                                        class="dash-search-input"
+                                        id="searchEventsInput"
+                                        placeholder="Search event title, speaker..."
+                                    />
+                                    <button class="btn-primary" onclick="openAddEventModal()">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        </svg>
+                                        <span>Create Event</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="dash-table-wrapper">
+                                <table class="dash-table" id="eventsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Event & Poster</th>
+                                            <th>Category</th>
+                                            <th>Date & Time</th>
+                                            <th>Location</th>
+                                            <th>Speaker & Moderator</th>
+                                            <th>Status</th>
+                                            <th style="text-align: right;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="eventsTableBody">
                                         <!-- Dynamically populated -->
                                     </tbody>
                                 </table>
@@ -1516,6 +1601,116 @@
             </div>
         </div>
 
+        <!-- Modal: Add / Edit Event -->
+        <div class="dash-modal-backdrop" id="eventModalBackdrop">
+            <div class="dash-modal" style="max-width: 720px;">
+                <div class="dash-modal-header">
+                    <h3 class="dash-modal-title" id="eventModalTitle">Create New Event</h3>
+                    <button class="dash-modal-close" onclick="closeModal('eventModalBackdrop')" aria-label="Close modal">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <form id="eventForm" onsubmit="handleSaveEvent(event)">
+                    <input type="hidden" id="eventFormId" />
+                    <input type="hidden" id="eventOriginalId" />
+                    <div class="dash-form-grid">
+                        <!-- Poster Direct Upload -->
+                        <div class="dash-form-group dash-form-full">
+                            <label class="dash-form-label">Event Poster Image</label>
+                            <div class="dash-upload-zone" id="eventPosterUploadZone">
+                                <div class="dash-upload-preview-wrapper" style="width: 70px; height: 90px; border-radius: 6px;">
+                                    <img id="eventPosterPreview" src="" alt="Poster" class="dash-upload-preview" />
+                                </div>
+                                <div class="dash-upload-info">
+                                    <div class="dash-upload-actions">
+                                        <input type="file" id="eventPosterFileInput" accept="image/*" style="display: none;" />
+                                        <button type="button" class="btn-secondary" onclick="document.getElementById('eventPosterFileInput').click()">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                                <polyline points="17 8 12 3 7 8"></polyline>
+                                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                                            </svg>
+                                            <span>Choose Poster File</span>
+                                        </button>
+                                        <button type="button" class="btn-secondary" id="eventRemovePosterBtn" style="display: none;" onclick="clearEventPoster()">
+                                            <span>Reset Poster</span>
+                                        </button>
+                                    </div>
+                                    <div class="dash-upload-hint" id="eventPosterUploadStatus">Select an image file (auto-uploaded to Supabase Storage).</div>
+                                    <input type="hidden" id="eventFormPoster" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dash-form-group dash-form-full">
+                            <label class="dash-form-label">Nama Event (Main Title)</label>
+                            <input type="text" id="eventFormTitle" class="dash-form-input" placeholder="e.g. Weekly Class #2 Problem Statement & Figma Project Setup" required />
+                        </div>
+
+                        <div class="dash-form-group">
+                            <label class="dash-form-label">Category / Sub-header</label>
+                            <input type="text" id="eventFormCategory" class="dash-form-input" placeholder="e.g. Weekly Class #2 — UI/UX Design" required />
+                        </div>
+
+                        <div class="dash-form-group">
+                            <label class="dash-form-label">Status</label>
+                            <select id="eventFormStatus" class="dash-form-select">
+                                <option value="Upcoming">Upcoming</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+
+                        <div class="dash-form-group dash-form-full">
+                            <label class="dash-form-label">Tempat / Lokasi</label>
+                            <input type="text" id="eventFormLocation" class="dash-form-input" placeholder="e.g. Offline: Telkom AI Connect Makassar (*Limited for 30 Participants)" required />
+                        </div>
+
+                        <div class="dash-form-group">
+                            <label class="dash-form-label">Tanggal</label>
+                            <input type="text" id="eventFormDate" class="dash-form-input" placeholder="e.g. Saturday, November 14, 2026" required />
+                        </div>
+
+                        <div class="dash-form-group">
+                            <label class="dash-form-label">Waktu</label>
+                            <input type="text" id="eventFormTime" class="dash-form-input" placeholder="e.g. 13.00 WITA - Finish" required />
+                        </div>
+
+                        <div class="dash-form-group">
+                            <label class="dash-form-label">Nama Speaker</label>
+                            <input type="text" id="eventFormSpeaker" class="dash-form-input" placeholder="e.g. Andi Muh. Yusran Haris" required />
+                        </div>
+
+                        <div class="dash-form-group">
+                            <label class="dash-form-label">Role / Divisi Speaker</label>
+                            <input type="text" id="eventFormSpeakerRole" class="dash-form-input" placeholder="e.g. Research & Development" />
+                        </div>
+
+                        <div class="dash-form-group">
+                            <label class="dash-form-label">Nama Moderator</label>
+                            <input type="text" id="eventFormModerator" class="dash-form-input" placeholder="e.g. Azzahra Suci Ramadhani" required />
+                        </div>
+
+                        <div class="dash-form-group">
+                            <label class="dash-form-label">Role / Divisi Moderator</label>
+                            <input type="text" id="eventFormModeratorRole" class="dash-form-input" placeholder="e.g. Relation & Communication" />
+                        </div>
+
+                        <div class="dash-form-group dash-form-full">
+                            <label class="dash-form-label">Link Pendaftaran / Lokasi (Optional)</label>
+                            <input type="url" id="eventFormRegUrl" class="dash-form-input" placeholder="https://s.id/gdgoc-unm" />
+                        </div>
+                    </div>
+                    <div class="dash-modal-footer">
+                        <button type="button" class="btn-secondary" onclick="closeModal('eventModalBackdrop')">Cancel</button>
+                        <button type="submit" class="btn-primary">Save Event</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- Toast Notification Alert -->
         <div class="dash-toast" id="dashToast" role="alert">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--google-green);">
@@ -1535,12 +1730,14 @@
                 'use strict';
 
                 let allTracks = [];
+                let allEvents = [];
                 let allTeam = [];
                 let allCerts = [];
                 let allGallery = [];
                 let selectedGalleryFiles = [];
                 let selectedMemberFile = null;
                 let selectedTrackLeadFile = null;
+                let selectedEventPosterFile = null;
 
                 const DEFAULT_AVATAR_PLACEHOLDER = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 24 24' fill='none' stroke='%2380868b' stroke-width='1.5'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E";
 
@@ -1648,6 +1845,226 @@
                             </td>
                         </tr>
                     `).join('');
+                }
+
+                // --------------------------------------------------------------------
+                // Events & Workshops Management
+                // --------------------------------------------------------------------
+                async function loadEvents() {
+                    if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.getEvents === 'function') {
+                        allEvents = await window.GDG_SUPABASE.getEvents();
+                    } else {
+                        allEvents = (window.GDG_DATA && window.GDG_DATA.events) || [];
+                    }
+                    const statEl = document.getElementById('statEventsCount');
+                    if (statEl) statEl.textContent = allEvents.length;
+
+                    const labelEl = document.getElementById('tabEventsLabel');
+                    if (labelEl) labelEl.textContent = `Events (${allEvents.length})`;
+
+                    renderEventsTable(allEvents);
+                }
+
+                function renderEventsTable(events) {
+                    const tbody = document.getElementById('eventsTableBody');
+                    if (!tbody) return;
+
+                    if (!events || events.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 28px; color: var(--text-muted);">No events found. Click "+ Create Event" to add one.</td></tr>`;
+                        return;
+                    }
+
+                    tbody.innerHTML = events.map(ev => {
+                        const isUpcoming = (ev.status || 'Upcoming').toLowerCase() === 'upcoming';
+                        const posterSrc = ev.poster || 'assets/images/events/weekly-class-2.jpg';
+
+                        return `
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <div style="width: 44px; height: 56px; border-radius: 4px; overflow: hidden; background: #11141c; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.12);">
+                                            <img src="${posterSrc}" alt="${ev.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='assets/images/events/weekly-class-2.jpg'" />
+                                        </div>
+                                        <div>
+                                            <strong style="color: #ffffff; font-size: 0.92rem;">${ev.title}</strong>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="dash-badge">${ev.category || 'Weekly Class'}</span></td>
+                                <td>
+                                    <div style="color: #ffffff; font-weight: 500; font-size: 0.84rem;">${ev.date}</div>
+                                    <div style="font-size: 0.74rem; color: var(--text-muted);">${ev.time}</div>
+                                </td>
+                                <td style="max-width: 220px; font-size: 0.82rem; color: var(--text-secondary);">${ev.location}</td>
+                                <td>
+                                    <div style="font-size: 0.84rem;"><strong style="color: #ffffff;">${ev.speaker}</strong> <span style="font-size: 0.72rem; color: var(--text-muted);">(${ev.speakerRole || 'Speaker'})</span></div>
+                                    <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px;">Mod: ${ev.moderator}</div>
+                                </td>
+                                <td>
+                                    <span class="dash-badge ${isUpcoming ? 'badge-valid' : ''}">${ev.status || 'Upcoming'}</span>
+                                </td>
+                                <td style="text-align: right; white-space: nowrap;">
+                                    <button class="dash-action-btn" onclick="openEditEventModal('${ev.id}')">Edit</button>
+                                    <button class="dash-action-btn delete" onclick="confirmDeleteEvent('${ev.id}', '${(ev.title || 'event').replace(/'/g, "\\'")}')">Delete</button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+
+                window.openAddEventModal = function () {
+                    document.getElementById('eventModalTitle').textContent = 'Create New Event';
+                    document.getElementById('eventFormId').value = '';
+                    document.getElementById('eventOriginalId').value = '';
+                    document.getElementById('eventFormTitle').value = '';
+                    document.getElementById('eventFormCategory').value = 'Weekly Class';
+                    document.getElementById('eventFormStatus').value = 'Upcoming';
+                    document.getElementById('eventFormLocation').value = 'Offline: Telkom AI Connect Makassar (*Limited for 30 Participants)';
+                    document.getElementById('eventFormDate').value = '';
+                    document.getElementById('eventFormTime').value = '13.00 WITA - Finish';
+                    document.getElementById('eventFormSpeaker').value = '';
+                    document.getElementById('eventFormSpeakerRole').value = 'Research & Development';
+                    document.getElementById('eventFormModerator').value = '';
+                    document.getElementById('eventFormModeratorRole').value = 'Relation & Communication';
+                    document.getElementById('eventFormRegUrl').value = 'https://s.id/gdgoc-unm';
+
+                    selectedEventPosterFile = null;
+                    if (document.getElementById('eventPosterFileInput')) document.getElementById('eventPosterFileInput').value = '';
+                    document.getElementById('eventFormPoster').value = '';
+                    document.getElementById('eventPosterPreview').src = DEFAULT_AVATAR_PLACEHOLDER;
+                    document.getElementById('eventRemovePosterBtn').style.display = 'none';
+                    document.getElementById('eventPosterUploadStatus').textContent = 'Select a poster image (auto-uploaded to Supabase Storage).';
+
+                    openModal('eventModalBackdrop');
+                };
+
+                window.openEditEventModal = function (eventId) {
+                    const ev = allEvents.find(e => e.id === eventId);
+                    if (!ev) return;
+
+                    document.getElementById('eventModalTitle').textContent = 'Edit Event: ' + ev.title;
+                    document.getElementById('eventFormId').value = ev.id || '';
+                    document.getElementById('eventOriginalId').value = ev.id || '';
+                    document.getElementById('eventFormTitle').value = ev.title || '';
+                    document.getElementById('eventFormCategory').value = ev.category || 'Weekly Class';
+                    document.getElementById('eventFormStatus').value = ev.status || 'Upcoming';
+                    document.getElementById('eventFormLocation').value = ev.location || '';
+                    document.getElementById('eventFormDate').value = ev.date || '';
+                    document.getElementById('eventFormTime').value = ev.time || '';
+                    document.getElementById('eventFormSpeaker').value = ev.speaker || '';
+                    document.getElementById('eventFormSpeakerRole').value = ev.speakerRole || '';
+                    document.getElementById('eventFormModerator').value = ev.moderator || '';
+                    document.getElementById('eventFormModeratorRole').value = ev.moderatorRole || '';
+                    document.getElementById('eventFormRegUrl').value = ev.registrationUrl || '';
+
+                    selectedEventPosterFile = null;
+                    if (document.getElementById('eventPosterFileInput')) document.getElementById('eventPosterFileInput').value = '';
+                    const curPoster = ev.poster || '';
+                    document.getElementById('eventFormPoster').value = curPoster;
+                    if (curPoster) {
+                        document.getElementById('eventPosterPreview').src = curPoster;
+                        document.getElementById('eventRemovePosterBtn').style.display = 'inline-flex';
+                        document.getElementById('eventPosterUploadStatus').textContent = 'Current poster loaded. Choose file to replace.';
+                    } else {
+                        document.getElementById('eventPosterPreview').src = DEFAULT_AVATAR_PLACEHOLDER;
+                        document.getElementById('eventRemovePosterBtn').style.display = 'none';
+                        document.getElementById('eventPosterUploadStatus').textContent = 'No poster set. Choose an image file.';
+                    }
+
+                    openModal('eventModalBackdrop');
+                };
+
+                window.clearEventPoster = function () {
+                    selectedEventPosterFile = null;
+                    if (document.getElementById('eventPosterFileInput')) document.getElementById('eventPosterFileInput').value = '';
+                    document.getElementById('eventFormPoster').value = '';
+                    document.getElementById('eventPosterPreview').src = DEFAULT_AVATAR_PLACEHOLDER;
+                    document.getElementById('eventRemovePosterBtn').style.display = 'none';
+                    document.getElementById('eventPosterUploadStatus').textContent = 'Poster cleared.';
+                };
+
+                document.getElementById('eventPosterFileInput')?.addEventListener('change', function (e) {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    selectedEventPosterFile = file;
+                    const previewUrl = URL.createObjectURL(file);
+                    document.getElementById('eventPosterPreview').src = previewUrl;
+                    document.getElementById('eventRemovePosterBtn').style.display = 'inline-flex';
+                    document.getElementById('eventPosterUploadStatus').textContent = `Ready: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                });
+
+                window.handleSaveEvent = async function (e) {
+                    e.preventDefault();
+                    const submitBtn = e.target.querySelector('button[type="submit"]');
+                    const origBtnText = submitBtn.innerHTML;
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span>Saving Event...</span>';
+
+                    const originalId = document.getElementById('eventOriginalId').value.trim();
+
+                    try {
+                        let finalPoster = document.getElementById('eventFormPoster').value.trim();
+                        if (selectedEventPosterFile) {
+                            document.getElementById('eventPosterUploadStatus').textContent = 'Uploading poster to Supabase Storage...';
+                            finalPoster = await window.GDG_SUPABASE.uploadImage(selectedEventPosterFile, 'events');
+                        }
+
+                        const eventData = {
+                            id: document.getElementById('eventFormId').value || undefined,
+                            title: document.getElementById('eventFormTitle').value.trim(),
+                            category: document.getElementById('eventFormCategory').value.trim(),
+                            poster: finalPoster || 'assets/images/events/weekly-class-2.jpg',
+                            location: document.getElementById('eventFormLocation').value.trim(),
+                            date: document.getElementById('eventFormDate').value.trim(),
+                            time: document.getElementById('eventFormTime').value.trim(),
+                            speaker: document.getElementById('eventFormSpeaker').value.trim(),
+                            speakerRole: document.getElementById('eventFormSpeakerRole').value.trim(),
+                            moderator: document.getElementById('eventFormModerator').value.trim(),
+                            moderatorRole: document.getElementById('eventFormModeratorRole').value.trim(),
+                            registrationUrl: document.getElementById('eventFormRegUrl').value.trim() || '#',
+                            status: document.getElementById('eventFormStatus').value
+                        };
+
+                        await window.GDG_SUPABASE.saveEvent(eventData, originalId);
+                        closeModal('eventModalBackdrop');
+                        showToast(`Event '${eventData.title}' saved.`);
+                        await loadEvents();
+                    } catch (err) {
+                        alert('Error saving event: ' + err.message);
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = origBtnText;
+                    }
+                };
+
+                window.confirmDeleteEvent = async function (id, title) {
+                    if (confirm(`Hapus event '${title}'? Poster di Supabase Storage juga akan dibersihkan.`)) {
+                        try {
+                            await window.GDG_SUPABASE.deleteEvent(id);
+                            showToast(`Event '${title}' dihapus.`);
+                            await loadEvents();
+                        } catch (err) {
+                            alert('Error: ' + err.message);
+                        }
+                    }
+                };
+
+                // Filter & Search handlers for Events
+                document.getElementById('searchEventsInput')?.addEventListener('input', applyEventFilters);
+                document.getElementById('eventStatusFilter')?.addEventListener('change', applyEventFilters);
+
+                function applyEventFilters() {
+                    const q = (document.getElementById('searchEventsInput')?.value || '').toLowerCase();
+                    const status = document.getElementById('eventStatusFilter')?.value || 'all';
+
+                    const filtered = allEvents.filter(ev => {
+                        const matchStatus = (status === 'all') || (ev.status === status);
+                        const matchQ = (ev.title && ev.title.toLowerCase().includes(q)) || 
+                                       (ev.speaker && ev.speaker.toLowerCase().includes(q)) ||
+                                       (ev.location && ev.location.toLowerCase().includes(q));
+                        return matchStatus && matchQ;
+                    });
+                    renderEventsTable(filtered);
                 }
 
                 // Load Core Team
@@ -2329,6 +2746,7 @@
                     await checkConnection();
                     await Promise.all([
                         loadTracks(),
+                        loadEvents(),
                         loadTeam(),
                         loadCertificatesData(),
                         loadGallery()

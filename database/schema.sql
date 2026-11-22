@@ -144,3 +144,34 @@ DROP POLICY IF EXISTS "Anon Full Access Gallery" ON activity_gallery;
 CREATE POLICY "Anon Full Access Gallery" ON activity_gallery 
     FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
 
+-- ------------------------------------------------------------------------
+-- 5. Table: events
+-- ------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS events (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(250) NOT NULL,
+    category VARCHAR(100) DEFAULT 'Weekly Class',
+    poster_url TEXT,
+    location VARCHAR(200) NOT NULL,
+    date VARCHAR(100) NOT NULL,
+    time VARCHAR(100) NOT NULL,
+    speaker VARCHAR(150) NOT NULL,
+    speaker_role VARCHAR(100) DEFAULT 'Speaker',
+    moderator VARCHAR(150) NOT NULL,
+    moderator_role VARCHAR(100) DEFAULT 'Moderator',
+    registration_url TEXT DEFAULT '#',
+    status VARCHAR(50) DEFAULT 'Upcoming',
+    badge_color VARCHAR(20) DEFAULT 'blue',
+    order_index INT DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE events ENABLE ROW LEVEL SECURITY;
+GRANT ALL ON TABLE events TO anon, authenticated;
+
+DROP POLICY IF EXISTS "Anon Full Access Events" ON events;
+CREATE POLICY "Anon Full Access Events" ON events 
+    FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
+
+

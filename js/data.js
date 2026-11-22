@@ -274,66 +274,26 @@ const GDG_DATA = {
         }
     ],
 
-    // Google Events directly from gdgoc-unm.vercel.app
-    googleEventsIntro:
-        "Discover various events and competitions from Google that you can join to hone your skills, gain experience, and continue growing in the tech world.",
+    // Google Events & Workshops directly managed via Dashboard & Supabase
+    eventsIntro:
+        "Join our interactive workshops, weekly study jams, and technical classes hosted by GDGoC UNM leads and industry mentors.",
     events: [
         {
-            id: "juaragcp",
-            title: "JuaraGCP",
-            color: "blue",
-            desc: "JuaraGCP is a cloud computing learning program for Indonesian developers through Qwiklabs / Google Cloud Skills Boost. Take the training, master cloud technology, and get ready to earn GCP certifications to advance your career in the digital world.",
-            link: "https://cloud.google.com/innovators/juaragcp",
-            linkLabel: "Learn More",
-            highlights: [
-                "Free Google Cloud Labs",
-                "Official Digital Badges",
-                "Exclusive Google Swag",
-                "Certification Readiness",
-            ],
-        },
-        {
-            id: "solution-challenge",
-            title: "Google Solution Challenge",
-            color: "green",
-            desc: "Annual worldwide competition inviting university students to build solutions for one or more of the 17 United Nations Sustainable Development Goals using Google technologies.",
-            link: "https://developers.google.com/community/gdsc-solution-challenge",
-            linkLabel: "Explore Challenge",
-            highlights: [
-                "Mentorship from Google Engineers",
-                "$10,000+ Prize Pool",
-                "Global Showcase",
-                "Impactful Solutions",
-            ],
-        },
-        {
-            id: "build-with-ai",
-            title: "Build with AI & Gemini",
-            color: "yellow",
-            desc: "Hands-on workshops focused on integrating modern Generative AI capabilities—including Gemini 2.5, Gemma open models, and Google AI Studio—into student applications.",
-            link: "https://developers.google.com/events",
-            linkLabel: "Join Sessions",
-            highlights: [
-                "Prompt Engineering",
-                "Gemini API Access",
-                "GenAI Project Demos",
-                "Q&A with Experts",
-            ],
-        },
-        {
-            id: "devfest",
-            title: "DevFest Makassar",
-            color: "red",
-            desc: "The largest annual developer conference in Eastern Indonesia hosted by Google Developer Groups, featuring keynote speakers, community showcases, and developer networking.",
-            link: "https://gdg.community.dev/events/",
-            linkLabel: "View DevFest",
-            highlights: [
-                "Keynote Presentations",
-                "Developer Stages",
-                "Tech Exhibition",
-                "Networking Hub",
-            ],
-        },
+            id: "event-wc-2",
+            title: "Weekly Class #2 Problem Statement & Figma Project Setup",
+            category: "Weekly Class #2 — UI/UX Design",
+            poster: "assets/images/events/weekly-class-2.jpg",
+            location: "Offline: Telkom AI Connect Makassar (*Limited for 30 Participants)",
+            date: "Saturday, November 14, 2026",
+            time: "13.00 WITA - Finish",
+            speaker: "Andi Muh. Yusran Haris",
+            speakerRole: "Research & Development",
+            moderator: "Azzahra Suci Ramadhani",
+            moderatorRole: "Relation & Communication",
+            registrationUrl: "https://s.id/gdgoc-unm",
+            status: "Upcoming",
+            color: "blue"
+        }
     ],
 
     // Official Core Team Structure GDGoC UNM 2026/2027 from GDGOC FINAL - Divisi.pdf

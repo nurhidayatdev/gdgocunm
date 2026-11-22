@@ -185,6 +185,54 @@
     }
 
     /**
+     * Fallback to static events from window.GDG_DATA.events or localStorage
+     */
+    function getLocalEvents() {
+        try {
+            const cached = localStorage.getItem('GDG_LOCAL_EVENTS');
+            if (cached) {
+                const parsed = JSON.parse(cached);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    return parsed;
+                }
+            }
+        } catch (e) {}
+
+        const globalData = (typeof GDG_DATA !== 'undefined') ? GDG_DATA : (typeof window !== 'undefined' ? window.GDG_DATA : null);
+        if (globalData && Array.isArray(globalData.events) && globalData.events.length > 0) {
+            return JSON.parse(JSON.stringify(globalData.events));
+        }
+
+        return [];
+    }
+
+    function saveLocalEvents(events) {
+        try {
+            localStorage.setItem('GDG_LOCAL_EVENTS', JSON.stringify(events));
+        } catch (e) {}
+    }
+
+    function mapEventRow(row) {
+        return {
+            id: row.id,
+            title: row.title || 'GDGoC UNM Event',
+            category: row.category || 'Weekly Class',
+            poster: row.poster_url || 'assets/images/events/weekly-class-2.jpg',
+            location: row.location || 'Offline / Online',
+            date: row.date || '',
+            time: row.time || '',
+            speaker: row.speaker || '',
+            speakerRole: row.speaker_role || 'Speaker',
+            moderator: row.moderator || '',
+            moderatorRole: row.moderator_role || 'Moderator',
+            registrationUrl: row.registration_url || '#',
+            status: row.status || 'Upcoming',
+            color: row.badge_color || 'blue',
+            createdAt: row.created_at
+        };
+    }
+
+    /**
      * Map Supabase learning_paths row + modules to frontend format
      */
     function mapTrackRow(row, modules = []) {
@@ -855,6 +903,134 @@
 
             const updatedGallery = localGallery.filter(g => g.id !== id);
             saveLocalGallery(updatedGallery);
+            return true;
+        },
+
+        // --------------------------------------------------------------------
+        // EVENTS CRUD (Posters, Schedule, Speakers & Moderators)
+        // --------------------------------------------------------------------
+        async getEvents() {
+            const client = initSupabase();
+            if (!client) {
+                return getLocalEvents();
+            }
+
+            try {
+                const { data, error } = await client
+                    .from('events')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error || !data || data.length === 0) {
+                    return getLocalEvents();
+                }
+
+                return data.map(mapEventRow);
+            } catch (err) {
+                console.warn('[GDG Supabase] getEvents error, falling back to local:', err);
+                return getLocalEvents();
+            }
+        },
+
+        async saveEvent(eventData, originalId = '') {
+            const client = initSupabase();
+            const payload = {
+                title: eventData.title,
+                category: eventData.category || 'Weekly Class',
+                poster_url: eventData.poster || '',
+                location: eventData.location,
+                date: eventData.date,
+                time: eventData.time,
+                speaker: eventData.speaker,
+                speaker_role: eventData.speakerRole || 'Speaker',
+                moderator: eventData.moderator,
+                moderator_role: eventData.moderatorRole || 'Moderator',
+                registration_url: eventData.registrationUrl || '#',
+                status: eventData.status || 'Upcoming',
+                badge_color: eventData.color || 'blue'
+            };
+
+            if (eventData.id && !String(eventData.id).startsWith('temp-')) {
+                payload.id = eventData.id;
+            }
+
+            // Check if replacing an existing Supabase Storage poster to delete old file
+            let oldPosterUrl = '';
+            const existingEvent = getLocalEvents().find(ev =>
+                (eventData.id && ev.id === eventData.id) ||
+                (originalId && ev.id === originalId) ||
+                ev.title === eventData.title
+            );
+            if (existingEvent && existingEvent.poster) {
+                oldPosterUrl = existingEvent.poster;
+            }
+
+            let savedId = eventData.id;
+            if (client) {
+                try {
+                    if (eventData.id && !String(eventData.id).startsWith('temp-')) {
+                        const { data } = await client.from('events').update(payload).eq('id', eventData.id).select().single();
+                        if (data) savedId = data.id;
+                    } else if (originalId && !String(originalId).startsWith('temp-')) {
+                        const { data } = await client.from('events').update(payload).eq('id', originalId).select().single();
+                        if (data) savedId = data.id;
+                    } else {
+                        const { data } = await client.from('events').insert(payload).select().single();
+                        if (data) savedId = data.id;
+                    }
+                } catch (err) {
+                    console.warn('[Supabase Event Save]', err);
+                }
+            }
+
+            // Cleanup old poster if changed
+            if (oldPosterUrl && payload.poster_url && oldPosterUrl !== payload.poster_url) {
+                await this.deleteImageFromStorage(oldPosterUrl);
+            }
+
+            const events = getLocalEvents();
+            const newEvent = { ...eventData, id: savedId || eventData.id || 'temp-' + Date.now() };
+            const idx = events.findIndex(ev => (eventData.id && ev.id === eventData.id) || (originalId && ev.id === originalId) || ev.title === eventData.title);
+            if (idx >= 0) {
+                events[idx] = { ...events[idx], ...newEvent };
+            } else {
+                events.unshift(newEvent);
+            }
+            saveLocalEvents(events);
+            return newEvent;
+        },
+
+        async deleteEvent(eventId) {
+            const client = initSupabase();
+            let posterToDelete = '';
+
+            const localEvents = getLocalEvents();
+            const target = localEvents.find(ev => ev.id === eventId);
+            if (target && target.poster) {
+                posterToDelete = target.poster;
+            }
+
+            if (client) {
+                try {
+                    if (!posterToDelete && eventId && !String(eventId).startsWith('temp-')) {
+                        const { data } = await client.from('events').select('poster_url').eq('id', eventId).single();
+                        if (data && data.poster_url) posterToDelete = data.poster_url;
+                    }
+                } catch (e) {}
+
+                if (eventId && !String(eventId).startsWith('temp-')) {
+                    const { error } = await client.from('events').delete().eq('id', eventId);
+                    if (error) console.warn('[Supabase Event Delete DB]', error.message);
+                }
+            }
+
+            // Cleanup poster file from Supabase Storage
+            if (posterToDelete) {
+                await this.deleteImageFromStorage(posterToDelete);
+            }
+
+            const updated = localEvents.filter(ev => ev.id !== eventId);
+            saveLocalEvents(updated);
             return true;
         }
     };
