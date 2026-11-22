@@ -28,8 +28,8 @@
 
             .dash-main-content {
                 flex: 1;
-                padding-top: 108px;
-                padding-bottom: 80px;
+                padding-top: 36px;
+                padding-bottom: 60px;
                 position: relative;
                 z-index: 1;
             }
@@ -584,71 +584,33 @@
         <div class="tech-grid-overlay" aria-hidden="true"></div>
 
         <div class="dash-page-wrapper">
-            <!-- ========================================================================
-               Site Navigation (Strictly Matches index.html & design.md)
-               ======================================================================== -->
-            <header class="site-header" id="main-header">
-                <div class="container">
-                    <nav class="nav-inner" aria-label="Main Navigation">
-                        <!-- Brand Identity -->
-                        <a href="index.html" class="nav-brand">
-                            <div class="nav-logo-icon">
-                                <img
-                                    src="assets/logo/logo-gdgoc.png"
-                                    alt="GDGoC Logo"
-                                    class="brand-logo-img"
-                                />
-                            </div>
-                            <div class="nav-brand-text">
-                                <span class="nav-brand-title">
-                                    GDG <span class="campus-tag">on Campus</span>
-                                </span>
-                                <span class="nav-brand-sub">Universitas Negeri Makassar</span>
-                            </div>
-                        </a>
-
-                        <!-- Desktop Navigation Links -->
-                        <ul class="nav-links">
-                            <li><a href="index.html" class="nav-link">Home</a></li>
-                            <li><a href="learning-path.html" class="nav-link">Learning Path</a></li>
-                            <li><a href="team.html" class="nav-link">Team</a></li>
-                            <li><a href="dashboard.html" class="nav-link active">Dashboard</a></li>
-                            <li><a href="certificate-verification/Index.html" class="nav-link">Verify Certificate</a></li>
-                        </ul>
-
-                        <!-- Action Buttons -->
-                        <div class="nav-actions">
-                            <a
-                                href="https://gdg.community.dev/gdg-on-campus-universitas-negeri-makassar-makassar-indonesia/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="btn-primary"
-                            >
-                                <span>Register Member</span>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <path d="M5 12h14M12 5l7 7-7 7" />
-                                </svg>
-                            </a>
-                        </div>
-                    </nav>
-                </div>
-            </header>
-
-            <!-- ========================================================================
-               Main Dashboard Content Area
-               ======================================================================== -->
+            <!-- Main Dashboard Content Area -->
             <main class="dash-main-content">
                 <div class="container">
                     <!-- Dashboard Top Header Bar -->
                     <div class="dash-header-section">
                         <div class="dash-header-bar">
-                            <div class="dash-title-group">
-                                <h1>Management Dashboard</h1>
-                                <p>Control center for GDGoC UNM curriculum, team roster, and credentials</p>
+                            <div style="display: flex; align-items: center; gap: 14px;">
+                                <a href="index.html" style="text-decoration: none; display: flex; align-items: center;" title="GDGoC UNM">
+                                    <img src="assets/logo/logo-gdgoc.png" alt="GDGoC Logo" style="width: 38px; height: auto;" />
+                                </a>
+                                <div class="dash-title-group">
+                                    <h1>Management Dashboard</h1>
+                                    <p>Control center for GDGoC UNM curriculum, team roster, and credentials</p>
+                                </div>
                             </div>
-                            <div class="dash-status-pill">
-                                <span class="dash-status-dot" id="dbStatusDot"></span>
-                                <span id="dbStatusText">Checking Supabase...</span>
+                            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                                <div class="dash-status-pill">
+                                    <span class="dash-status-dot" id="dbStatusDot"></span>
+                                    <span id="dbStatusText">Checking Supabase...</span>
+                                </div>
+                                <a href="index.html" class="btn-secondary" style="font-size: 0.82rem; padding: 7px 16px;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                    </svg>
+                                    <span>Exit to Website</span>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -1020,52 +982,6 @@
                     </div>
                 </div>
             </main>
-
-            <!-- ========================================================================
-               Site Footer (Strictly Matches design.md)
-               ======================================================================== -->
-            <footer class="site-footer">
-                <div class="container">
-                    <div class="footer-top">
-                        <div class="footer-brand">
-                            <div class="footer-brand-header">
-                                <img
-                                    src="assets/logo/logo-gdgoc-full.png"
-                                    alt="GDGoC UNM"
-                                    class="footer-logo-full"
-                                />
-                            </div>
-                            <p>
-                                Google Developer Groups on Campus at Universitas Negeri Makassar is a student-led developer community supported by Google Developers.
-                            </p>
-                        </div>
-                        <div class="footer-nav-wrapper">
-                            <div class="footer-col">
-                                <h4>Navigation</h4>
-                                <ul class="footer-links">
-                                    <li><a href="index.html">Home</a></li>
-                                    <li><a href="learning-path.html">Learning Path</a></li>
-                                    <li><a href="team.html">Core Team</a></li>
-                                    <li><a href="dashboard.html">Dashboard</a></li>
-                                </ul>
-                            </div>
-                            <div class="footer-col">
-                                <h4>Resources</h4>
-                                <ul class="footer-links">
-                                    <li><a href="certificate-verification/Index.html">Certificate Verification</a></li>
-                                    <li><a href="https://gdg.community.dev/gdg-on-campus-universitas-negeri-makassar-makassar-indonesia/" target="_blank">Google Community Dev</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="footer-bottom">
-                        <div>&copy; 2026 <strong>GDGoC UNM</strong>. All Rights Reserved</div>
-                        <p class="footer-disclaimer">
-                            Google Developer Groups on Campus is an independent group; the activities and opinions expressed here should in no way be attributed to Google, the corporation.
-                        </p>
-                    </div>
-                </div>
-            </footer>
         </div>
 
         <!-- ========================================================================
