@@ -9,26 +9,12 @@
     'use strict';
 
     // ========================================================================
-    // Supabase Project Configuration
+    // Supabase Project Configuration (Directly Configured)
     // ========================================================================
-    let SUPABASE_CONFIG = {
-        url: '', // e.g. 'https://xyzcompany.supabase.co'
-        anonKey: '' // e.g. 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    const SUPABASE_CONFIG = {
+        url: 'https://ryerpuyrfehlfhoqhkxv.supabase.co',
+        anonKey: 'sb_publishable_TNQ71Qk98wTM8LOl6UApVg_qSYAytP6'
     };
-
-    // Load persisted credentials from localStorage if available
-    try {
-        const stored = localStorage.getItem('GDG_SUPABASE_CONFIG');
-        if (stored) {
-            const parsed = JSON.parse(stored);
-            if (parsed.url && parsed.anonKey) {
-                SUPABASE_CONFIG.url = parsed.url;
-                SUPABASE_CONFIG.anonKey = parsed.anonKey;
-            }
-        }
-    } catch (e) {
-        // Ignore localStorage error
-    }
 
     let supabaseClient = null;
 
@@ -307,7 +293,7 @@
             }
         },
 
-        async saveLearningPath(trackData) {
+        async saveLearningPath(trackData, originalId = '') {
             const client = initSupabase();
             const payload = {
                 id: trackData.id,
@@ -340,13 +326,21 @@
             };
 
             if (client) {
-                const { error } = await client.from('learning_paths').upsert(payload);
-                if (error) throw error;
+                try {
+                    if (originalId && originalId === trackData.id) {
+                        const { error } = await client.from('learning_paths').update(payload).eq('id', originalId);
+                        if (error) await client.from('learning_paths').upsert(payload);
+                    } else {
+                        await client.from('learning_paths').upsert(payload);
+                    }
+                } catch (err) {
+                    console.warn('[Supabase Track Save]', err);
+                }
             }
 
-            // Also update local cache
+            // Update local cache in-place (NEVER create duplicate)
             const tracks = getLocalTracks();
-            const existingIdx = tracks.findIndex(t => t.id === trackData.id);
+            const existingIdx = tracks.findIndex(t => (originalId && t.id === originalId) || t.id === trackData.id);
             if (existingIdx >= 0) {
                 tracks[existingIdx] = { ...tracks[existingIdx], ...trackData };
             } else {
@@ -448,7 +442,7 @@
             }
         },
 
-        async saveTeamMember(memberData) {
+        async saveTeamMember(memberData, originalName = '') {
             const client = initSupabase();
             const isLead = memberData.role === 'Lead' || memberData.role === 'Co-Lead' || memberData.isLead === true || memberData.subRole === 'Lead Organizer';
 
@@ -463,19 +457,41 @@
                 socials: memberData.socials || { linkedin: '#', github: '#', instagram: '#' },
                 is_active: memberData.isActive !== false
             };
-            if (memberData.id) payload.id = memberData.id;
+            if (memberData.id && !String(memberData.id).startsWith('temp-')) {
+                payload.id = memberData.id;
+            }
 
             let savedId = memberData.id;
             if (client) {
-                const { data, error } = await client.from('core_team').upsert(payload).select().single();
-                if (error) throw error;
-                if (data && data.id) savedId = data.id;
+                try {
+                    if (memberData.id && !String(memberData.id).startsWith('temp-')) {
+                        const { data } = await client.from('core_team').update(payload).eq('id', memberData.id).select().single();
+                        if (data && data.id) savedId = data.id;
+                    } else if (originalName) {
+                        const { data } = await client.from('core_team').update(payload).eq('name', originalName).select();
+                        if (data && data.length > 0) {
+                            savedId = data[0].id;
+                        } else {
+                            const insertRes = await client.from('core_team').insert(payload).select().single();
+                            if (insertRes.data) savedId = insertRes.data.id;
+                        }
+                    } else {
+                        const { data } = await client.from('core_team').insert(payload).select().single();
+                        if (data) savedId = data.id;
+                    }
+                } catch (err) {
+                    console.warn('[Supabase Team Save]', err);
+                }
             }
 
-            // Update local team
+            // Update local team in-place (NEVER create duplicate)
             const team = getLocalTeam();
-            const newMember = { ...memberData, id: savedId || 'temp-' + Date.now() };
-            const mIdx = team.findIndex(m => (m.id && m.id === memberData.id) || (m.name === memberData.name && m.role === memberData.role));
+            const newMember = { ...memberData, id: savedId || memberData.id || 'temp-' + Date.now() };
+            const mIdx = team.findIndex(m => 
+                (memberData.id && m.id && m.id === memberData.id) || 
+                (originalName && m.name === originalName) || 
+                m.name === memberData.name
+            );
             if (mIdx >= 0) {
                 team[mIdx] = { ...team[mIdx], ...newMember };
             } else {

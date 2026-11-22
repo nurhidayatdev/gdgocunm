@@ -87,8 +87,16 @@ CREATE INDEX IF NOT EXISTS idx_modules_track_id ON learning_path_modules(track_i
 CREATE INDEX IF NOT EXISTS idx_modules_order ON learning_path_modules(order_index);
 
 -- ------------------------------------------------------------------------
--- Row Level Security (RLS) Policies
+-- Permissions & Row Level Security (RLS) Policies
 -- ------------------------------------------------------------------------
+GRANT USAGE ON SCHEMA public TO anon, authenticated;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated;
+GRANT ALL ON ALL ROUTINES IN SCHEMA public TO anon, authenticated;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO anon, authenticated;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO anon, authenticated;
+
 ALTER TABLE core_team ENABLE ROW LEVEL SECURITY;
 ALTER TABLE learning_paths ENABLE ROW LEVEL SECURITY;
 ALTER TABLE learning_path_modules ENABLE ROW LEVEL SECURITY;
@@ -100,23 +108,16 @@ DROP POLICY IF EXISTS "Public Read Modules" ON learning_path_modules;
 DROP POLICY IF EXISTS "Admin Full Access Team" ON core_team;
 DROP POLICY IF EXISTS "Admin Full Access Paths" ON learning_paths;
 DROP POLICY IF EXISTS "Admin Full Access Modules" ON learning_path_modules;
+DROP POLICY IF EXISTS "Anon Full Access Team" ON core_team;
+DROP POLICY IF EXISTS "Anon Full Access Paths" ON learning_paths;
+DROP POLICY IF EXISTS "Anon Full Access Modules" ON learning_path_modules;
 
--- PUBLIC READ (Anonymous visitors can read active records)
-CREATE POLICY "Public Read Team" ON core_team 
-    FOR SELECT USING (is_active = true);
+-- Full Access for Dashboard & Public Visitors
+CREATE POLICY "Anon Full Access Team" ON core_team 
+    FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
 
-CREATE POLICY "Public Read Learning Paths" ON learning_paths 
-    FOR SELECT USING (is_active = true);
+CREATE POLICY "Anon Full Access Paths" ON learning_paths 
+    FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
 
-CREATE POLICY "Public Read Modules" ON learning_path_modules 
-    FOR SELECT USING (true);
-
--- ADMIN FULL ACCESS (Authenticated users in Supabase Studio / Auth)
-CREATE POLICY "Admin Full Access Team" ON core_team 
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
-
-CREATE POLICY "Admin Full Access Paths" ON learning_paths 
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
-
-CREATE POLICY "Admin Full Access Modules" ON learning_path_modules 
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Anon Full Access Modules" ON learning_path_modules 
+    FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);

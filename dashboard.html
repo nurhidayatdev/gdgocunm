@@ -649,13 +649,6 @@
                             </svg>
                             <span>Certificates Database</span>
                         </button>
-                        <button class="dash-tab-btn" data-tab="tab-settings" role="tab" aria-selected="false">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="3"></circle>
-                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                            </svg>
-                            <span>Supabase Settings</span>
-                        </button>
                     </div>
 
                     <!-- ====================================================================
@@ -743,13 +736,6 @@
                                     </svg>
                                     <span>Open Spreadsheet Database</span>
                                 </a>
-                                <button class="btn-secondary" onclick="switchTab('tab-settings');">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="12" cy="12" r="3"></circle>
-                                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                                    </svg>
-                                    <span>Configure Supabase Keys</span>
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -920,66 +906,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- ====================================================================
-                       TAB 5: SUPABASE SETTINGS & CREDENTIALS
-                       ==================================================================== -->
-                    <div class="dash-section-pane" id="tab-settings">
-                        <div class="dash-panel" style="max-width: 760px; margin: 0 auto;">
-                            <div class="dash-panel-header">
-                                <div>
-                                    <h2 class="dash-panel-title">Supabase Database Credentials</h2>
-                                    <p class="dash-panel-desc">Configure your live Supabase Project URL and Public Anon Key</p>
-                                </div>
-                            </div>
-
-                            <form id="supabaseConfigForm" onsubmit="handleSaveConfig(event)">
-                                <div class="dash-form-group" style="margin-bottom: 20px;">
-                                    <label class="dash-form-label" for="inputSupabaseUrl">Supabase Project URL</label>
-                                    <input
-                                        type="url"
-                                        id="inputSupabaseUrl"
-                                        class="dash-form-input"
-                                        placeholder="https://xyzcompany.supabase.co"
-                                        required
-                                    />
-                                    <small style="color: var(--text-muted); font-size: 0.74rem;">
-                                        Found in Supabase Dashboard &gt; Project Settings &gt; API &gt; Project URL
-                                    </small>
-                                </div>
-
-                                <div class="dash-form-group" style="margin-bottom: 24px;">
-                                    <label class="dash-form-label" for="inputSupabaseKey">Public Anon Key</label>
-                                    <input
-                                        type="text"
-                                        id="inputSupabaseKey"
-                                        class="dash-form-input"
-                                        placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                                        required
-                                    />
-                                    <small style="color: var(--text-muted); font-size: 0.74rem;">
-                                        Found in Project Settings &gt; API &gt; Project API keys (anon / public). Never enter service_role key.
-                                    </small>
-                                </div>
-
-                                <div style="display: flex; gap: 12px; align-items: center;">
-                                    <button type="submit" class="btn-primary">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                            <polyline points="20 6 9 17 4 12"></polyline>
-                                        </svg>
-                                        <span>Save & Connect</span>
-                                    </button>
-                                    <button type="button" class="btn-secondary" onclick="handleTestConnection()">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <circle cx="12" cy="12" r="10"></circle>
-                                            <polyline points="12 6 12 12 16 14"></polyline>
-                                        </svg>
-                                        <span>Test Connection</span>
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
                 </div>
             </main>
         </div>
@@ -1002,6 +928,7 @@
                 </div>
                 <form id="trackForm" onsubmit="handleSaveTrack(event)">
                     <input type="hidden" id="trackFormId" />
+                    <input type="hidden" id="trackOriginalId" />
                     <div class="dash-form-grid">
                         <div class="dash-form-group">
                             <label class="dash-form-label">Track ID (slug)</label>
@@ -1110,6 +1037,7 @@
                 </div>
                 <form id="memberForm" onsubmit="handleSaveMember(event)">
                     <input type="hidden" id="memberFormId" />
+                    <input type="hidden" id="memberOriginalName" />
                     <div class="dash-form-grid">
                         <div class="dash-form-group">
                             <label class="dash-form-label">Full Name</label>
@@ -1381,6 +1309,7 @@
                 window.openAddTrackModal = function () {
                     document.getElementById('trackModalTitle').textContent = 'Add New Learning Path';
                     document.getElementById('trackFormId').value = '';
+                    document.getElementById('trackOriginalId').value = '';
                     document.getElementById('trackFormSlug').value = '';
                     document.getElementById('trackFormSlug').readOnly = false;
                     document.getElementById('trackFormTitle').value = '';
@@ -1397,6 +1326,7 @@
                     if (!track) return;
                     document.getElementById('trackModalTitle').textContent = 'Edit ' + track.title;
                     document.getElementById('trackFormId').value = track.id;
+                    document.getElementById('trackOriginalId').value = track.id;
                     document.getElementById('trackFormSlug').value = track.id;
                     document.getElementById('trackFormSlug').readOnly = true;
                     document.getElementById('trackFormTitle').value = track.title;
@@ -1412,6 +1342,7 @@
                 window.handleSaveTrack = async function (e) {
                     e.preventDefault();
                     const trackId = document.getElementById('trackFormSlug').value.trim();
+                    const originalId = document.getElementById('trackOriginalId').value.trim();
                     const trackData = {
                         id: trackId,
                         title: document.getElementById('trackFormTitle').value.trim(),
@@ -1426,7 +1357,7 @@
                     };
 
                     try {
-                        await window.GDG_SUPABASE.saveLearningPath(trackData);
+                        await window.GDG_SUPABASE.saveLearningPath(trackData, originalId);
                         closeModal('trackModalBackdrop');
                         showToast('Learning Path saved successfully.');
                         await loadTracks();
@@ -1520,6 +1451,7 @@
                 window.openAddMemberModal = function () {
                     document.getElementById('memberModalTitle').textContent = 'Add Team Member';
                     document.getElementById('memberFormId').value = '';
+                    document.getElementById('memberOriginalName').value = '';
                     document.getElementById('memberFormName').value = '';
                     document.getElementById('memberFormRole').value = '';
                     document.getElementById('memberFormDivision').value = 'Organizer';
@@ -1531,10 +1463,11 @@
                 };
 
                 window.openEditMemberModal = function (id, name) {
-                    const member = allTeam.find(m => (m.id && m.id === id) || m.name === name);
+                    const member = allTeam.find(m => (id && m.id && m.id === id) || m.name === name);
                     if (!member) return;
                     document.getElementById('memberModalTitle').textContent = 'Edit ' + member.name;
                     document.getElementById('memberFormId').value = member.id || '';
+                    document.getElementById('memberOriginalName').value = member.name;
                     document.getElementById('memberFormName').value = member.name;
                     document.getElementById('memberFormRole').value = member.role;
                     document.getElementById('memberFormDivision').value = member.division;
@@ -1547,6 +1480,7 @@
 
                 window.handleSaveMember = async function (e) {
                     e.preventDefault();
+                    const originalName = document.getElementById('memberOriginalName').value.trim();
                     const memberData = {
                         id: document.getElementById('memberFormId').value || undefined,
                         name: document.getElementById('memberFormName').value.trim(),
@@ -1561,7 +1495,7 @@
                     };
 
                     try {
-                        await window.GDG_SUPABASE.saveTeamMember(memberData);
+                        await window.GDG_SUPABASE.saveTeamMember(memberData, originalName);
                         closeModal('memberModalBackdrop');
                         showToast(`Member '${memberData.name}' saved.`);
                         await loadTeam();
@@ -1613,22 +1547,6 @@
                     renderCertsTable(filtered);
                 });
 
-                // Supabase Settings form
-                window.handleSaveConfig = function (e) {
-                    e.preventDefault();
-                    const url = document.getElementById('inputSupabaseUrl').value.trim();
-                    const key = document.getElementById('inputSupabaseKey').value.trim();
-                    window.GDG_SUPABASE.saveConfig(url, key);
-                    showToast('Supabase settings saved. Testing connection...');
-                    checkConnection();
-                };
-
-                window.handleTestConnection = async function () {
-                    const res = await window.GDG_SUPABASE.testConnection();
-                    alert(res.message);
-                    checkConnection();
-                };
-
                 // Initialize dashboard on load
                 async function initDashboard() {
                     // Clear stale empty local cache if present
@@ -1638,11 +1556,6 @@
                         const cm = localStorage.getItem('GDG_LOCAL_TEAM');
                         if (cm && (cm === '[]' || JSON.parse(cm).length === 0)) localStorage.removeItem('GDG_LOCAL_TEAM');
                     } catch (e) {}
-
-                    // Populate current config if any
-                    const cfg = window.GDG_SUPABASE.getConfig();
-                    if (cfg.url) document.getElementById('inputSupabaseUrl').value = cfg.url;
-                    if (cfg.anonKey) document.getElementById('inputSupabaseKey').value = cfg.anonKey;
 
                     await checkConnection();
                     await Promise.all([
