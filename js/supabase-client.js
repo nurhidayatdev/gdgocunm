@@ -352,12 +352,35 @@
 
         async deleteLearningPath(trackId) {
             const client = initSupabase();
+            let imagesToDelete = [];
+
+            const tracks = getLocalTracks();
+            const existingTrack = tracks.find(t => t.id === trackId);
+            if (existingTrack) {
+                if (existingTrack.image) imagesToDelete.push(existingTrack.image);
+                if (existingTrack.instructor?.image) imagesToDelete.push(existingTrack.instructor.image);
+            }
+
             if (client) {
+                try {
+                    const { data } = await client.from('learning_paths').select('image_url, instructor_image_url').eq('id', trackId).single();
+                    if (data) {
+                        if (data.image_url) imagesToDelete.push(data.image_url);
+                        if (data.instructor_image_url) imagesToDelete.push(data.instructor_image_url);
+                    }
+                } catch (e) {}
+
                 const { error } = await client.from('learning_paths').delete().eq('id', trackId);
                 if (error) throw error;
             }
-            const tracks = getLocalTracks().filter(t => t.id !== trackId);
-            saveLocalTracks(tracks);
+
+            // Cleanup storage images
+            for (const img of imagesToDelete) {
+                await this.deleteImageFromStorage(img);
+            }
+
+            const updatedTracks = tracks.filter(t => t.id !== trackId);
+            saveLocalTracks(updatedTracks);
             return true;
         },
 
@@ -461,6 +484,17 @@
                 payload.id = memberData.id;
             }
 
+            // Check if replacing an existing Supabase Storage image to delete old file
+            let oldImageUrl = '';
+            const existingMember = getLocalTeam().find(m =>
+                (memberData.id && m.id && m.id === memberData.id) ||
+                (originalName && m.name === originalName) ||
+                m.name === memberData.name
+            );
+            if (existingMember && existingMember.image) {
+                oldImageUrl = existingMember.image;
+            }
+
             let savedId = memberData.id;
             if (client) {
                 try {
@@ -484,6 +518,11 @@
                 }
             }
 
+            // If photo changed and old photo was on Supabase Storage, delete the old file
+            if (oldImageUrl && payload.image_url && oldImageUrl !== payload.image_url) {
+                await this.deleteImageFromStorage(oldImageUrl);
+            }
+
             // Update local team in-place (NEVER create duplicate)
             const team = getLocalTeam();
             const newMember = { ...memberData, id: savedId || memberData.id || 'temp-' + Date.now() };
@@ -503,10 +542,33 @@
 
         async deleteTeamMember(memberId, memberName = '') {
             const client = initSupabase();
-            if (client && memberId && !String(memberId).startsWith('temp-')) {
-                const { error } = await client.from('core_team').delete().eq('id', memberId);
-                if (error) throw error;
+            let imageUrlToDelete = '';
+
+            const localList = getLocalTeam();
+            const target = localList.find(m => (memberId && m.id === memberId) || (memberName && m.name === memberName));
+            if (target && target.image) {
+                imageUrlToDelete = target.image;
             }
+
+            if (client) {
+                try {
+                    if (!imageUrlToDelete && memberId && !String(memberId).startsWith('temp-')) {
+                        const { data } = await client.from('core_team').select('image_url').eq('id', memberId).single();
+                        if (data && data.image_url) imageUrlToDelete = data.image_url;
+                    }
+                } catch (e) {}
+
+                if (memberId && !String(memberId).startsWith('temp-')) {
+                    const { error } = await client.from('core_team').delete().eq('id', memberId);
+                    if (error) throw error;
+                }
+            }
+
+            // Delete associated file from Supabase Storage bucket
+            if (imageUrlToDelete) {
+                await this.deleteImageFromStorage(imageUrlToDelete);
+            }
+
             const team = getLocalTeam().filter(m => {
                 if (memberId && m.id === memberId) return false;
                 if (memberName && m.name === memberName) return false;
@@ -517,8 +579,31 @@
         },
 
         // --------------------------------------------------------------------
-        // FILE / IMAGE UPLOAD (Supabase Storage + Base64 Fallback)
+        // FILE / IMAGE UPLOAD & CLEANUP (Supabase Storage + Base64 Fallback)
         // --------------------------------------------------------------------
+        async deleteImageFromStorage(imageUrl, bucket = 'team-avatars') {
+            if (!imageUrl || typeof imageUrl !== 'string') return;
+            if (!imageUrl.includes(`/storage/v1/object/public/${bucket}/`)) return;
+
+            const client = initSupabase();
+            if (!client || !client.storage) return;
+
+            try {
+                const path = imageUrl.split(`/storage/v1/object/public/${bucket}/`)[1];
+                if (path) {
+                    const decodedPath = decodeURIComponent(path.split('?')[0]);
+                    const { error } = await client.storage.from(bucket).remove([decodedPath]);
+                    if (error) {
+                        console.warn('[Supabase Storage] Delete error:', error.message);
+                    } else {
+                        console.log('[Supabase Storage] Cleaned up file from bucket:', decodedPath);
+                    }
+                }
+            } catch (err) {
+                console.warn('[Supabase Storage] Delete exception:', err);
+            }
+        },
+
         async uploadImage(file, folder = 'team') {
             if (!file) return '';
 
