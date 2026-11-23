@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=5.0"
+        />
+        <meta
+            name="description"
+            content="Activities and Documentation Gallery of Google Developer Groups On Campus Universitas Negeri Makassar (GDGoC UNM). Browse photos from workshops, weekly study jams, and hackathons."
+        />
+        <meta name="theme-color" content="#171B21" />
+        <title>Activities Gallery • GDGoC UNM</title>
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="assets/logo/favicon.png" />
+
+        <!-- Google Fonts: Google Sans & Space Grotesk -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600&display=swap"
+            rel="stylesheet"
+        />
+
+        <!-- Codebase Core Stylesheets -->
+        <link rel="stylesheet" href="css/style.css" />
+        <link rel="stylesheet" href="css/animations.css" />
+
+        <style>
+            .gallery-page-hero {
+                padding-top: 140px;
+                padding-bottom: 36px;
+                position: relative;
+                z-index: 1;
+                text-align: center;
+            }
+
+            .gallery-hero-title {
+                font-size: clamp(2.2rem, 4.8vw, 3.4rem);
+                font-weight: 700;
+                letter-spacing: -0.03em;
+                line-height: 1.15;
+                margin-bottom: 16px;
+                background: linear-gradient(135deg, #ffffff 40%, var(--blue-light) 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .gallery-hero-desc {
+                font-size: 1.05rem;
+                color: var(--text-secondary);
+                max-width: 720px;
+                margin: 0 auto 28px;
+                line-height: 1.65;
+            }
+
+            .gallery-search-wrap {
+                max-width: 440px;
+                margin: 0 auto 36px;
+                position: relative;
+            }
+
+            .gallery-search-input {
+                width: 100%;
+                background: rgba(255, 255, 255, 0.04);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                border-radius: var(--radius-pill);
+                padding: 12px 20px 12px 44px;
+                color: #ffffff;
+                font-size: 0.92rem;
+                font-family: inherit;
+                outline: none;
+                transition: all var(--transition-fast);
+            }
+
+            .gallery-search-input:focus {
+                border-color: var(--google-blue);
+                background: rgba(255, 255, 255, 0.07);
+                box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
+            }
+
+            .gallery-search-icon {
+                position: absolute;
+                left: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-muted);
+                pointer-events: none;
+            }
+
+            .gallery-empty-state {
+                text-align: center;
+                padding: 60px 20px;
+                background: rgba(255, 255, 255, 0.02);
+                border: 1px dashed rgba(255, 255, 255, 0.1);
+                border-radius: var(--radius-lg);
+                color: var(--text-muted);
+                grid-column: 1 / -1;
+            }
+        </style>
+    </head>
+    <body class="page-wrapper">
+        <!-- Ambient Background Layers (Strictly per design.md) -->
+        <div class="ambient-glow glow-blue" aria-hidden="true"></div>
+        <div class="ambient-glow glow-red" aria-hidden="true"></div>
+        <div class="ambient-glow glow-yellow" aria-hidden="true"></div>
+        <div class="ambient-glow glow-green" aria-hidden="true"></div>
+        <div class="tech-grid-overlay" aria-hidden="true"></div>
+        <div class="pinisi-silhouette-layer" aria-hidden="true"></div>
+
+        <!-- Site Header / Floating Navbar -->
+        <header class="site-header" role="banner">
+            <div class="nav-container">
+                <a href="index.html" class="nav-brand" aria-label="GDGoC UNM Home">
+                    <img
+                        src="assets/logo/gdgoc-logo.png"
+                        alt="GDGoC UNM Logo"
+                        class="brand-logo"
+                        onerror="this.src='assets/logo/favicon.png'"
+                    />
+                    <div class="brand-text">
+                        <span class="brand-title">Google Developer Groups</span>
+                        <span class="brand-subtitle">On Campus • Universitas Negeri Makassar</span>
+                    </div>
+                </a>
+
+                <nav class="nav-menu" role="navigation" aria-label="Main Navigation">
+                    <ul class="nav-links">
+                        <li><a href="index.html" class="nav-link">Home</a></li>
+                        <li><a href="index.html#events" class="nav-link">Events</a></li>
+                        <li><a href="learning-path.html" class="nav-link">Learning Path</a></li>
+                        <li><a href="index.html#team" class="nav-link">Team</a></li>
+                        <li><a href="gallery.html" class="nav-link active">Gallery</a></li>
+                        <li><a href="index.html#faq" class="nav-link">FAQ</a></li>
+                    </ul>
+
+                    <div class="nav-actions">
+                        <a href="dashboard.html" class="btn-secondary" style="font-size: 0.82rem; padding: 7px 14px;">Dashboard</a>
+                        <a
+                            href="https://gdg.community.dev/gdg-on-campus-universitas-negeri-makassar-makassar-indonesia/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="btn-primary"
+                        >
+                            <span>Join Chapter</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                    </div>
+                </nav>
+
+                <button
+                    class="mobile-toggle"
+                    id="mobile-toggle-btn"
+                    aria-label="Toggle mobile menu"
+                    aria-expanded="false"
+                >
+                    <span class="toggle-line"></span>
+                    <span class="toggle-line"></span>
+                    <span class="toggle-line"></span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Mobile Drawer Navigation -->
+        <div class="mobile-nav-backdrop" id="mobile-nav-backdrop"></div>
+        <div class="mobile-nav-drawer" id="mobile-nav-drawer" role="dialog" aria-modal="true">
+            <div class="mobile-nav-header">
+                <div class="brand-text">
+                    <span class="brand-title">GDGoC UNM</span>
+                    <span class="brand-subtitle">Universitas Negeri Makassar</span>
+                </div>
+            </div>
+            <div class="mobile-nav-links">
+                <a href="index.html" class="nav-link"><span>Home</span></a>
+                <a href="index.html#events" class="nav-link"><span>Events</span></a>
+                <a href="learning-path.html" class="nav-link"><span>Learning Path</span></a>
+                <a href="index.html#team" class="nav-link"><span>Team</span></a>
+                <a href="gallery.html" class="nav-link active"><span>Gallery</span></a>
+                <a href="index.html#faq" class="nav-link"><span>FAQ</span></a>
+                <a href="dashboard.html" class="nav-link"><span>Dashboard</span></a>
+            </div>
+            <div class="mobile-nav-actions" style="margin-top: 24px;">
+                <a
+                    href="https://gdg.community.dev/gdg-on-campus-universitas-negeri-makassar-makassar-indonesia/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-primary"
+                    style="width: 100%; justify-content: center;"
+                >
+                    <span>Join Chapter</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="page-main" id="main-content">
+            <!-- Hero Header -->
+            <section class="gallery-page-hero">
+                <div class="container">
+                    <div style="display: flex; justify-content: center; margin-bottom: 16px;">
+                        <span class="pill-badge">
+                            <span class="pill-dot"></span>
+                            <span>ACTIVITIES & DOCUMENTATION</span>
+                        </span>
+                    </div>
+                    <h1 class="gallery-hero-title">Activities & Event Gallery</h1>
+                    <p class="gallery-hero-desc">
+                        Dokumentasi lengkap momen seru, workshop teknologi, study jam, dan kebersamaan komunitas Google Developer Groups on Campus Universitas Negeri Makassar.
+                    </p>
+
+                    <!-- Search Input -->
+                    <div class="gallery-search-wrap">
+                        <svg class="gallery-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input
+                            type="text"
+                            class="gallery-search-input"
+                            id="gallerySearchInput"
+                            placeholder="Cari dokumentasi kegiatan..."
+                            oninput="filterGallery()"
+                        />
+                    </div>
+                </div>
+            </section>
+
+            <!-- Gallery Albums Section -->
+            <section class="section" style="padding-top: 0; padding-bottom: 80px;">
+                <div class="gallery-page-container">
+                    <!-- Filter Tabs -->
+                    <div class="gallery-filter-bar">
+                        <div class="gallery-category-tabs" id="galleryCategoryTabs">
+                            <button type="button" class="gallery-cat-tab active" data-category="all" onclick="selectCategory('all', this)">Semua Kegiatan</button>
+                            <button type="button" class="gallery-cat-tab" data-category="Workshop" onclick="selectCategory('Workshop', this)">Workshop</button>
+                            <button type="button" class="gallery-cat-tab" data-category="Weekly Class" onclick="selectCategory('Weekly Class', this)">Weekly Class</button>
+                            <button type="button" class="gallery-cat-tab" data-category="Onboarding" onclick="selectCategory('Onboarding', this)">Onboarding</button>
+                            <button type="button" class="gallery-cat-tab" data-category="Hackathon" onclick="selectCategory('Hackathon', this)">Hackathon</button>
+                            <button type="button" class="gallery-cat-tab" data-category="Community" onclick="selectCategory('Community', this)">Community</button>
+                            <button type="button" class="gallery-cat-tab" data-category="Robotics" onclick="selectCategory('Robotics', this)">Robotics</button>
+                        </div>
+                        <div id="galleryStatsCounter" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">
+                            Memuat dokumentasi...
+                        </div>
+                    </div>
+
+                    <!-- Albums Grid -->
+                    <div class="gallery-albums-grid" id="galleryAlbumsContainer">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Fullscreen Interactive Lightbox Modal -->
+        <div class="gallery-lightbox-backdrop" id="galleryLightbox" role="dialog" aria-modal="true" aria-label="Photo Lightbox">
+            <!-- Header -->
+            <div class="lightbox-header">
+                <div class="lightbox-title-area">
+                    <h3 id="lightboxAlbumTitle" style="font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0;">Judul Kegiatan</h3>
+                    <span id="lightboxAlbumMeta" style="font-size: 0.76rem; color: var(--text-muted);">Tanggal • Kategori</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <span id="lightboxPhotoCounter" style="font-size: 0.82rem; font-weight: 600; color: var(--blue-light); font-family: var(--font-mono);">Foto 1 dari 1</span>
+                    <button type="button" class="dash-modal-close" style="color: #ffffff; font-size: 1.5rem; line-height: 1;" onclick="closeLightbox()" aria-label="Close Lightbox">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- View Area -->
+            <div class="lightbox-view-area">
+                <button type="button" class="lightbox-nav-btn prev" onclick="navigateLightbox(-1)" aria-label="Previous Photo">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+
+                <img id="lightboxMainImg" src="" alt="Documentation Photo" class="lightbox-main-img" />
+
+                <button type="button" class="lightbox-nav-btn next" onclick="navigateLightbox(1)" aria-label="Next Photo">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Bottom Thumbnails Carousel -->
+            <div class="lightbox-thumbs-carousel" id="lightboxThumbsCarousel">
+                <!-- Dynamically populated thumbnails -->
+            </div>
+        </div>
+
+        <!-- Site Footer (Strictly per design.md) -->
+        <footer class="site-footer">
+            <div class="container footer-content">
+                <div class="footer-top">
+                    <div class="footer-brand">
+                        <div class="footer-logo-row">
+                            <img
+                                src="assets/logo/gdgoc-logo.png"
+                                alt="GDGoC UNM"
+                                class="footer-logo"
+                                onerror="this.src='assets/logo/favicon.png'"
+                            />
+                            <div>
+                                <div class="footer-brand-title">Google Developer Groups</div>
+                                <div class="footer-brand-subtitle">On Campus • Universitas Negeri Makassar</div>
+                            </div>
+                        </div>
+                        <p class="footer-desc">
+                            Komunitas teknologi mahasiswa resmi Universitas Negeri Makassar yang didukung oleh Google Developers. Wadah belajar, membangun proyek nyata, dan bertumbuh bersama.
+                        </p>
+                    </div>
+
+                    <div class="footer-links-grid">
+                        <div class="footer-column">
+                            <h4 class="footer-col-title">Navigation</h4>
+                            <ul class="footer-links">
+                                <li><a href="index.html">Home</a></li>
+                                <li><a href="index.html#events">Events & Workshops</a></li>
+                                <li><a href="learning-path.html">Learning Path</a></li>
+                                <li><a href="index.html#team">Core Team</a></li>
+                                <li><a href="gallery.html">Activities Gallery</a></li>
+                            </ul>
+                        </div>
+                        <div class="footer-column">
+                            <h4 class="footer-col-title">Connect</h4>
+                            <ul class="footer-links">
+                                <li><a href="https://instagram.com/gdgoc.unm" target="_blank" rel="noopener">Instagram</a></li>
+                                <li><a href="https://linkedin.com/company/gdgoc-unm" target="_blank" rel="noopener">LinkedIn</a></li>
+                                <li><a href="https://github.com/gdgoc-unm" target="_blank" rel="noopener">GitHub</a></li>
+                                <li><a href="https://gdg.community.dev/gdg-on-campus-universitas-negeri-makassar-makassar-indonesia/" target="_blank" rel="noopener">Community Platform</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <p class="footer-copyright">
+                        © 2026 GDGoC Universitas Negeri Makassar. All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="js/data.js"></script>
+        <script src="js/supabase-client.js"></script>
+
+        <script>
+            (function () {
+                'use strict';
+
+                let allAlbums = [];
+                let currentCategory = 'all';
+                let currentSearchQuery = '';
+
+                // Active Lightbox State
+                let activeAlbum = null;
+                let activePhotoIndex = 0;
+
+                const colorMap = {
+                    blue: '#4285F4',
+                    green: '#34A853',
+                    yellow: '#FBBC04',
+                    red: '#EA4335'
+                };
+
+                // Initialize Mobile Nav
+                const mobileToggle = document.getElementById('mobile-toggle-btn');
+                const mobileDrawer = document.getElementById('mobile-nav-drawer');
+                const mobileBackdrop = document.getElementById('mobile-nav-backdrop');
+
+                function toggleMobileMenu() {
+                    const isOpen = mobileDrawer.classList.contains('open');
+                    if (isOpen) {
+                        mobileDrawer.classList.remove('open');
+                        mobileBackdrop.classList.remove('open');
+                        mobileToggle.classList.remove('active');
+                        document.body.style.overflow = '';
+                    } else {
+                        mobileDrawer.classList.add('open');
+                        mobileBackdrop.classList.add('open');
+                        mobileToggle.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    }
+                }
+
+                mobileToggle?.addEventListener('click', toggleMobileMenu);
+                mobileBackdrop?.addEventListener('click', toggleMobileMenu);
+
+                // Fetch Gallery Albums
+                async function loadGalleryAlbums() {
+                    const counter = document.getElementById('galleryStatsCounter');
+                    try {
+                        if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.getGallery === 'function') {
+                            allAlbums = await window.GDG_SUPABASE.getGallery();
+                        }
+                    } catch (e) {
+                        console.warn('[Gallery] Error loading from Supabase:', e);
+                    }
+
+                    if (!allAlbums || allAlbums.length === 0) {
+                        allAlbums = (window.GDG_DATA && window.GDG_DATA.gallery) || [];
+                    }
+
+                    filterGallery();
+
+                    // Check for URL parameter e.g. gallery.html?id=gal-1
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const targetId = urlParams.get('id');
+                    if (targetId) {
+                        const targetAlbum = allAlbums.find(a => String(a.id) === targetId || a.title === targetId);
+                        if (targetAlbum) {
+                            openLightbox(targetAlbum, 0);
+                        }
+                    }
+                }
+
+                window.selectCategory = function (cat, btn) {
+                    currentCategory = cat;
+                    document.querySelectorAll('.gallery-cat-tab').forEach(b => b.classList.remove('active'));
+                    if (btn) btn.classList.add('active');
+                    filterGallery();
+                };
+
+                window.filterGallery = function () {
+                    const searchInput = document.getElementById('gallerySearchInput');
+                    currentSearchQuery = (searchInput?.value || '').trim().toLowerCase();
+
+                    const filtered = allAlbums.filter(album => {
+                        const matchCat = (currentCategory === 'all') || (album.category && album.category.toLowerCase() === currentCategory.toLowerCase());
+                        const matchSearch = !currentSearchQuery || 
+                            (album.title && album.title.toLowerCase().includes(currentSearchQuery)) ||
+                            (album.desc && album.desc.toLowerCase().includes(currentSearchQuery)) ||
+                            (album.category && album.category.toLowerCase().includes(currentSearchQuery));
+                        return matchCat && matchSearch;
+                    });
+
+                    renderAlbums(filtered);
+                };
+
+                function renderAlbums(albums) {
+                    const container = document.getElementById('galleryAlbumsContainer');
+                    const counter = document.getElementById('galleryStatsCounter');
+                    if (!container) return;
+
+                    if (counter) {
+                        const totalPhotos = albums.reduce((acc, a) => {
+                            const count = Array.isArray(a.images) && a.images.length > 0 ? a.images.length : (a.image ? 1 : 0);
+                            return acc + count;
+                        }, 0);
+                        counter.textContent = `Menampilkan ${albums.length} Album (${totalPhotos} Foto Dokumentasi)`;
+                    }
+
+                    if (albums.length === 0) {
+                        container.innerHTML = `
+                            <div class="gallery-empty-state">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 12px; opacity: 0.5;">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg>
+                                <p style="margin-bottom: 6px; font-weight: 600; color: #ffffff;">Tidak ada dokumentasi kegiatan ditemukan.</p>
+                                <p style="font-size: 0.85rem;">Coba ganti kata kunci pencarian atau pilih kategori lain.</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    container.innerHTML = albums.map((album, idx) => {
+                        const col = colorMap[album.color] || '#4285F4';
+                        const photos = Array.isArray(album.images) && album.images.length > 0 ? album.images : (album.image ? [album.image] : []);
+                        const coverSrc = album.image || (photos.length > 0 ? photos[0] : 'assets/images/events/weekly-class-2.jpg');
+                        const photoCount = photos.length;
+                        const otherThumbs = photos.slice(1, 5);
+
+                        return `
+                            <article class="gallery-album-card" onclick="openLightboxByAlbumIndex(${idx})" tabindex="0" role="button" aria-label="Lihat album ${album.title}">
+                                <div class="album-cover-wrapper">
+                                    <img src="${coverSrc}" alt="${album.title}" class="album-cover-img" onerror="this.src='assets/images/events/weekly-class-2.jpg'" />
+                                    <span class="gallery-tag-pill" style="border-left: 3px solid ${col}; position: absolute; top: 12px; left: 12px;">
+                                        ${album.category || 'Activity'}
+                                    </span>
+                                    <span class="album-badge-count">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+                                        </svg>
+                                        <span>${photoCount} Foto</span>
+                                    </span>
+                                </div>
+
+                                ${otherThumbs.length > 0 ? `
+                                    <div class="album-thumb-strip">
+                                        ${otherThumbs.map(thumb => `
+                                            <img src="${thumb}" alt="thumb" class="album-thumb-mini" onerror="this.style.display='none'" />
+                                        `).join('')}
+                                        ${photoCount > 5 ? `
+                                            <div style="width: 44px; height: 36px; border-radius: 4px; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">
+                                                +${photoCount - 5}
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                ` : ''}
+
+                                <div class="album-card-body">
+                                    <div class="album-meta-row">
+                                        <span>${album.date || 'GDGoC UNM'}</span>
+                                    </div>
+                                    <h3 class="album-title">${album.title || 'Dokumentasi Kegiatan'}</h3>
+                                    ${album.desc ? `<p class="album-desc">${album.desc}</p>` : ''}
+                                </div>
+
+                                <div class="album-card-footer">
+                                    <span style="font-size: 0.8rem; color: var(--blue-light); font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                                        <span>Buka Album (${photoCount} Foto)</span>
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                                        </svg>
+                                    </span>
+                                </div>
+                            </article>
+                        `;
+                    }).join('');
+                }
+
+                // Lightbox Functionality
+                window.openLightboxByAlbumIndex = function (index) {
+                    const album = allAlbums[index];
+                    if (album) openLightbox(album, 0);
+                };
+
+                window.openLightbox = function (album, photoIdx = 0) {
+                    activeAlbum = album;
+                    activePhotoIndex = photoIdx;
+
+                    const photos = Array.isArray(album.images) && album.images.length > 0 ? album.images : (album.image ? [album.image] : []);
+                    if (photos.length === 0) return;
+
+                    document.getElementById('lightboxAlbumTitle').textContent = album.title || 'Dokumentasi Kegiatan';
+                    document.getElementById('lightboxAlbumMeta').textContent = `${album.date || 'GDGoC UNM'} • ${album.category || 'Activity'}`;
+
+                    updateLightboxPhoto();
+
+                    // Render thumbs carousel
+                    const thumbsContainer = document.getElementById('lightboxThumbsCarousel');
+                    thumbsContainer.innerHTML = photos.map((src, i) => `
+                        <img
+                            src="${src}"
+                            alt="photo thumbnail"
+                            class="lightbox-thumb-item ${i === activePhotoIndex ? 'active' : ''}"
+                            onclick="setLightboxPhoto(${i})"
+                            onerror="this.src='assets/images/events/weekly-class-2.jpg'"
+                        />
+                    `).join('');
+
+                    document.getElementById('galleryLightbox').classList.add('open');
+                    document.body.style.overflow = 'hidden';
+                };
+
+                window.closeLightbox = function () {
+                    document.getElementById('galleryLightbox').classList.remove('open');
+                    document.body.style.overflow = '';
+                    activeAlbum = null;
+                };
+
+                window.navigateLightbox = function (direction) {
+                    if (!activeAlbum) return;
+                    const photos = Array.isArray(activeAlbum.images) && activeAlbum.images.length > 0 ? activeAlbum.images : (activeAlbum.image ? [activeAlbum.image] : []);
+                    if (photos.length <= 1) return;
+
+                    activePhotoIndex = (activePhotoIndex + direction + photos.length) % photos.length;
+                    updateLightboxPhoto();
+                };
+
+                window.setLightboxPhoto = function (index) {
+                    activePhotoIndex = index;
+                    updateLightboxPhoto();
+                };
+
+                function updateLightboxPhoto() {
+                    if (!activeAlbum) return;
+                    const photos = Array.isArray(activeAlbum.images) && activeAlbum.images.length > 0 ? activeAlbum.images : (activeAlbum.image ? [activeAlbum.image] : []);
+                    const curPhoto = photos[activePhotoIndex];
+
+                    const mainImg = document.getElementById('lightboxMainImg');
+                    mainImg.src = curPhoto;
+
+                    const counter = document.getElementById('lightboxPhotoCounter');
+                    counter.textContent = `Foto ${activePhotoIndex + 1} dari ${photos.length}`;
+
+                    // Update active thumb
+                    const thumbs = document.querySelectorAll('.lightbox-thumb-item');
+                    thumbs.forEach((t, i) => {
+                        if (i === activePhotoIndex) {
+                            t.classList.add('active');
+                            t.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                        } else {
+                            t.classList.remove('active');
+                        }
+                    });
+                }
+
+                // Keyboard Navigation
+                document.addEventListener('keydown', function (e) {
+                    const lightbox = document.getElementById('galleryLightbox');
+                    if (!lightbox || !lightbox.classList.contains('open')) return;
+
+                    if (e.key === 'Escape') {
+                        closeLightbox();
+                    } else if (e.key === 'ArrowLeft') {
+                        navigateLightbox(-1);
+                    } else if (e.key === 'ArrowRight') {
+                        navigateLightbox(1);
+                    }
+                });
+
+                // Load initial data
+                loadGalleryAlbums();
+            })();
+        </script>
+    </body>
+</html>

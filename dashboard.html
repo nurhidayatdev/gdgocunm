@@ -686,6 +686,38 @@
                 padding: 0;
             }
 
+            .gallery-preview-badge {
+                position: absolute;
+                bottom: 3px;
+                left: 3px;
+                font-size: 9px;
+                font-weight: 700;
+                text-transform: uppercase;
+                padding: 1px 5px;
+                border-radius: 4px;
+                background: rgba(66, 133, 244, 0.85);
+                color: #fff;
+                letter-spacing: 0.5px;
+            }
+
+            .dash-gallery-count-badge {
+                position: absolute;
+                bottom: 8px;
+                right: 8px;
+                font-size: 0.72rem;
+                font-weight: 600;
+                font-family: var(--font-mono);
+                padding: 3px 8px;
+                border-radius: 20px;
+                background: rgba(14, 16, 24, 0.85);
+                backdrop-filter: blur(6px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                color: #fff;
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+            }
+
             .dash-gallery-grid {
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -995,7 +1027,7 @@
                                     </svg>
                                     <span>Add Team Member</span>
                                 </button>
-                                <button class="btn-primary" onclick="switchTab('tab-gallery'); openUploadGalleryModal();">
+                                <button class="btn-primary" onclick="switchTab('tab-gallery'); openAddGalleryModal();">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                         <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                                         <circle cx="8.5" cy="8.5" r="1.5"></circle>
@@ -1263,12 +1295,12 @@
                                         id="searchGalleryInput"
                                         placeholder="Search photo title..."
                                     />
-                                    <button class="btn-primary" onclick="openUploadGalleryModal()">
+                                    <button class="btn-primary" onclick="openAddGalleryModal()">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                             <line x1="12" y1="5" x2="12" y2="19"></line>
                                             <line x1="5" y1="12" x2="19" y2="12"></line>
                                         </svg>
-                                        <span>Upload Photos (Batch)</span>
+                                        <span>Add Activity Album</span>
                                     </button>
                                 </div>
                             </div>
@@ -1508,11 +1540,11 @@
             </div>
         </div>
 
-        <!-- Modal: Upload Activity Gallery Photos (Supports Multi-File Upload) -->
+        <!-- Modal: Activity Gallery Album (Supports Multi-Photo Management) -->
         <div class="dash-modal-backdrop" id="galleryUploadModalBackdrop">
             <div class="dash-modal" style="max-width: 680px;">
                 <div class="dash-modal-header">
-                    <h3 class="dash-modal-title">Upload Activity Photos (Batch)</h3>
+                    <h3 class="dash-modal-title" id="galleryModalTitle">Add Activity Album</h3>
                     <button class="dash-modal-close" onclick="closeModal('galleryUploadModalBackdrop')" aria-label="Close modal">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -1520,11 +1552,12 @@
                         </svg>
                     </button>
                 </div>
-                <form id="galleryUploadForm" onsubmit="handleBatchGalleryUpload(event)">
+                <form id="galleryUploadForm" onsubmit="handleGalleryAlbumSubmit(event)">
+                    <input type="hidden" id="galleryFormId" />
                     <div class="dash-form-grid">
-                        <div class="dash-form-group">
+                        <div class="dash-form-group dash-form-full">
                             <label class="dash-form-label">Activity / Event Title</label>
-                            <input type="text" id="galleryFormTitle" class="dash-form-input" placeholder="e.g. Hands-on Workshop: Gemini API" required />
+                            <input type="text" id="galleryFormTitle" class="dash-form-input" placeholder="e.g. Info Session & Grand Onboarding 2026" required />
                         </div>
                         <div class="dash-form-group">
                             <label class="dash-form-label">Category</label>
@@ -1540,6 +1573,10 @@
                             </select>
                         </div>
                         <div class="dash-form-group">
+                            <label class="dash-form-label">Activity Date / Month</label>
+                            <input type="text" id="galleryFormDate" class="dash-form-input" placeholder="e.g. November 2026 atau 14 Nov 2026" />
+                        </div>
+                        <div class="dash-form-group">
                             <label class="dash-form-label">Color Accent</label>
                             <select id="galleryFormColor" class="dash-form-select">
                                 <option value="blue">Blue</option>
@@ -1549,13 +1586,13 @@
                             </select>
                         </div>
                         <div class="dash-form-group">
-                            <label class="dash-form-label">Caption / Short Description</label>
-                            <input type="text" id="galleryFormDesc" class="dash-form-input" placeholder="e.g. Live coding and building AI applications in UNM Lab" />
+                            <label class="dash-form-label">Description (Optional)</label>
+                            <input type="text" id="galleryFormDesc" class="dash-form-input" placeholder="e.g. Sesi onboarding dan pengenalan roadmap GDGoC UNM..." />
                         </div>
 
                         <!-- Multi-File Picker -->
                         <div class="dash-form-group dash-form-full">
-                            <label class="dash-form-label">Choose Photos (Bisa Pilih Lebih dari 1 Sekaligus)</label>
+                            <label class="dash-form-label">Photos (Bisa Tambah Lebih dari 1 Foto Sekaligus)</label>
                             <div class="dash-upload-multi-zone" id="galleryMultiDropZone" onclick="document.getElementById('galleryMultiFileInput').click()">
                                 <input type="file" id="galleryMultiFileInput" multiple accept="image/*" style="display: none;" onchange="handleGalleryMultiFileSelect(event)" />
                                 <div class="dash-upload-multi-icon">
@@ -1566,19 +1603,19 @@
                                     </svg>
                                 </div>
                                 <div style="font-weight: 600; color: #ffffff; margin-top: 10px; font-size: 0.95rem;">
-                                    Klik di sini untuk Memilih Berkas Foto
+                                    Klik atau Drag & Drop Foto di Sini
                                 </div>
                                 <div class="dash-upload-hint" style="margin-top: 4px;">
-                                    Tahan Ctrl atau Shift untuk memilih banyak foto sekaligus (PNG, JPG, WEBP).
+                                    Tahan Ctrl atau Shift untuk memilih banyak foto sekaligus (PNG, JPG, WEBP). Foto pertama menjadi Cover Album.
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Selected Files Preview Container -->
+                        <!-- Selected Files & Existing Images Preview Container -->
                         <div class="dash-form-group dash-form-full" id="galleryPreviewContainer" style="display: none;">
                             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                                <label class="dash-form-label" id="gallerySelectedFilesCount">Selected Photos (0)</label>
-                                <button type="button" class="btn-secondary" style="font-size: 0.72rem; padding: 3px 8px;" onclick="clearAllSelectedGalleryFiles()">Clear All</button>
+                                <label class="dash-form-label" id="gallerySelectedFilesCount">Album Photos (0)</label>
+                                <button type="button" class="btn-secondary" style="font-size: 0.72rem; padding: 3px 8px;" onclick="clearAllStagedGalleryFiles()">Clear New Photos</button>
                             </div>
                             <div class="gallery-preview-grid" id="galleryPreviewList">
                                 <!-- Thumbnails populated dynamically -->
@@ -1595,7 +1632,7 @@
                     </div>
                     <div class="dash-modal-footer">
                         <button type="button" class="btn-secondary" onclick="closeModal('galleryUploadModalBackdrop')">Cancel</button>
-                        <button type="submit" class="btn-primary" id="gallerySubmitBtn" disabled>Upload All Photos</button>
+                        <button type="submit" class="btn-primary" id="gallerySubmitBtn" disabled>Save Activity Album</button>
                     </div>
                 </form>
             </div>
@@ -1772,7 +1809,9 @@
                 let allTeam = [];
                 let allCerts = [];
                 let allGallery = [];
-                let selectedGalleryFiles = [];
+                let stagedGalleryFiles = [];
+                let existingGalleryImages = [];
+                let selectedGalleryFiles = []; // backward compatibility
                 let selectedMemberFile = null;
                 let selectedTrackLeadFile = null;
                 let selectedEventPosterFile = null;
@@ -2543,7 +2582,7 @@
                 }
 
                 // --------------------------------------------------------------------
-                // Activity Gallery Management (Multi-File Batch Upload & Delete)
+                // Activity Gallery Album Management (Multi-Photo Album CRUD)
                 // --------------------------------------------------------------------
                 async function loadGallery() {
                     if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.getGallery === 'function') {
@@ -2567,13 +2606,13 @@
                     if (!items || items.length === 0) {
                         container.innerHTML = `
                             <div style="grid-column: 1 / -1; text-align: center; padding: 48px 20px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
-                                <div style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 14px;">No activity gallery photos uploaded yet.</div>
-                                <button class="btn-primary" onclick="openUploadGalleryModal()">
+                                <div style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 14px;">No activity gallery albums uploaded yet.</div>
+                                <button class="btn-primary" onclick="openAddGalleryModal()">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                         <line x1="12" y1="5" x2="12" y2="19"></line>
                                         <line x1="5" y1="12" x2="19" y2="12"></line>
                                     </svg>
-                                    <span>Upload First Photos</span>
+                                    <span>Add First Activity Album</span>
                                 </button>
                             </div>
                         `;
@@ -2589,22 +2628,39 @@
 
                     container.innerHTML = items.map(item => {
                         const col = colorMap[item.color] || '#4285F4';
+                        const photos = Array.isArray(item.images) && item.images.length > 0
+                            ? item.images
+                            : (item.image ? [item.image] : []);
+                        const coverImg = photos[0] || item.image || '';
+                        const photoCount = photos.length || 1;
+
                         return `
                             <div class="dash-gallery-card">
                                 <div class="dash-gallery-img-wrap">
                                     <span class="dash-gallery-tag" style="border-left: 3px solid ${col};">${item.category || 'Activity'}</span>
-                                    ${item.image 
-                                        ? `<img src="${item.image}" alt="${item.title}" class="dash-gallery-img" onerror="this.src='${DEFAULT_AVATAR_PLACEHOLDER}'" />` 
+                                    <span class="dash-gallery-count-badge">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                            <polyline points="21 15 16 10 5 21"></polyline>
+                                        </svg>
+                                        ${photoCount} Foto
+                                    </span>
+                                    ${coverImg 
+                                        ? `<img src="${coverImg}" alt="${item.title}" class="dash-gallery-img" onerror="this.src='${DEFAULT_AVATAR_PLACEHOLDER}'" />` 
                                         : `<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-muted);">No Image</div>`
                                     }
                                 </div>
                                 <div class="dash-gallery-info">
                                     <h4 class="dash-gallery-title">${item.title || 'GDGoC UNM Activity'}</h4>
+                                    <div style="font-size: 0.74rem; color: var(--text-muted); font-family: var(--font-mono); margin-top: -2px;">${item.date || (item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Dokumentasi')}</div>
                                     ${item.desc ? `<p class="dash-gallery-desc">${item.desc}</p>` : ''}
                                 </div>
                                 <div class="dash-gallery-footer">
-                                    <span style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono);">${item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Active'}</span>
-                                    <button class="dash-action-btn delete" onclick="confirmDeleteGalleryItem('${item.id}', '${(item.title || 'photo').replace(/'/g, "\\'")}')">
+                                    <button class="dash-action-btn" onclick="openEditGalleryModal('${item.id}')">
+                                        Edit Album
+                                    </button>
+                                    <button class="dash-action-btn delete" onclick="confirmDeleteGalleryItem('${item.id}', '${(item.title || 'album').replace(/'/g, "\\'")}')">
                                         Delete
                                     </button>
                                 </div>
@@ -2613,18 +2669,49 @@
                     }).join('');
                 }
 
-                window.openUploadGalleryModal = function () {
+                window.openAddGalleryModal = function () {
+                    stagedGalleryFiles = [];
+                    existingGalleryImages = [];
                     selectedGalleryFiles = [];
+
+                    document.getElementById('galleryModalTitle').textContent = 'Add Activity Album';
+                    document.getElementById('galleryFormId').value = '';
                     document.getElementById('galleryFormTitle').value = '';
                     document.getElementById('galleryFormCategory').value = 'Workshop';
+                    document.getElementById('galleryFormDate').value = '';
                     document.getElementById('galleryFormColor').value = 'blue';
                     document.getElementById('galleryFormDesc').value = '';
                     document.getElementById('galleryMultiFileInput').value = '';
 
-                    document.getElementById('galleryPreviewContainer').style.display = 'none';
-                    document.getElementById('galleryPreviewList').innerHTML = '';
                     document.getElementById('galleryUploadProgressWrap').style.display = 'none';
-                    document.getElementById('gallerySubmitBtn').disabled = true;
+                    renderGalleryAlbumPreviews();
+
+                    openModal('galleryUploadModalBackdrop');
+                };
+
+                window.openUploadGalleryModal = window.openAddGalleryModal;
+
+                window.openEditGalleryModal = function (id) {
+                    const item = allGallery.find(g => String(g.id) === String(id));
+                    if (!item) return;
+
+                    stagedGalleryFiles = [];
+                    selectedGalleryFiles = [];
+                    existingGalleryImages = Array.isArray(item.images) && item.images.length > 0
+                        ? [...item.images]
+                        : (item.image ? [item.image] : []);
+
+                    document.getElementById('galleryModalTitle').textContent = 'Edit Activity Album';
+                    document.getElementById('galleryFormId').value = item.id;
+                    document.getElementById('galleryFormTitle').value = item.title || '';
+                    document.getElementById('galleryFormCategory').value = item.category || 'Workshop';
+                    document.getElementById('galleryFormDate').value = item.date || '';
+                    document.getElementById('galleryFormColor').value = item.color || 'blue';
+                    document.getElementById('galleryFormDesc').value = item.desc || '';
+                    document.getElementById('galleryMultiFileInput').value = '';
+
+                    document.getElementById('galleryUploadProgressWrap').style.display = 'none';
+                    renderGalleryAlbumPreviews();
 
                     openModal('galleryUploadModalBackdrop');
                 };
@@ -2634,22 +2721,24 @@
                     if (!files || files.length === 0) return;
 
                     files.forEach(f => {
-                        const exists = selectedGalleryFiles.some(existing => existing.name === f.name && existing.size === f.size);
+                        const exists = stagedGalleryFiles.some(existing => existing.name === f.name && existing.size === f.size);
                         if (!exists) {
-                            selectedGalleryFiles.push(f);
+                            stagedGalleryFiles.push(f);
                         }
                     });
 
-                    renderSelectedGalleryPreviews();
+                    renderGalleryAlbumPreviews();
                 };
 
-                function renderSelectedGalleryPreviews() {
+                function renderGalleryAlbumPreviews() {
                     const container = document.getElementById('galleryPreviewContainer');
                     const list = document.getElementById('galleryPreviewList');
                     const countLabel = document.getElementById('gallerySelectedFilesCount');
                     const submitBtn = document.getElementById('gallerySubmitBtn');
 
-                    if (selectedGalleryFiles.length === 0) {
+                    const totalCount = existingGalleryImages.length + stagedGalleryFiles.length;
+
+                    if (totalCount === 0) {
                         container.style.display = 'none';
                         submitBtn.disabled = true;
                         return;
@@ -2658,35 +2747,85 @@
                     container.style.display = 'block';
                     submitBtn.disabled = false;
 
-                    const totalSizeMB = (selectedGalleryFiles.reduce((acc, f) => acc + f.size, 0) / (1024 * 1024)).toFixed(2);
-                    countLabel.textContent = `Selected: ${selectedGalleryFiles.length} photos (${totalSizeMB} MB)`;
+                    const stagedMB = (stagedGalleryFiles.reduce((acc, f) => acc + f.size, 0) / (1024 * 1024)).toFixed(1);
+                    countLabel.textContent = `Album Photos (${totalCount} foto: ${existingGalleryImages.length} tersimpan, ${stagedGalleryFiles.length} baru${stagedGalleryFiles.length ? ` ~ ${stagedMB}MB` : ''})`;
 
-                    list.innerHTML = selectedGalleryFiles.map((file, idx) => {
+                    const existingHtml = existingGalleryImages.map((url, idx) => `
+                        <div class="gallery-preview-item" title="Saved Photo #${idx + 1}">
+                            <img src="${url}" class="gallery-preview-img" alt="saved photo" />
+                            <span class="gallery-preview-badge">Tersimpan</span>
+                            <button type="button" class="gallery-preview-remove" onclick="removeExistingGalleryImage(${idx})" title="Hapus foto dari album">✕</button>
+                        </div>
+                    `).join('');
+
+                    const stagedHtml = stagedGalleryFiles.map((file, idx) => {
                         const previewUrl = URL.createObjectURL(file);
                         return `
                             <div class="gallery-preview-item" title="${file.name}">
-                                <img src="${previewUrl}" class="gallery-preview-img" alt="preview" />
-                                <button type="button" class="gallery-preview-remove" onclick="removeSelectedGalleryFile(${idx})" title="Remove photo">✕</button>
+                                <img src="${previewUrl}" class="gallery-preview-img" alt="staged photo" />
+                                <span class="gallery-preview-badge" style="background: rgba(52, 168, 83, 0.85);">Baru</span>
+                                <button type="button" class="gallery-preview-remove" onclick="removeStagedGalleryFile(${idx})" title="Batal pilih foto">✕</button>
                             </div>
                         `;
                     }).join('');
+
+                    list.innerHTML = existingHtml + stagedHtml;
                 }
 
-                window.removeSelectedGalleryFile = function (index) {
-                    selectedGalleryFiles.splice(index, 1);
-                    renderSelectedGalleryPreviews();
+                window.removeExistingGalleryImage = function (index) {
+                    existingGalleryImages.splice(index, 1);
+                    renderGalleryAlbumPreviews();
                 };
 
-                window.clearAllSelectedGalleryFiles = function () {
-                    selectedGalleryFiles = [];
+                window.removeStagedGalleryFile = function (index) {
+                    stagedGalleryFiles.splice(index, 1);
+                    renderGalleryAlbumPreviews();
+                };
+
+                window.clearAllStagedGalleryFiles = function () {
+                    stagedGalleryFiles = [];
                     document.getElementById('galleryMultiFileInput').value = '';
-                    renderSelectedGalleryPreviews();
+                    renderGalleryAlbumPreviews();
                 };
 
-                window.handleBatchGalleryUpload = async function (e) {
+                window.clearAllSelectedGalleryFiles = window.clearAllStagedGalleryFiles;
+
+                // Drag and drop support for Gallery multi upload zone
+                const galleryDropZone = document.getElementById('galleryMultiDropZone');
+                if (galleryDropZone) {
+                    ['dragenter', 'dragover'].forEach(eventName => {
+                        galleryDropZone.addEventListener(eventName, (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            galleryDropZone.classList.add('dragover');
+                        }, false);
+                    });
+                    ['dragleave', 'drop'].forEach(eventName => {
+                        galleryDropZone.addEventListener(eventName, (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            galleryDropZone.classList.remove('dragover');
+                        }, false);
+                    });
+                    galleryDropZone.addEventListener('drop', (e) => {
+                        const dt = e.dataTransfer;
+                        const files = Array.from(dt.files || []).filter(f => f.type.startsWith('image/'));
+                        if (files.length > 0) {
+                            files.forEach(f => {
+                                const exists = stagedGalleryFiles.some(existing => existing.name === f.name && existing.size === f.size);
+                                if (!exists) stagedGalleryFiles.push(f);
+                            });
+                            renderGalleryAlbumPreviews();
+                        }
+                    }, false);
+                }
+
+                window.handleGalleryAlbumSubmit = async function (e) {
                     e.preventDefault();
-                    if (selectedGalleryFiles.length === 0) {
-                        alert('Silakan pilih minimal 1 foto untuk di-upload.');
+
+                    const totalCount = existingGalleryImages.length + stagedGalleryFiles.length;
+                    if (totalCount === 0) {
+                        alert('Silakan pilih atau tambahkan minimal 1 foto untuk album kegiatan.');
                         return;
                     }
 
@@ -2696,43 +2835,61 @@
                     const progressBar = document.getElementById('galleryUploadProgressBar');
 
                     submitBtn.disabled = true;
-                    progressWrap.style.display = 'block';
-
-                    const metadata = {
-                        title: document.getElementById('galleryFormTitle').value.trim(),
-                        category: document.getElementById('galleryFormCategory').value,
-                        color: document.getElementById('galleryFormColor').value,
-                        desc: document.getElementById('galleryFormDesc').value.trim()
-                    };
+                    if (stagedGalleryFiles.length > 0) {
+                        progressWrap.style.display = 'block';
+                    }
 
                     try {
-                        await window.GDG_SUPABASE.uploadGalleryImages(
-                            selectedGalleryFiles,
-                            metadata,
-                            (current, total, filename) => {
-                                const percent = Math.round((current / total) * 100);
-                                progressBar.style.width = percent + '%';
-                                statusText.textContent = `Uploading photo ${current} of ${total}: ${filename}...`;
-                            }
-                        );
+                        let uploadedUrls = [];
+                        if (stagedGalleryFiles.length > 0) {
+                            uploadedUrls = await window.GDG_SUPABASE.uploadMultipleImages(
+                                stagedGalleryFiles,
+                                'gallery',
+                                (current, total, filename) => {
+                                    const percent = Math.round((current / total) * 100);
+                                    progressBar.style.width = percent + '%';
+                                    statusText.textContent = `Mengunggah foto ${current} dari ${total}: ${filename}...`;
+                                }
+                            );
+                        }
+
+                        const allImages = [...existingGalleryImages, ...uploadedUrls];
+                        const albumId = document.getElementById('galleryFormId').value.trim() || undefined;
+
+                        const albumData = {
+                            id: albumId,
+                            title: document.getElementById('galleryFormTitle').value.trim(),
+                            category: document.getElementById('galleryFormCategory').value,
+                            date: document.getElementById('galleryFormDate').value.trim(),
+                            color: document.getElementById('galleryFormColor').value,
+                            desc: document.getElementById('galleryFormDesc').value.trim(),
+                            images: allImages,
+                            image: allImages[0] || ''
+                        };
+
+                        await window.GDG_SUPABASE.saveGalleryItem(albumData);
 
                         closeModal('galleryUploadModalBackdrop');
-                        showToast(`Successfully uploaded ${selectedGalleryFiles.length} photos!`);
-                        selectedGalleryFiles = [];
+                        showToast(albumId ? 'Album kegiatan berhasil diperbarui!' : `Album baru dengan ${allImages.length} foto berhasil disimpan!`);
+                        stagedGalleryFiles = [];
+                        existingGalleryImages = [];
                         await loadGallery();
                     } catch (err) {
-                        alert('Error uploading gallery photos: ' + err.message);
+                        alert('Error menyimpan album kegiatan: ' + err.message);
                     } finally {
                         submitBtn.disabled = false;
                         progressWrap.style.display = 'none';
                     }
                 };
 
+                // Backward compatibility alias
+                window.handleBatchGalleryUpload = window.handleGalleryAlbumSubmit;
+
                 window.confirmDeleteGalleryItem = async function (id, title) {
-                    if (confirm(`Hapus foto '${title}' dari galeri? Foto di Supabase Storage juga akan dibersihkan.`)) {
+                    if (confirm(`Hapus album '${title}' dari galeri? Semua foto album di Supabase Storage juga akan dibersihkan.`)) {
                         try {
                             await window.GDG_SUPABASE.deleteGalleryItem(id);
-                            showToast(`Foto '${title}' telah dihapus.`);
+                            showToast(`Album '${title}' telah dihapus.`);
                             await loadGallery();
                         } catch (err) {
                             alert('Error: ' + err.message);
@@ -2749,7 +2906,9 @@
 
                     const filtered = allGallery.filter(item => {
                         const matchCat = (cat === 'all') || (item.category === cat);
-                        const matchQ = (item.title && item.title.toLowerCase().includes(q)) || (item.desc && item.desc.toLowerCase().includes(q));
+                        const matchQ = (item.title && item.title.toLowerCase().includes(q)) || 
+                                       (item.desc && item.desc.toLowerCase().includes(q)) ||
+                                       (item.date && item.date.toLowerCase().includes(q));
                         return matchCat && matchQ;
                     });
                     renderGalleryCards(filtered);

@@ -752,13 +752,9 @@ function moveTeamCarousel(dir) {
 /* -------------------------------------------------------------------------
  * Gallery — Infinite Auto-Scroll Carousel (viewport + track pattern)
  * ------------------------------------------------------------------------- */
-let galleryRafId = null;
-let galleryScrollPos = 0;
-let galleryScrollPaused = false;
-
 async function renderGallery() {
-    const viewport = document.getElementById("gallery-grid");
-    if (!viewport) return;
+    const container = document.getElementById("gallery-abstract-grid");
+    if (!container) return;
 
     let galleryItems = [];
     if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.getGallery === 'function') {
@@ -769,7 +765,13 @@ async function renderGallery() {
     if (!galleryItems || galleryItems.length === 0) {
         galleryItems = (window.GDG_DATA && window.GDG_DATA.gallery) || [];
     }
-    if (galleryItems.length === 0) return;
+    if (galleryItems.length === 0) {
+        container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 40px;">No gallery activities available yet.</div>`;
+        return;
+    }
+
+    // Take top 6 activities for the abstract collage
+    const showcaseItems = galleryItems.slice(0, 6);
 
     const colorMap = {
         blue: "#4285F4",
@@ -778,120 +780,41 @@ async function renderGallery() {
         red: "#EA4335",
     };
 
-    const makeCard = (item) => {
+    container.innerHTML = showcaseItems.map((item, idx) => {
         const col = colorMap[item.color] || "#4285F4";
+        const photoCount = Array.isArray(item.images) && item.images.length > 0 ? item.images.length : (item.image ? 1 : 0);
+        const imgSrc = item.image || (Array.isArray(item.images) && item.images[0]) || '';
+        const dateStr = item.date || '';
+
         return `
-      <div class="gallery-card">
-        <div class="gallery-media">
-          <span class="gallery-tag-pill" style="border-left: 3px solid ${col};">${item.category || "Activity"}</span>
-          ${
-              item.image
-                  ? `
-            <img src="${item.image}" alt="${item.title}" class="gallery-media-img"
-                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-                 style="width:100%; height:100%; object-fit:cover;">
-          `
-                  : ""
-          }
-          <div class="gallery-fallback-graphic" style="${item.image ? "display:none;" : ""} width:100%; height:100%;">
-            <svg class="gallery-media-svg" viewBox="0 0 400 260" fill="none" width="100%" height="100%">
-              <rect width="400" height="260" fill="#141722"/>
-              <line x1="0" y1="65" x2="400" y2="65" stroke="#1d2232" stroke-width="1"/>
-              <line x1="0" y1="130" x2="400" y2="130" stroke="#1d2232" stroke-width="1"/>
-              <line x1="0" y1="195" x2="400" y2="195" stroke="#1d2232" stroke-width="1"/>
-              <circle cx="200" cy="130" r="65" fill="${col}" fill-opacity="0.12"/>
-              <circle cx="200" cy="130" r="46" stroke="${col}" stroke-width="1.5" stroke-dasharray="4 4"/>
-              <rect x="165" y="100" width="70" height="60" rx="8" fill="#1a1e2d" stroke="${col}" stroke-width="1.2"/>
-              <circle cx="178" cy="112" r="3" fill="#EA4335"/>
-              <circle cx="188" cy="112" r="3" fill="#FBBC04"/>
-              <circle cx="198" cy="112" r="3" fill="#34A853"/>
-              <line x1="176" y1="130" x2="220" y2="130" stroke="#4285F4" stroke-width="2" stroke-linecap="round"/>
-              <line x1="176" y1="142" x2="210" y2="142" stroke="#bdc1c6" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </div>
-        </div>
-        <div class="gallery-body">
-          <h4>${item.title || "GDGoC UNM Activity"}</h4>
-          ${item.desc ? `<p>${item.desc}</p>` : ""}
-        </div>
-      </div>
-    `;
-    };
-
-    // Build track with duplicate cards for infinite auto-scroll
-    let renderList = [...galleryItems];
-    while (renderList.length < 6) {
-        renderList = renderList.concat(galleryItems);
-    }
-    const allCards = renderList.map(makeCard).join("");
-    viewport.innerHTML = `<div class="gallery-track" id="gallery-track">${allCards}${allCards}</div>`;
-
-    const track = document.getElementById("gallery-track");
-
-    // Pause on hover / touch
-    viewport.addEventListener("mouseenter", () => {
-        galleryScrollPaused = true;
-    });
-    viewport.addEventListener("mouseleave", () => {
-        galleryScrollPaused = false;
-    });
-    let touchStartX = 0;
-    viewport.addEventListener(
-        "touchstart",
-        (e) => {
-            galleryScrollPaused = true;
-            touchStartX = e.touches[0].clientX;
-        },
-        { passive: true },
-    );
-    viewport.addEventListener(
-        "touchend",
-        (e) => {
-            const diff = touchStartX - e.changedTouches[0].clientX;
-            if (Math.abs(diff) > 30) galleryScrollPos += diff;
-            setTimeout(() => {
-                galleryScrollPaused = false;
-            }, 50);
-        },
-        { passive: true },
-    );
-
-    // Reset
-    galleryScrollPos = 0;
-    track.style.transform = "translateX(0)";
-    if (galleryRafId) {
-        cancelAnimationFrame(galleryRafId);
-        galleryRafId = null;
-    }
-
-    requestAnimationFrame(() =>
-        requestAnimationFrame(() => {
-            _startGalleryRaf(track, renderList.length);
-        }),
-    );
-}
-
-function _startGalleryRaf(track, originalCount) {
-    if (galleryRafId) cancelAnimationFrame(galleryRafId);
-    let last = null;
-    function step(ts) {
-        if (!last) last = ts;
-        const dt = ts - last;
-        last = ts;
-        if (!galleryScrollPaused) {
-            const cards = track.querySelectorAll(".gallery-card");
-            if (cards.length) {
-                const gap = 24;
-                const unitW = cards[0].offsetWidth + gap;
-                const halfW = originalCount * unitW;
-                galleryScrollPos += 0.03 * dt;
-                if (galleryScrollPos >= halfW) galleryScrollPos -= halfW;
-                track.style.transform = `translateX(-${galleryScrollPos}px)`;
-            }
-        }
-        galleryRafId = requestAnimationFrame(step);
-    }
-    galleryRafId = requestAnimationFrame(step);
+            <div class="gallery-abstract-item" onclick="window.location.href='gallery.html?id=${encodeURIComponent(item.id || idx)}'" role="button" tabindex="0" title="Buka dokumentasi: ${item.title}">
+                ${imgSrc ? `
+                    <img src="${imgSrc}" alt="${item.title}" class="gallery-abstract-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                ` : ''}
+                <div class="gallery-fallback-graphic" style="${imgSrc ? 'display:none;' : 'display:flex;'} width:100%; height:100%; align-items:center; justify-content:center; background:#141722;">
+                    <svg viewBox="0 0 100 100" fill="none" style="width:48px; height:48px; opacity:0.35;">
+                        <circle cx="50" cy="50" r="40" stroke="${col}" stroke-width="2" stroke-dasharray="4 4"/>
+                        <rect x="35" y="35" width="30" height="30" rx="4" fill="${col}" fill-opacity="0.3"/>
+                    </svg>
+                </div>
+                <div class="gallery-abstract-overlay">
+                    <div class="gallery-abstract-top">
+                        <span class="gallery-tag-pill" style="border-left: 3px solid ${col}; font-size: 0.72rem;">${item.category || "Activity"}</span>
+                        ${photoCount > 0 ? `
+                            <span class="gallery-photo-count-pill">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                <span>${photoCount} Foto</span>
+                            </span>
+                        ` : ''}
+                    </div>
+                    <div class="gallery-abstract-bottom">
+                        <div class="gallery-abstract-title">${item.title || "GDGoC UNM Activity"}</div>
+                        ${dateStr ? `<div class="gallery-abstract-meta">${dateStr}</div>` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join("");
 }
 
 /* -------------------------------------------------------------------------

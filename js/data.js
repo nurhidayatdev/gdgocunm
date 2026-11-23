@@ -706,44 +706,75 @@ const GDG_DATA = {
         "A glimpse into our journey from team collaboration to inspirational activities. This gallery showcases precious moments of the core team and GDGoC UNM members learning, sharing, and growing together in the spirit of technology and innovation.",
     gallery: [
         {
+            id: "gal-1",
             title: "Info Session & Grand Onboarding",
             category: "Onboarding",
+            date: "October 12, 2026",
             image: "assets/images/gallery/gallery-1.jpg",
+            images: [
+                "assets/images/gallery/gallery-1.jpg",
+                "assets/images/events/weekly-class-2.jpg"
+            ],
             desc: "Welcoming hundreds of new members at the Pinisi Tower Theater Room, UNM.",
             color: "blue",
         },
         {
+            id: "gal-2",
             title: "Hands-on Workshop: Gemini API",
             category: "Workshop",
+            date: "October 24, 2026",
             image: "assets/images/gallery/gallery-2.jpg",
+            images: [
+                "assets/images/gallery/gallery-2.jpg"
+            ],
             desc: "Live coding intelligent assistants with Google AI Studio and Gemini 2.5.",
             color: "yellow",
         },
         {
+            id: "gal-3",
             title: "Weekly Class: Modern Web Architecture",
             category: "Weekly Class",
+            date: "November 07, 2026",
             image: "assets/images/gallery/gallery-3.jpg",
+            images: [
+                "assets/images/gallery/gallery-3.jpg"
+            ],
             desc: "Intensive component development and responsive styling in JTIK Lab.",
             color: "green",
         },
         {
+            id: "gal-4",
             title: "Solution Challenge Hackathon Day",
             category: "Hackathon",
+            date: "November 14, 2026",
             image: "assets/images/gallery/gallery-4.jpg",
+            images: [
+                "assets/images/gallery/gallery-4.jpg"
+            ],
             desc: "Brainstorming and prototyping digital solutions addressing the 17 UN SDGs.",
             color: "red",
         },
         {
+            id: "gal-5",
             title: "Robotics & Telemetry Lab Testing",
             category: "Robotics",
+            date: "November 21, 2026",
             image: "assets/images/gallery/gallery-5.jpg",
+            images: [
+                "assets/images/gallery/gallery-5.jpg"
+            ],
             desc: "Mobile robot navigation and sensor data telemetry using ESP32 & ROS.",
             color: "green",
         },
         {
+            id: "gal-6",
             title: "Core Team Strategic Sync",
             category: "Community",
+            date: "November 28, 2026",
             image: "assets/images/gallery/gallery-6.jpg",
+            images: [
+                "assets/images/gallery/gallery-6.jpg"
+            ],
             desc: "Annual roadmap alignment and curriculum planning with all division leads.",
             color: "blue",
         },

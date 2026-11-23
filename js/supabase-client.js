@@ -173,11 +173,30 @@
     }
 
     function mapGalleryRow(row) {
+        let images = [];
+        if (Array.isArray(row.images)) {
+            images = row.images;
+        } else if (typeof row.images === 'string' && row.images.trim().startsWith('[')) {
+            try {
+                images = JSON.parse(row.images);
+            } catch (e) {}
+        }
+        if (!images || images.length === 0) {
+            if (row.image_url) {
+                images = [row.image_url];
+            } else if (row.image) {
+                images = [row.image];
+            }
+        }
+        const cover = row.image_url || row.image || (images.length > 0 ? images[0] : '');
+
         return {
             id: row.id,
             title: row.title || 'GDGoC UNM Activity',
             category: row.category || 'Activity',
-            image: row.image_url || '',
+            image: cover,
+            images: images,
+            date: row.date || '',
             desc: row.description || '',
             color: row.color || 'blue',
             createdAt: row.created_at
@@ -805,82 +824,34 @@
             }
         },
 
-        async uploadGalleryImages(files, metadata = {}, onProgress = null) {
+        async uploadMultipleImages(files, bucket = 'gallery', onProgress = null) {
             if (!files || files.length === 0) return [];
-
-            const client = initSupabase();
-            const results = [];
-            const localGallery = getLocalGallery();
-
+            const urls = [];
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 if (typeof onProgress === 'function') {
                     onProgress(i + 1, files.length, file.name);
                 }
-
-                try {
-                    // Upload file to Supabase Storage in 'gallery' folder
-                    const imageUrl = await this.uploadImage(file, 'gallery');
-
-                    const rawName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
-                    const cleanName = rawName.replace(/[-_]/g, ' ');
-                    const title = metadata.title ? (files.length > 1 ? `${metadata.title} #${i + 1}` : metadata.title) : cleanName;
-                    const category = metadata.category || 'Activity';
-                    const desc = metadata.desc || '';
-                    const color = metadata.color || ['blue', 'yellow', 'green', 'red'][i % 4];
-
-                    const payload = {
-                        title: title,
-                        category: category,
-                        image_url: imageUrl,
-                        description: desc,
-                        color: color
-                    };
-
-                    let savedItem = {
-                        id: 'temp-' + Date.now() + '-' + i,
-                        title,
-                        category,
-                        image: imageUrl,
-                        desc,
-                        color,
-                        createdAt: new Date().toISOString()
-                    };
-
-                    if (client) {
-                        try {
-                            const { data, error } = await client
-                                .from('activity_gallery')
-                                .insert(payload)
-                                .select()
-                                .single();
-
-                            if (data && data.id) {
-                                savedItem = mapGalleryRow(data);
-                            }
-                        } catch (dbErr) {
-                            console.warn('[Supabase Gallery Insert]', dbErr);
-                        }
-                    }
-
-                    results.push(savedItem);
-                    localGallery.unshift(savedItem);
-                } catch (err) {
-                    console.error('[Gallery Upload Error] File:', file.name, err);
-                }
+                const url = await this.uploadImage(file, bucket);
+                if (url) urls.push(url);
             }
-
-            saveLocalGallery(localGallery);
-            return results;
+            return urls;
         },
 
         async saveGalleryItem(itemData) {
             const client = initSupabase();
+            const images = Array.isArray(itemData.images) && itemData.images.length > 0
+                ? itemData.images
+                : (itemData.image ? [itemData.image] : []);
+            const coverImage = itemData.image || (images.length > 0 ? images[0] : '');
+
             const payload = {
                 title: itemData.title,
                 category: itemData.category || 'Activity',
-                image_url: itemData.image || '',
-                description: itemData.desc || '',
+                image_url: coverImage,
+                images: images,
+                date: itemData.date || '',
+                description: itemData.desc || itemData.description || '',
                 color: itemData.color || 'blue'
             };
             if (itemData.id && !String(itemData.id).startsWith('temp-')) {
@@ -890,20 +861,44 @@
             let savedId = itemData.id;
             if (client) {
                 try {
+                    let res;
                     if (itemData.id && !String(itemData.id).startsWith('temp-')) {
-                        const { data } = await client.from('activity_gallery').update(payload).eq('id', itemData.id).select().single();
-                        if (data) savedId = data.id;
+                        res = await client.from('activity_gallery').update(payload).eq('id', itemData.id).select().single();
                     } else {
-                        const { data } = await client.from('activity_gallery').insert(payload).select().single();
-                        if (data) savedId = data.id;
+                        res = await client.from('activity_gallery').insert(payload).select().single();
                     }
+
+                    // Fallback without new columns if DB doesn't have them yet
+                    if (res && res.error && (res.error.message?.includes('images') || res.error.message?.includes('date'))) {
+                        const fallbackPayload = {
+                            title: itemData.title,
+                            category: itemData.category || 'Activity',
+                            image_url: coverImage,
+                            description: itemData.desc || itemData.description || '',
+                            color: itemData.color || 'blue'
+                        };
+                        if (itemData.id && !String(itemData.id).startsWith('temp-')) {
+                            res = await client.from('activity_gallery').update(fallbackPayload).eq('id', itemData.id).select().single();
+                        } else {
+                            res = await client.from('activity_gallery').insert(fallbackPayload).select().single();
+                        }
+                    }
+
+                    if (res && res.data) savedId = res.data.id;
                 } catch (err) {
                     console.warn('[Supabase Gallery Save]', err);
                 }
             }
 
             const gallery = getLocalGallery();
-            const newItem = { ...itemData, id: savedId || itemData.id || 'temp-' + Date.now() };
+            const newItem = {
+                ...itemData,
+                id: savedId || itemData.id || 'temp-' + Date.now(),
+                image: coverImage,
+                images: images,
+                date: payload.date,
+                desc: payload.description
+            };
             const idx = gallery.findIndex(g => g.id === itemData.id);
             if (idx >= 0) {
                 gallery[idx] = { ...gallery[idx], ...newItem };
@@ -916,31 +911,33 @@
 
         async deleteGalleryItem(id) {
             const client = initSupabase();
-            let imageUrlToDelete = '';
+            const imagesToDelete = [];
 
             const localGallery = getLocalGallery();
             const target = localGallery.find(g => g.id === id);
-            if (target && target.image) {
-                imageUrlToDelete = target.image;
+            if (target) {
+                if (Array.isArray(target.images)) {
+                    target.images.forEach(img => {
+                        if (img && !imagesToDelete.includes(img)) imagesToDelete.push(img);
+                    });
+                }
+                if (target.image && !imagesToDelete.includes(target.image)) {
+                    imagesToDelete.push(target.image);
+                }
             }
 
             if (client) {
                 try {
-                    if (!imageUrlToDelete && id && !String(id).startsWith('temp-')) {
-                        const { data } = await client.from('activity_gallery').select('image_url').eq('id', id).single();
-                        if (data && data.image_url) imageUrlToDelete = data.image_url;
+                    if (id && !String(id).startsWith('temp-')) {
+                        const { error } = await client.from('activity_gallery').delete().eq('id', id);
+                        if (error) console.warn('[Supabase Gallery Delete DB]', error.message);
                     }
                 } catch (e) {}
-
-                if (id && !String(id).startsWith('temp-')) {
-                    const { error } = await client.from('activity_gallery').delete().eq('id', id);
-                    if (error) console.warn('[Supabase Gallery Delete DB]', error.message);
-                }
             }
 
             // Cleanup from Supabase Storage
-            if (imageUrlToDelete) {
-                await this.deleteImageFromStorage(imageUrlToDelete);
+            for (const imgUrl of imagesToDelete) {
+                if (imgUrl) await this.deleteImageFromStorage(imgUrl);
             }
 
             const updatedGallery = localGallery.filter(g => g.id !== id);
