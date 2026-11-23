@@ -2303,10 +2303,17 @@ a {
 }
 
 .gallery-stats-text {
-    font-size: 0.85rem;
-    color: var(--text-muted);
+    font-size: 0.82rem;
+    color: var(--text-secondary);
     font-family: var(--font-mono);
     font-weight: 500;
+    background: rgba(22, 24, 34, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 6px 16px;
+    border-radius: var(--radius-pill);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
 /* Albums Grid & Cards */
@@ -2351,12 +2358,30 @@ a {
     right: 0;
     height: 3px;
     z-index: 3;
+    background: linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%);
 }
 
 .gallery-album-card.blue::before { background: var(--google-blue); }
 .gallery-album-card.green::before { background: var(--google-green); }
 .gallery-album-card.yellow::before { background: var(--google-yellow); }
 .gallery-album-card.red::before { background: var(--google-red); }
+
+.gallery-album-card.blue:hover {
+    border-color: rgba(66, 133, 244, 0.5);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55), 0 0 20px rgba(66, 133, 244, 0.15);
+}
+.gallery-album-card.green:hover {
+    border-color: rgba(52, 168, 83, 0.5);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55), 0 0 20px rgba(52, 168, 83, 0.15);
+}
+.gallery-album-card.yellow:hover {
+    border-color: rgba(251, 188, 4, 0.5);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55), 0 0 20px rgba(251, 188, 4, 0.15);
+}
+.gallery-album-card.red:hover {
+    border-color: rgba(234, 67, 53, 0.5);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55), 0 0 20px rgba(234, 67, 53, 0.15);
+}
 
 /* Cover Wrapper */
 .album-cover-wrapper {

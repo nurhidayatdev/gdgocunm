@@ -150,19 +150,41 @@
                     red: '#EA4335'
                 };
 
+                // Date Parsing & Timestamp Helper (Newest First)
+                function getGalleryTimestamp(item) {
+                    if (!item) return 0;
+                    if (item.date) {
+                        if (/^\d{4}-\d{2}-\d{2}$/.test(item.date)) {
+                            const dt = new Date(item.date + 'T00:00:00');
+                            if (!isNaN(dt.getTime())) return dt.getTime();
+                        }
+                        const parsed = new Date(item.date);
+                        if (!isNaN(parsed.getTime())) return parsed.getTime();
+                    }
+                    if (item.created_at || item.createdAt) {
+                        const parsed = new Date(item.created_at || item.createdAt);
+                        if (!isNaN(parsed.getTime())) return parsed.getTime();
+                    }
+                    return 0;
+                }
+
                 // Fetch Gallery Albums
                 async function loadGalleryAlbums() {
+                    let rawAlbums = [];
                     try {
                         if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.getGallery === 'function') {
-                            allAlbums = await window.GDG_SUPABASE.getGallery();
+                            rawAlbums = await window.GDG_SUPABASE.getGallery();
                         }
                     } catch (e) {
                         console.warn('[Gallery] Error loading from Supabase:', e);
                     }
 
-                    if (!allAlbums || allAlbums.length === 0) {
-                        allAlbums = (window.GDG_DATA && window.GDG_DATA.gallery) || [];
+                    if (!rawAlbums || rawAlbums.length === 0) {
+                        rawAlbums = (window.GDG_DATA && window.GDG_DATA.gallery) || [];
                     }
+
+                    // Sort newest first
+                    allAlbums = [...rawAlbums].sort((a, b) => getGalleryTimestamp(b) - getGalleryTimestamp(a));
 
                     filterGallery();
 
@@ -208,6 +230,16 @@
                             return dateStr;
                         }
                     }
+                    try {
+                        const parsed = new Date(dateStr);
+                        if (!isNaN(parsed.getTime())) {
+                            return parsed.toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric'
+                            });
+                        }
+                    } catch (e) {}
                     return dateStr;
                 }
 
@@ -221,7 +253,10 @@
                             const count = Array.isArray(a.images) && a.images.length > 0 ? a.images.length : (a.image ? 1 : 0);
                             return acc + count;
                         }, 0);
-                        counter.textContent = `${albums.length} ${albums.length === 1 ? 'Album' : 'Albums'} • ${totalPhotos} ${totalPhotos === 1 ? 'Photo' : 'Photos'}`;
+                        counter.innerHTML = `
+                            <span style="width: 7px; height: 7px; border-radius: 50%; background: var(--google-blue); display: inline-block;"></span>
+                            <span>${albums.length} ${albums.length === 1 ? 'Album' : 'Albums'} • ${totalPhotos} ${totalPhotos === 1 ? 'Photo' : 'Photos'}</span>
+                        `;
                     }
 
                     if (albums.length === 0) {
@@ -239,6 +274,8 @@
                         return;
                     }
 
+                    const colorPalette = ['blue', 'red', 'yellow', 'green'];
+
                     container.innerHTML = albums.map((album, idx) => {
                         const photos = Array.isArray(album.images) && album.images.length > 0 
                             ? album.images 
@@ -248,17 +285,42 @@
                         const otherThumbs = photos.slice(1, 5);
                         const displayDate = formatGalleryDate(album.date);
                         const locationText = album.location || album.desc || '';
+                        const colorClass = album.color || colorPalette[idx % colorPalette.length];
 
                         return `
-                            <article class="gallery-album-card" onclick="openLightboxByAlbumIndex(${idx})" tabindex="0" role="button" aria-label="View album ${album.title}">
+                            <article class="gallery-album-card ${colorClass}" onclick="openLightboxByAlbumIndex(${idx})" tabindex="0" role="button" aria-label="View album ${album.title}">
                                 <div class="album-cover-wrapper">
                                     <img src="${coverSrc}" alt="${album.title}" class="album-cover-img" loading="lazy" onerror="this.src='assets/images/events/weekly-class-2.jpg'" />
+                                    <span class="album-badge-count">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                            <polyline points="21 15 16 10 5 21"></polyline>
+                                        </svg>
+                                        <span>${photoCount} ${photoCount === 1 ? 'Photo' : 'Photos'}</span>
+                                    </span>
                                 </div>
 
                                 <div class="album-card-body">
                                     <div class="album-meta-row">
-                                        ${displayDate ? `<span class="album-date-label">${displayDate}</span>` : ''}
-                                        ${locationText ? `<span class="album-location-badge" style="color: var(--text-muted); font-size: 0.74rem; font-family: var(--font-mono);">${displayDate ? '• ' : ''}${locationText}</span>` : ''}
+                                        ${displayDate ? `
+                                            <span class="album-date-label" style="display: inline-flex; align-items: center; gap: 6px; color: var(--yellow-light); font-weight: 500;">
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--google-yellow); flex-shrink: 0;">
+                                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                                </svg>
+                                                <span>${displayDate}</span>
+                                            </span>` : ''}
+                                        ${locationText ? `
+                                            <span class="album-location-badge" style="display: inline-flex; align-items: center; gap: 5px; color: var(--text-muted); font-size: 0.74rem; font-family: var(--font-mono); max-width: 55%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--google-blue); flex-shrink: 0;">
+                                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                                    <circle cx="12" cy="10" r="2.5"></circle>
+                                                </svg>
+                                                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${locationText}</span>
+                                            </span>` : ''}
                                     </div>
                                     <h3 class="album-title">${album.title || 'Activity Documentation'}</h3>
 
@@ -278,7 +340,7 @@
 
                                 <div class="album-card-footer">
                                     <span class="album-action-link">
-                                        <span>View Album (${photoCount} ${photoCount === 1 ? 'Photo' : 'Photos'})</span>
+                                        <span>View Album (${photoCount} Photos)</span>
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                             <path d="M5 12h14M12 5l7 7-7 7"/>
                                         </svg>
