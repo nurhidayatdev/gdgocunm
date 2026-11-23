@@ -817,12 +817,8 @@ async function renderGallery() {
     }
 
     container.innerHTML = showcaseItems.map((item, idx) => {
-        const col = colorMap[item.color] || "#4285F4";
         const photos = Array.isArray(item.images) && item.images.length > 0 ? item.images : (item.image ? [item.image] : []);
         const imgSrc = photos[0] || item.image || 'assets/images/events/weekly-class-2.jpg';
-        const displayDate = formatGalleryDate(item.date);
-        const locationText = item.location || item.desc || '';
-        const metaText = displayDate ? (displayDate + (locationText ? ` • ${locationText}` : '')) : locationText;
 
         return `
             <div class="gallery-abstract-item" data-collage-idx="${idx}" onclick="window.location.href='gallery.html?id=${encodeURIComponent(item.id || idx)}'" role="button" tabindex="0" title="View documentation: ${item.title}">
@@ -830,7 +826,6 @@ async function renderGallery() {
                 <div class="gallery-abstract-overlay">
                     <div class="gallery-abstract-bottom">
                         <div class="gallery-abstract-title">${item.title || "GDGoC UNM Activity"}</div>
-                        ${metaText ? `<div class="gallery-abstract-meta">${metaText}</div>` : ''}
                     </div>
                 </div>
             </div>
@@ -859,7 +854,6 @@ async function renderGallery() {
                     boxes.forEach((box, i) => {
                         const img = box.querySelector(".gallery-abstract-img");
                         const titleEl = box.querySelector(".gallery-abstract-title");
-                        const metaEl = box.querySelector(".gallery-abstract-meta");
                         if (!img) return;
 
                         const pick = shuffled[i % shuffled.length];
@@ -868,10 +862,6 @@ async function renderGallery() {
                         img.src = pick.src;
                         if (pick.album) {
                             if (titleEl && pick.album.title) titleEl.textContent = pick.album.title;
-                            const pickDate = formatGalleryDate(pick.album.date);
-                            const pickLoc = pick.album.location || pick.album.desc || '';
-                            const pickMeta = pickDate ? (pickDate + (pickLoc ? ` • ${pickLoc}` : '')) : pickLoc;
-                            if (metaEl) metaEl.textContent = pickMeta;
                             box.onclick = () => {
                                 window.location.href = `gallery.html?id=${encodeURIComponent(pick.album.id || i)}`;
                             };

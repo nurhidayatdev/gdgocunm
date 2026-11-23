@@ -288,15 +288,6 @@
                         `;
                     }).join('');
                 }
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                                        </svg>
-                                    </span>
-                                </div>
-                            </article>
-                        `;
-                    }).join('');
-                }
 
                 // Lightbox Implementation
                 window.openLightboxByAlbumIndex = function (index) {
@@ -304,14 +295,12 @@
                     const q = (searchInput?.value || '').trim().toLowerCase();
 
                     const currentList = allAlbums.filter(album => {
-                        const matchCat = (currentCategory === 'all') || 
-                            (album.category && album.category.toLowerCase() === currentCategory.toLowerCase());
                         const matchSearch = !q || 
                             (album.title && album.title.toLowerCase().includes(q)) ||
+                            (album.location && album.location.toLowerCase().includes(q)) ||
                             (album.desc && album.desc.toLowerCase().includes(q)) ||
-                            (album.category && album.category.toLowerCase().includes(q)) ||
                             (album.date && album.date.toLowerCase().includes(q));
-                        return matchCat && matchSearch;
+                        return matchSearch;
                     });
 
                     const album = currentList[index] || allAlbums[index];
