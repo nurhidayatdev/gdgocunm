@@ -772,8 +772,8 @@ async function renderGallery() {
         return;
     }
 
-    // Take top 6 activities for the abstract collage
-    const showcaseItems = galleryItems.slice(0, 6);
+    // Take top 4 activities for the abstract collage
+    const showcaseItems = galleryItems.slice(0, 4);
 
     const colorMap = {
         blue: "#4285F4",
