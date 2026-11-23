@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=5.0"
+        />
+        <meta
+            name="description"
+            content="Events & Workshops catalog of Google Developer Groups on Campus Universitas Negeri Makassar (GDGoC UNM). Explore upcoming and past developer sessions, hands-on masterclasses, and tech workshops."
+        />
+        <meta name="theme-color" content="#171B21" />
+        <title>Events & Workshops • GDGoC UNM</title>
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="assets/logo/favicon.png" />
+
+        <!-- Google Fonts: Google Sans & Space Grotesk -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600&display=swap"
+            rel="stylesheet"
+        />
+
+        <!-- Codebase Stylesheets -->
+        <link rel="stylesheet" href="css/style.css" />
+        <link rel="stylesheet" href="css/animations.css" />
+    </head>
+    <body id="top">
+        <!-- Tech Grid Lines Overlay (Single permitted background overlay per design.md) -->
+        <div class="tech-grid-overlay" aria-hidden="true"></div>
+
+        <!-- Shared Navbar Component Placeholder -->
+        <div id="navbar-placeholder"></div>
+
+        <!-- ========================================================================
+             Main Content: Events Catalog Showcase
+             ======================================================================== -->
+        <main class="main-content" id="main-content">
+            <section class="section events-hero-section">
+                <div class="container">
+                    <!-- Clean Section Header (No artificial badges per design.md) -->
+                    <div class="section-header">
+                        <h1 class="section-title">Events & Workshops</h1>
+                        <p class="section-subtitle">
+                            Participate in hands-on technical workshops, weekly study jams, hackathons, and masterclasses curated by Google Developer Groups on Campus Universitas Negeri Makassar.
+                        </p>
+                    </div>
+
+                    <!-- Search Input Box -->
+                    <div class="events-search-box">
+                        <svg class="events-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input
+                            type="text"
+                            id="eventSearchInput"
+                            placeholder="Search events by title, speaker, or venue..."
+                            autocomplete="off"
+                        />
+                    </div>
+
+                    <!-- Filter Bar & Counter -->
+                    <div class="events-filter-bar">
+                        <div class="events-filter-tabs" id="eventFilterTabs">
+                            <button type="button" class="events-filter-tab active" data-filter="all">
+                                <span class="events-filter-dot" style="color: var(--blue-light);"></span>
+                                <span>All Events</span>
+                                <span class="events-filter-count" id="countAll">0</span>
+                            </button>
+                            <button type="button" class="events-filter-tab" data-filter="upcoming">
+                                <span class="events-filter-dot" style="color: var(--google-green);"></span>
+                                <span>Upcoming</span>
+                                <span class="events-filter-count" id="countUpcoming">0</span>
+                            </button>
+                            <button type="button" class="events-filter-tab" data-filter="completed">
+                                <span class="events-filter-dot" style="color: var(--text-muted);"></span>
+                                <span>Completed</span>
+                                <span class="events-filter-count" id="countCompleted">0</span>
+                            </button>
+                        </div>
+                        <div class="events-stats-text" id="eventStatsCounter">
+                            Loading events...
+                        </div>
+                    </div>
+
+                    <!-- Events Catalog Grid -->
+                    <div class="events-catalog-grid" id="eventsContainer">
+                        <!-- Populated dynamically via JavaScript -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- ========================================================================
+             Interactive Event Detail Modal
+             ======================================================================== -->
+        <div
+            class="event-detail-backdrop"
+            id="eventDetailModal"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Event Details"
+        >
+            <div class="event-detail-card" id="eventDetailCard">
+                <!-- Modal Header -->
+                <div class="event-detail-header">
+                    <span id="modalEventStatus" class="event-status-pill upcoming">UPCOMING</span>
+                    <button
+                        type="button"
+                        class="event-detail-close-btn"
+                        id="modalCloseBtn"
+                        aria-label="Close Event Details"
+                    >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Modal Content: Two Columns on Desktop -->
+                <div class="event-detail-content">
+                    <!-- Left: Poster Column -->
+                    <div class="event-detail-poster-col">
+                        <div class="event-detail-poster-wrap">
+                            <img
+                                id="modalEventPoster"
+                                src="assets/images/events/weekly-class-2.jpg"
+                                alt="Event Poster"
+                                class="event-detail-poster-img"
+                            />
+                        </div>
+                        <a
+                            id="modalOpenPosterBtn"
+                            href="#"
+                            target="_blank"
+                            rel="noopener"
+                            class="event-catalog-btn"
+                            style="width: 100%;"
+                        >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="15 3 21 3 21 9"></polyline>
+                                <polyline points="9 21 3 21 3 15"></polyline>
+                                <line x1="21" y1="3" x2="14" y2="10"></line>
+                                <line x1="3" y1="21" x2="10" y2="14"></line>
+                            </svg>
+                            <span>Open Full Resolution Poster</span>
+                        </a>
+                    </div>
+
+                    <!-- Right: Info Column -->
+                    <div class="event-detail-info-col">
+                        <h2 id="modalEventTitle" class="event-detail-title">
+                            Event Title
+                        </h2>
+
+                        <!-- Grid Schedule & Location -->
+                        <div class="event-detail-grid-meta">
+                            <div class="event-detail-meta-box">
+                                <span class="event-detail-meta-label">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    </svg>
+                                    Date
+                                </span>
+                                <span id="modalEventDate" class="event-detail-meta-value">-</span>
+                            </div>
+
+                            <div class="event-detail-meta-box">
+                                <span class="event-detail-meta-label">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12 6 12 12 16 14"></polyline>
+                                    </svg>
+                                    Time
+                                </span>
+                                <span id="modalEventTime" class="event-detail-meta-value">-</span>
+                            </div>
+
+                            <div class="event-detail-meta-box full">
+                                <span class="event-detail-meta-label">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                        <circle cx="12" cy="10" r="3"></circle>
+                                    </svg>
+                                    Location / Venue
+                                </span>
+                                <span id="modalEventLocation" class="event-detail-meta-value">-</span>
+                            </div>
+                        </div>
+
+                        <!-- Speakers Section -->
+                        <div class="event-detail-people-sec">
+                            <h4>Speakers & Instructors</h4>
+                            <div class="event-detail-people-grid" id="modalSpeakersContainer">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Moderator Section -->
+                        <div class="event-detail-people-sec" id="modalModeratorSection" style="display: none;">
+                            <h4>Moderator</h4>
+                            <div class="event-detail-people-grid">
+                                <div class="event-detail-person-card">
+                                    <span class="event-detail-person-badge">MODERATOR</span>
+                                    <div id="modalModeratorName" class="event-detail-person-name">-</div>
+                                    <div id="modalModeratorRole" class="event-detail-person-role">-</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer Actions -->
+                        <div class="event-detail-footer-actions">
+                            <a
+                                id="modalRegisterBtn"
+                                href="#"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="btn-primary"
+                                style="flex: 1; justify-content: center;"
+                            >
+                                <span>Register / Location</span>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <path d="M5 12h14M12 5l7 7-7 7" />
+                                </svg>
+                            </a>
+                            <button
+                                type="button"
+                                id="modalShareBtn"
+                                class="event-catalog-btn"
+                                style="flex-shrink: 0; padding: 10px 16px;"
+                            >
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                </svg>
+                                <span>Share Link</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shared Toast Notification Container -->
+        <div id="eventToast" class="gallery-toast" style="display: none;" role="status" aria-live="polite"></div>
+
+        <!-- Shared Footer Component Placeholder -->
+        <div id="footer-placeholder"></div>
+
+        <!-- Required Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="js/supabase-client.js"></script>
+        <script src="js/data.js"></script>
+        <script src="js/components.js"></script>
+
+        <!-- Events Page Logic -->
+        <script>
+            (function () {
+                'use strict';
+
+                let allEvents = [];
+                let currentFilter = 'all';
+                let searchQuery = '';
+
+                // Timestamp extractor for newest-first sorting
+                function getEventTimestamp(ev) {
+                    if (ev.raw_date || ev.rawDate) {
+                        const rawD = ev.raw_date || ev.rawDate;
+                        const rawT = ev.raw_time || ev.rawTime || '00:00:00';
+                        const dt = new Date(`${rawD}T${rawT.length === 5 ? rawT + ':00' : rawT}`);
+                        if (!isNaN(dt.getTime())) return dt.getTime();
+                    }
+                    if (ev.date) {
+                        const parsed = new Date(ev.date);
+                        if (!isNaN(parsed.getTime())) return parsed.getTime();
+                    }
+                    if (ev.created_at || ev.createdAt) {
+                        const parsed = new Date(ev.created_at || ev.createdAt);
+                        if (!isNaN(parsed.getTime())) return parsed.getTime();
+                    }
+                    return 0;
+                }
+
+                function getStatusInfo(ev) {
+                    let currentStatus = ev.status || 'Upcoming';
+                    if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.getEventAutoStatus === 'function') {
+                        currentStatus = window.GDG_SUPABASE.getEventAutoStatus(ev);
+                    } else if (ev.raw_date || ev.rawDate) {
+                        const rawD = ev.raw_date || ev.rawDate;
+                        const rawT = ev.raw_time || ev.rawTime || '23:59:59';
+                        const dt = new Date(`${rawD}T${rawT.length === 5 ? rawT + ':00' : rawT}`);
+                        if (!isNaN(dt.getTime())) {
+                            currentStatus = dt >= new Date() ? 'Upcoming' : 'Completed';
+                        }
+                    }
+                    return {
+                        status: currentStatus,
+                        isUpcoming: currentStatus.toLowerCase() === 'upcoming'
+                    };
+                }
+
+                async function loadEventsData() {
+                    const container = document.getElementById('eventsContainer');
+                    const stats = document.getElementById('eventStatsCounter');
+
+                    let list = [];
+                    if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.getEvents === 'function') {
+                        try {
+                            list = await window.GDG_SUPABASE.getEvents();
+                        } catch (e) {
+                            console.warn('Supabase fetch failed, falling back to local data', e);
+                        }
+                    }
+                    if (!list || list.length === 0) {
+                        list = (window.GDG_DATA && window.GDG_DATA.events) || [];
+                    }
+
+                    // Sort newest events first
+                    allEvents = [...list].sort((a, b) => getEventTimestamp(b) - getEventTimestamp(a));
+
+                    updateCounters();
+                    renderEventsGrid();
+                    checkUrlDeepLink();
+                }
+
+                function updateCounters() {
+                    let upcomingCount = 0;
+                    let completedCount = 0;
+
+                    allEvents.forEach(ev => {
+                        const st = getStatusInfo(ev);
+                        if (st.isUpcoming) {
+                            upcomingCount++;
+                        } else {
+                            completedCount++;
+                        }
+                    });
+
+                    const countAll = document.getElementById('countAll');
+                    const countUpcoming = document.getElementById('countUpcoming');
+                    const countCompleted = document.getElementById('countCompleted');
+
+                    if (countAll) countAll.textContent = allEvents.length;
+                    if (countUpcoming) countUpcoming.textContent = upcomingCount;
+                    if (countCompleted) countCompleted.textContent = completedCount;
+                }
+
+                function renderEventsGrid() {
+                    const container = document.getElementById('eventsContainer');
+                    const stats = document.getElementById('eventStatsCounter');
+                    if (!container) return;
+
+                    const filtered = allEvents.filter(ev => {
+                        const st = getStatusInfo(ev);
+
+                        // Status filter
+                        if (currentFilter === 'upcoming' && !st.isUpcoming) return false;
+                        if (currentFilter === 'completed' && st.isUpcoming) return false;
+
+                        // Search query
+                        if (searchQuery) {
+                            const q = searchQuery.toLowerCase();
+                            const title = (ev.title || '').toLowerCase();
+                            const loc = (ev.location || '').toLowerCase();
+                            const date = (ev.date || '').toLowerCase();
+                            const speakerStr = (ev.speakers && Array.isArray(ev.speakers))
+                                ? ev.speakers.map(s => s.name || '').join(' ').toLowerCase()
+                                : (ev.speaker || '').toLowerCase();
+                            const mod = (ev.moderator || '').toLowerCase();
+
+                            return (
+                                title.includes(q) ||
+                                loc.includes(q) ||
+                                date.includes(q) ||
+                                speakerStr.includes(q) ||
+                                mod.includes(q)
+                            );
+                        }
+
+                        return true;
+                    });
+
+                    if (stats) {
+                        stats.textContent = `Showing ${filtered.length} of ${allEvents.length} events`;
+                    }
+
+                    if (filtered.length === 0) {
+                        container.innerHTML = `
+                            <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: 16px; color: var(--text-muted);">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 12px; opacity: 0.6;">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                                <div style="font-size: 1rem; color: #ffffff; font-weight: 600;">No events match your criteria</div>
+                                <div style="font-size: 0.84rem; margin-top: 4px;">Try adjusting your search terms or filter selection.</div>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    container.innerHTML = filtered.map(ev => {
+                        const st = getStatusInfo(ev);
+                        const poster = ev.poster || 'assets/images/events/weekly-class-2.jpg';
+                        const speakers = (ev.speakers && Array.isArray(ev.speakers) && ev.speakers.length > 0)
+                            ? ev.speakers
+                            : (ev.speaker ? [{ name: ev.speaker, role: ev.speakerRole || 'Speaker' }] : []);
+                        const primarySpeaker = speakers[0]?.name || '';
+
+                        return `
+                            <article class="event-catalog-card" data-id="${ev.id}">
+                                <div class="event-catalog-poster-wrap">
+                                    <img
+                                        src="${poster}"
+                                        alt="${ev.title}"
+                                        class="event-catalog-poster-img"
+                                        loading="lazy"
+                                        onerror="this.src='assets/images/events/weekly-class-2.jpg'"
+                                    />
+                                    <span class="event-status-pill ${st.isUpcoming ? 'upcoming' : 'completed'} event-catalog-status">
+                                        ${st.status}
+                                    </span>
+                                </div>
+                                <div class="event-catalog-body">
+                                    <h3 class="event-catalog-title" title="${ev.title}">${ev.title}</h3>
+                                    <div class="event-catalog-meta">
+                                        <div class="event-catalog-meta-item">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                                            </svg>
+                                            <span>${ev.date || 'TBA'}</span>
+                                        </div>
+                                        ${ev.location ? `
+                                            <div class="event-catalog-meta-item">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                                    <circle cx="12" cy="10" r="3"></circle>
+                                                </svg>
+                                                <span>${ev.location.split(':')[0]}</span>
+                                            </div>
+                                        ` : ''}
+                                        ${primarySpeaker ? `
+                                            <div class="event-catalog-meta-item" style="color: var(--blue-light);">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                                    <circle cx="12" cy="7" r="4"></circle>
+                                                </svg>
+                                                <span>${primarySpeaker}${speakers.length > 1 ? ` +${speakers.length - 1} more` : ''}</span>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                    <div class="event-catalog-actions">
+                                        <button
+                                            type="button"
+                                            class="event-catalog-btn"
+                                            onclick="openEventDetailsModal('${ev.id}')"
+                                        >
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                            </svg>
+                                            <span>View Details</span>
+                                        </button>
+                                        ${st.isUpcoming && ev.registrationUrl && ev.registrationUrl !== '#' ? `
+                                            <a
+                                                href="${ev.registrationUrl}"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="event-catalog-btn primary"
+                                                onclick="event.stopPropagation();"
+                                            >
+                                                <span>Register</span>
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                                    <path d="M5 12h14M12 5l7 7-7 7" />
+                                                </svg>
+                                            </a>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            </article>
+                        `;
+                    }).join('');
+
+                    // Make entire card clickable to open details
+                    container.querySelectorAll('.event-catalog-card').forEach(card => {
+                        card.addEventListener('click', function (e) {
+                            if (e.target.closest('a') || e.target.closest('button')) return;
+                            const evId = this.getAttribute('data-id');
+                            if (evId) openEventDetailsModal(evId);
+                        });
+                    });
+                }
+
+                // Modal interactions
+                window.openEventDetailsModal = function (eventId) {
+                    const ev = allEvents.find(e => e.id === eventId);
+                    if (!ev) return;
+
+                    const modal = document.getElementById('eventDetailModal');
+                    const st = getStatusInfo(ev);
+                    const poster = ev.poster || 'assets/images/events/weekly-class-2.jpg';
+
+                    // Update Status Badge
+                    const statusBadge = document.getElementById('modalEventStatus');
+                    statusBadge.textContent = st.status.toUpperCase();
+                    statusBadge.className = `event-status-pill ${st.isUpcoming ? 'upcoming' : 'completed'}`;
+
+                    // Update Poster
+                    const posterImg = document.getElementById('modalEventPoster');
+                    posterImg.src = poster;
+                    posterImg.onerror = () => { posterImg.src = 'assets/images/events/weekly-class-2.jpg'; };
+
+                    const openPosterBtn = document.getElementById('modalOpenPosterBtn');
+                    openPosterBtn.href = poster;
+
+                    // Update Titles & Meta
+                    document.getElementById('modalEventTitle').textContent = ev.title;
+                    document.getElementById('modalEventDate').textContent = ev.date || 'TBA';
+                    document.getElementById('modalEventTime').textContent = ev.time || 'TBA';
+                    document.getElementById('modalEventLocation').textContent = ev.location || 'Offline / Online';
+
+                    // Update Speakers List
+                    const speakersContainer = document.getElementById('modalSpeakersContainer');
+                    const speakers = (ev.speakers && Array.isArray(ev.speakers) && ev.speakers.length > 0)
+                        ? ev.speakers
+                        : (ev.speaker ? [{ name: ev.speaker, role: ev.speakerRole || 'Speaker' }] : []);
+
+                    if (speakers.length > 0) {
+                        speakersContainer.innerHTML = speakers.map((spk, idx) => `
+                            <div class="event-detail-person-card">
+                                <span class="event-detail-person-badge">${speakers.length > 1 ? `SPEAKER #${idx + 1}` : 'SPEAKER'}</span>
+                                <div class="event-detail-person-name">${spk.name}</div>
+                                <div class="event-detail-person-role">${spk.role || 'Research & Development'}</div>
+                            </div>
+                        `).join('');
+                    } else {
+                        speakersContainer.innerHTML = `
+                            <div class="event-detail-person-card">
+                                <span class="event-detail-person-badge">SPEAKER</span>
+                                <div class="event-detail-person-name">Core Team Speaker</div>
+                                <div class="event-detail-person-role">GDGoC UNM</div>
+                            </div>
+                        `;
+                    }
+
+                    // Update Moderator
+                    const modSection = document.getElementById('modalModeratorSection');
+                    if (ev.moderator) {
+                        document.getElementById('modalModeratorName').textContent = ev.moderator;
+                        document.getElementById('modalModeratorRole').textContent = ev.moderatorRole || 'Moderator';
+                        modSection.style.display = 'block';
+                    } else {
+                        modSection.style.display = 'none';
+                    }
+
+                    // Registration button
+                    const regBtn = document.getElementById('modalRegisterBtn');
+                    if (ev.registrationUrl && ev.registrationUrl !== '#') {
+                        regBtn.href = ev.registrationUrl;
+                        regBtn.style.display = 'inline-flex';
+                    } else {
+                        regBtn.style.display = 'none';
+                    }
+
+                    // Share button setup
+                    const shareBtn = document.getElementById('modalShareBtn');
+                    shareBtn.onclick = function () {
+                        const shareUrl = `${window.location.origin}${window.location.pathname}?event=${encodeURIComponent(ev.id)}`;
+                        if (navigator.clipboard && navigator.clipboard.writeText) {
+                            navigator.clipboard.writeText(shareUrl).then(() => {
+                                showToast('Event link copied to clipboard!');
+                            }).catch(() => {
+                                fallbackCopyText(shareUrl);
+                            });
+                        } else {
+                            fallbackCopyText(shareUrl);
+                        }
+                    };
+
+                    // Sync URL param
+                    if (window.history && window.history.replaceState) {
+                        window.history.replaceState(null, '', `?event=${encodeURIComponent(ev.id)}`);
+                    }
+
+                    modal.classList.add('open');
+                    document.body.style.overflow = 'hidden';
+                };
+
+                window.closeEventDetailsModal = function () {
+                    const modal = document.getElementById('eventDetailModal');
+                    if (!modal) return;
+                    modal.classList.remove('open');
+                    document.body.style.overflow = '';
+
+                    // Clean URL param
+                    if (window.history && window.history.replaceState) {
+                        window.history.replaceState(null, '', window.location.pathname);
+                    }
+                };
+
+                function fallbackCopyText(text) {
+                    const temp = document.createElement('input');
+                    temp.value = text;
+                    document.body.appendChild(temp);
+                    temp.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(temp);
+                    showToast('Event link copied to clipboard!');
+                }
+
+                function showToast(msg) {
+                    const toast = document.getElementById('eventToast');
+                    if (!toast) return;
+                    toast.textContent = msg;
+                    toast.style.display = 'block';
+                    toast.style.opacity = '1';
+                    setTimeout(() => {
+                        toast.style.opacity = '0';
+                        setTimeout(() => { toast.style.display = 'none'; }, 300);
+                    }, 2400);
+                }
+
+                function checkUrlDeepLink() {
+                    const params = new URLSearchParams(window.location.search);
+                    const eventId = params.get('event') || params.get('id');
+                    if (eventId) {
+                        openEventDetailsModal(eventId);
+                    }
+                }
+
+                // Event Listeners setup
+                function initEventsPage() {
+                    // Search input
+                    const searchInput = document.getElementById('eventSearchInput');
+                    if (searchInput) {
+                        searchInput.addEventListener('input', function () {
+                            searchQuery = this.value.trim();
+                            renderEventsGrid();
+                        });
+                    }
+
+                    // Filter tabs
+                    const filterTabs = document.querySelectorAll('.events-filter-tab');
+                    filterTabs.forEach(tab => {
+                        tab.addEventListener('click', function () {
+                            filterTabs.forEach(t => t.classList.remove('active'));
+                            this.classList.add('active');
+                            currentFilter = this.getAttribute('data-filter') || 'all';
+                            renderEventsGrid();
+                        });
+                    });
+
+                    // Modal close interactions
+                    const modal = document.getElementById('eventDetailModal');
+                    const closeBtn = document.getElementById('modalCloseBtn');
+                    if (closeBtn) {
+                        closeBtn.onclick = closeEventDetailsModal;
+                    }
+                    if (modal) {
+                        modal.addEventListener('click', function (e) {
+                            if (e.target === modal) {
+                                closeEventDetailsModal();
+                            }
+                        });
+                    }
+                    document.addEventListener('keydown', function (e) {
+                        if (e.key === 'Escape' && modal && modal.classList.contains('open')) {
+                            closeEventDetailsModal();
+                        }
+                    });
+
+                    // Load initial data
+                    loadEventsData();
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initEventsPage);
+                } else {
+                    initEventsPage();
+                }
+            })();
+        </script>
+    </body>
+</html>

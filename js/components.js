@@ -35,7 +35,7 @@
             <!-- Desktop Navigation Links -->
             <ul class="nav-links">
                 <li><a href="index.html#about" class="nav-link" data-nav="about">About</a></li>
-                <li><a href="index.html#events" class="nav-link" data-nav="events">Events</a></li>
+                <li><a href="events.html" class="nav-link" data-nav="events">Events</a></li>
                 <li><a href="learning-path.html" class="nav-link" data-nav="learning-path">Learning Path</a></li>
                 <li><a href="index.html#team" class="nav-link" data-nav="team">Team</a></li>
                 <li><a href="gallery.html" class="nav-link" data-nav="gallery">Gallery</a></li>
@@ -100,7 +100,7 @@
             <span>About</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" /></svg>
         </a>
-        <a href="index.html#events" class="nav-link" data-nav="events">
+        <a href="events.html" class="nav-link" data-nav="events">
             <span>Events</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" /></svg>
         </a>
@@ -166,7 +166,7 @@
                     <h4>Navigation</h4>
                     <ul class="footer-links">
                         <li><a href="index.html#about">About</a></li>
-                        <li><a href="index.html#events">Events</a></li>
+                        <li><a href="events.html">Events</a></li>
                         <li><a href="learning-path.html">Learning Path</a></li>
                         <li><a href="index.html#team">Core Team</a></li>
                         <li><a href="gallery.html">Activities Gallery</a></li>
@@ -299,6 +299,8 @@
             activeNav = 'learning-path';
         } else if (path.endsWith('team.html')) {
             activeNav = 'team';
+        } else if (path.endsWith('events.html')) {
+            activeNav = 'events';
         }
 
         if (activeNav) {
