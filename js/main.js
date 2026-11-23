@@ -387,7 +387,34 @@ async function renderEvents() {
         return;
     }
 
-    container.innerHTML = eventsList.map(ev => {
+    // Helper to extract timestamp for newest-first sorting
+    function getEventTimestamp(ev) {
+        if (ev.raw_date || ev.rawDate) {
+            const rawD = ev.raw_date || ev.rawDate;
+            const rawT = ev.raw_time || ev.rawTime || '00:00:00';
+            const dt = new Date(`${rawD}T${rawT.length === 5 ? rawT + ':00' : rawT}`);
+            if (!isNaN(dt.getTime())) return dt.getTime();
+        }
+        if (ev.date) {
+            const parsed = new Date(ev.date);
+            if (!isNaN(parsed.getTime())) return parsed.getTime();
+        }
+        if (ev.created_at || ev.createdAt) {
+            const parsed = new Date(ev.created_at || ev.createdAt);
+            if (!isNaN(parsed.getTime())) return parsed.getTime();
+        }
+        return 0;
+    }
+
+    // Sort: Newest / Most recent event date first
+    const sortedEvents = [...eventsList].sort((a, b) => getEventTimestamp(b) - getEventTimestamp(a));
+
+    // Limit to max 5 latest events on landing page
+    const topEvents = sortedEvents.slice(0, 5);
+    const featuredEvent = topEvents[0];
+    const compactEvents = topEvents.slice(1);
+
+    function getStatusInfo(ev) {
         let currentStatus = ev.status || 'Upcoming';
         if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.getEventAutoStatus === 'function') {
             currentStatus = window.GDG_SUPABASE.getEventAutoStatus(ev);
@@ -399,98 +426,182 @@ async function renderEvents() {
                 currentStatus = dt >= new Date() ? 'Upcoming' : 'Completed';
             }
         }
-        const isUpcoming = currentStatus.toLowerCase() === 'upcoming';
-        const posterSrc = ev.poster || 'assets/images/events/weekly-class-2.jpg';
-        const speakers = (ev.speakers && Array.isArray(ev.speakers) && ev.speakers.length > 0)
-            ? ev.speakers
-            : (ev.speaker ? [{ name: ev.speaker, role: ev.speakerRole || 'Speaker' }] : []);
+        return {
+            status: currentStatus,
+            isUpcoming: currentStatus.toLowerCase() === 'upcoming'
+        };
+    }
 
-        return `
-            <article class="event-showcase-card">
-                <div class="event-poster-wrapper">
-                    <img src="${posterSrc}" alt="${ev.title}" class="event-poster-img" onerror="this.src='assets/images/events/weekly-class-2.jpg'" />
-                    <a href="${posterSrc}" target="_blank" rel="noopener" class="event-poster-zoom-btn">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <polyline points="15 3 21 3 21 9"></polyline>
-                            <polyline points="9 21 3 21 3 15"></polyline>
-                            <line x1="21" y1="3" x2="14" y2="10"></line>
-                            <line x1="3" y1="21" x2="10" y2="14"></line>
-                        </svg>
-                        <span>View Poster</span>
-                    </a>
-                </div>
-                <div class="event-details-wrapper">
-                    <div>
-                        <div class="event-header-row">
-                            <span class="event-category-pill">${ev.category || 'Weekly Class'}</span>
-                            <span class="event-status-pill ${isUpcoming ? 'upcoming' : 'completed'}">${currentStatus}</span>
-                        </div>
-                        <h3 class="event-title" style="margin-top: 14px;">${ev.title}</h3>
+    // 1. Featured Large Event Card (Newest Event)
+    const featuredStatus = getStatusInfo(featuredEvent);
+    const featuredPoster = featuredEvent.poster || 'assets/images/events/weekly-class-2.jpg';
+    const featuredSpeakers = (featuredEvent.speakers && Array.isArray(featuredEvent.speakers) && featuredEvent.speakers.length > 0)
+        ? featuredEvent.speakers
+        : (featuredEvent.speaker ? [{ name: featuredEvent.speaker, role: featuredEvent.speakerRole || 'Speaker' }] : []);
+
+    const featuredHtml = `
+        <article class="event-showcase-card event-featured-card">
+            <div class="event-poster-wrapper">
+                <img src="${featuredPoster}" alt="${featuredEvent.title}" class="event-poster-img" onerror="this.src='assets/images/events/weekly-class-2.jpg'" />
+                <a href="${featuredPoster}" target="_blank" rel="noopener" class="event-poster-zoom-btn">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <polyline points="9 21 3 21 3 15"></polyline>
+                        <line x1="21" y1="3" x2="14" y2="10"></line>
+                        <line x1="3" y1="21" x2="10" y2="14"></line>
+                    </svg>
+                    <span>View Poster</span>
+                </a>
+            </div>
+            <div class="event-details-wrapper">
+                <div>
+                    <div class="event-header-row">
+                        <span class="event-category-pill">${featuredEvent.category || 'Event'}</span>
+                        <span class="event-status-pill ${featuredStatus.isUpcoming ? 'upcoming' : 'completed'}">${featuredStatus.status}</span>
                     </div>
+                    <h3 class="event-title" style="margin-top: 14px;">${featuredEvent.title}</h3>
+                </div>
 
-                    <!-- Date, Time, Venue -->
-                    <div class="event-meta-grid">
-                        <div class="event-meta-item">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                            <span>${ev.date}</span>
-                        </div>
+                <!-- Date, Time, Venue -->
+                <div class="event-meta-grid">
+                    <div class="event-meta-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <span>${featuredEvent.date || 'TBA'}</span>
+                    </div>
+                    ${featuredEvent.time ? `
                         <div class="event-meta-item">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <polyline points="12 6 12 12 16 14"></polyline>
                             </svg>
-                            <span>${ev.time}</span>
+                            <span>${featuredEvent.time}</span>
                         </div>
+                    ` : ''}
+                    ${featuredEvent.location ? `
                         <div class="event-meta-item">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                 <circle cx="12" cy="10" r="3"></circle>
                             </svg>
-                            <span>${ev.location}</span>
+                            <span>${featuredEvent.location}</span>
                         </div>
-                    </div>
-
-                    <!-- Speaker & Moderator -->
-                    <div class="event-speakers-grid">
-                        ${speakers.map((spk, idx) => `
-                            <div class="event-person-card">
-                                <span class="event-person-badge">${speakers.length > 1 ? `Speaker #${idx + 1}` : 'Speaker'}</span>
-                                <div class="event-person-name">${spk.name}</div>
-                                ${spk.role ? `<div class="event-person-role">${spk.role}</div>` : ''}
-                            </div>
-                        `).join('')}
-                        ${ev.moderator ? `
-                            <div class="event-person-card">
-                                <span class="event-person-badge">Moderator</span>
-                                <div class="event-person-name">${ev.moderator}</div>
-                                ${ev.moderatorRole ? `<div class="event-person-role">${ev.moderatorRole}</div>` : ''}
-                            </div>
-                        ` : ''}
-                    </div>
-
-                    <!-- Actions -->
-                    <div class="event-footer-actions">
-                        ${ev.registrationUrl && ev.registrationUrl !== '#' ? `
-                            <a href="${ev.registrationUrl}" target="_blank" rel="noopener noreferrer" class="btn-primary">
-                                <span>Register / Location</span>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                                </svg>
-                            </a>
-                        ` : ''}
-                        <a href="${posterSrc}" target="_blank" rel="noopener" class="btn-secondary">
-                            <span>Open Full Poster</span>
-                        </a>
-                    </div>
+                    ` : ''}
                 </div>
-            </article>
+
+                <!-- Speaker & Moderator Grid (Adaptive to many speakers) -->
+                <div class="event-speakers-grid">
+                    ${featuredSpeakers.map((spk, idx) => `
+                        <div class="event-person-card">
+                            <span class="event-person-badge">${featuredSpeakers.length > 1 ? `SPEAKER #${idx + 1}` : 'SPEAKER'}</span>
+                            <div class="event-person-name">${spk.name}</div>
+                            ${spk.role ? `<div class="event-person-role">${spk.role}</div>` : ''}
+                        </div>
+                    `).join('')}
+                    ${featuredEvent.moderator ? `
+                        <div class="event-person-card">
+                            <span class="event-person-badge">MODERATOR</span>
+                            <div class="event-person-name">${featuredEvent.moderator}</div>
+                            ${featuredEvent.moderatorRole ? `<div class="event-person-role">${featuredEvent.moderatorRole}</div>` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+
+                <!-- Actions -->
+                <div class="event-footer-actions">
+                    ${featuredEvent.registrationUrl && featuredEvent.registrationUrl !== '#' ? `
+                        <a href="${featuredEvent.registrationUrl}" target="_blank" rel="noopener noreferrer" class="btn-primary">
+                            <span>Register / Location</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                    ` : ''}
+                    <a href="${featuredPoster}" target="_blank" rel="noopener" class="btn-secondary">
+                        <span>Open Full Poster</span>
+                    </a>
+                </div>
+            </div>
+        </article>
+    `;
+
+    // 2. Compact Events Grid (Row 2 — 4 Columns)
+    let compactHtml = '';
+    if (compactEvents.length > 0) {
+        compactHtml = `
+            <div class="events-compact-grid">
+                ${compactEvents.map(ev => {
+                    const statusInfo = getStatusInfo(ev);
+                    const poster = ev.poster || 'assets/images/events/weekly-class-2.jpg';
+                    const speakers = (ev.speakers && Array.isArray(ev.speakers) && ev.speakers.length > 0)
+                        ? ev.speakers
+                        : (ev.speaker ? [{ name: ev.speaker, role: ev.speakerRole || 'Speaker' }] : []);
+                    const speakerText = speakers.length > 0
+                        ? (speakers.length > 1 ? `${speakers[0].name} +${speakers.length - 1} more` : speakers[0].name)
+                        : (ev.moderator || '');
+
+                    return `
+                        <article class="event-compact-card">
+                            <div class="event-compact-poster-wrap">
+                                <img src="${poster}" alt="${ev.title}" class="event-compact-poster-img" onerror="this.src='assets/images/events/weekly-class-2.jpg'" />
+                                <span class="event-status-pill ${statusInfo.isUpcoming ? 'upcoming' : 'completed'} event-compact-status">${statusInfo.status}</span>
+                            </div>
+                            <div class="event-compact-body">
+                                <div class="event-compact-category">${ev.category || 'Event'}</div>
+                                <h4 class="event-compact-title" title="${ev.title}">${ev.title}</h4>
+                                <div class="event-compact-meta">
+                                    <div class="event-compact-meta-item">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                                        </svg>
+                                        <span>${ev.date || 'TBA'}</span>
+                                    </div>
+                                    ${ev.location ? `
+                                        <div class="event-compact-meta-item">
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                                <circle cx="12" cy="10" r="3"></circle>
+                                            </svg>
+                                            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${ev.location.split(':')[0]}</span>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                ${speakerText ? `
+                                    <div class="event-compact-speaker">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="12" cy="7" r="4"></circle>
+                                        </svg>
+                                        <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${speakerText}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            <div class="event-compact-footer">
+                                ${ev.registrationUrl && ev.registrationUrl !== '#' ? `
+                                    <a href="${ev.registrationUrl}" target="_blank" rel="noopener noreferrer" class="event-compact-btn primary">
+                                        <span>Register</span>
+                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                    </a>
+                                ` : ''}
+                                <a href="${poster}" target="_blank" rel="noopener" class="event-compact-btn">
+                                    <span>Poster</span>
+                                </a>
+                            </div>
+                        </article>
+                    `;
+                }).join('')}
+            </div>
         `;
-    }).join('');
+    }
+
+    container.innerHTML = featuredHtml + compactHtml;
 }
 
 /* -------------------------------------------------------------------------
