@@ -8,7 +8,7 @@
         />
         <meta
             name="description"
-            content="Activities and Documentation Gallery of Google Developer Groups On Campus Universitas Negeri Makassar (GDGoC UNM). Browse photos from workshops, weekly study jams, and hackathons."
+            content="Documentation & Activities Gallery of Google Developer Groups on Campus Universitas Negeri Makassar (GDGoC UNM). Explore our tech workshops, hackathons, and community study jams."
         />
         <meta name="theme-color" content="#171B21" />
         <title>Activities Gallery • GDGoC UNM</title>
@@ -24,111 +24,44 @@
             rel="stylesheet"
         />
 
-        <!-- Codebase Core Stylesheets -->
+        <!-- Codebase Stylesheets -->
         <link rel="stylesheet" href="css/style.css" />
         <link rel="stylesheet" href="css/animations.css" />
-
-        <style>
-            .gallery-page-hero {
-                padding-top: 140px;
-                padding-bottom: 36px;
-                position: relative;
-                z-index: 1;
-                text-align: center;
-            }
-
-            .gallery-hero-title {
-                font-size: clamp(2.2rem, 4.8vw, 3.4rem);
-                font-weight: 700;
-                letter-spacing: -0.03em;
-                line-height: 1.15;
-                margin-bottom: 16px;
-                background: linear-gradient(135deg, #ffffff 40%, var(--blue-light) 100%);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-            }
-
-            .gallery-hero-desc {
-                font-size: 1.05rem;
-                color: var(--text-secondary);
-                max-width: 720px;
-                margin: 0 auto 28px;
-                line-height: 1.65;
-            }
-
-            .gallery-search-wrap {
-                max-width: 440px;
-                margin: 0 auto 36px;
-                position: relative;
-            }
-
-            .gallery-search-input {
-                width: 100%;
-                background: rgba(255, 255, 255, 0.04);
-                border: 1px solid rgba(255, 255, 255, 0.12);
-                border-radius: var(--radius-pill);
-                padding: 12px 20px 12px 44px;
-                color: #ffffff;
-                font-size: 0.92rem;
-                font-family: inherit;
-                outline: none;
-                transition: all var(--transition-fast);
-            }
-
-            .gallery-search-input:focus {
-                border-color: var(--google-blue);
-                background: rgba(255, 255, 255, 0.07);
-                box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
-            }
-
-            .gallery-search-icon {
-                position: absolute;
-                left: 16px;
-                top: 50%;
-                transform: translateY(-50%);
-                color: var(--text-muted);
-                pointer-events: none;
-            }
-
-            .gallery-empty-state {
-                text-align: center;
-                padding: 60px 20px;
-                background: rgba(255, 255, 255, 0.02);
-                border: 1px dashed rgba(255, 255, 255, 0.1);
-                border-radius: var(--radius-lg);
-                color: var(--text-muted);
-                grid-column: 1 / -1;
-            }
-        </style>
     </head>
-    <body class="page-wrapper">
-        <!-- Ambient Background Layers (Strictly per design.md) -->
-        <div class="ambient-glow glow-blue" aria-hidden="true"></div>
-        <div class="ambient-glow glow-red" aria-hidden="true"></div>
-        <div class="ambient-glow glow-yellow" aria-hidden="true"></div>
-        <div class="ambient-glow glow-green" aria-hidden="true"></div>
+    <body>
+        <!-- Background Tech Grid & Ambient Glows per design.md -->
         <div class="tech-grid-overlay" aria-hidden="true"></div>
-        <div class="pinisi-silhouette-layer" aria-hidden="true"></div>
+        <div class="ambient-glow" aria-hidden="true"></div>
 
-        <!-- Site Header / Floating Navbar -->
-        <header class="site-header" role="banner">
-            <div class="nav-container">
-                <a href="index.html" class="nav-brand" aria-label="GDGoC UNM Home">
-                    <img
-                        src="assets/logo/gdgoc-logo.png"
-                        alt="GDGoC UNM Logo"
-                        class="brand-logo"
-                        onerror="this.src='assets/logo/favicon.png'"
-                    />
-                    <div class="brand-text">
-                        <span class="brand-title">Google Developer Groups</span>
-                        <span class="brand-subtitle">On Campus • Universitas Negeri Makassar</span>
-                    </div>
-                </a>
+        <!-- ========================================================================
+             Header Navigation (Floating Dark Frosted Glass Pill matching index.html)
+             ======================================================================== -->
+        <header class="site-header" id="main-header">
+            <div class="container">
+                <nav class="nav-inner" aria-label="Main Navigation">
+                    <!-- Logo Branding -->
+                    <a href="index.html" class="nav-brand">
+                        <div class="nav-logo-icon">
+                            <img
+                                src="assets/logo/GDGoC-Logo.png"
+                                alt="GDGoC Logo"
+                                width="32"
+                                height="22"
+                            />
+                        </div>
+                        <div class="nav-brand-text">
+                            <span class="nav-brand-title">
+                                GDGoC <span class="campus-tag">UNM</span>
+                            </span>
+                            <span class="nav-brand-sub"
+                                >Universitas Negeri Makassar</span
+                            >
+                        </div>
+                    </a>
 
-                <nav class="nav-menu" role="navigation" aria-label="Main Navigation">
+                    <!-- Desktop Navigation Links -->
                     <ul class="nav-links">
-                        <li><a href="index.html" class="nav-link">Home</a></li>
+                        <li><a href="index.html#about" class="nav-link">About</a></li>
                         <li><a href="index.html#events" class="nav-link">Events</a></li>
                         <li><a href="learning-path.html" class="nav-link">Learning Path</a></li>
                         <li><a href="index.html#team" class="nav-link">Team</a></li>
@@ -136,8 +69,9 @@
                         <li><a href="index.html#faq" class="nav-link">FAQ</a></li>
                     </ul>
 
+                    <!-- Action Buttons -->
                     <div class="nav-actions">
-                        <a href="dashboard.html" class="btn-secondary" style="font-size: 0.82rem; padding: 7px 14px;">Dashboard</a>
+                        <a href="dashboard.html" class="btn-secondary" style="font-size: 0.85rem; padding: 7px 14px;">Dashboard</a>
                         <a
                             href="https://gdg.community.dev/gdg-on-campus-universitas-negeri-makassar-makassar-indonesia/"
                             target="_blank"
@@ -145,43 +79,72 @@
                             class="btn-primary"
                         >
                             <span>Join Chapter</span>
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            <svg
+                                width="12"
+                                height="12"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2.5"
+                            >
+                                <path d="M5 12h14M12 5l7 7-7 7" />
                             </svg>
                         </a>
                     </div>
-                </nav>
 
-                <button
-                    class="mobile-toggle"
-                    id="mobile-toggle-btn"
-                    aria-label="Toggle mobile menu"
-                    aria-expanded="false"
-                >
-                    <span class="toggle-line"></span>
-                    <span class="toggle-line"></span>
-                    <span class="toggle-line"></span>
-                </button>
+                    <!-- Mobile Hamburger Toggle -->
+                    <button
+                        class="mobile-toggle"
+                        id="mobile-toggle-btn"
+                        aria-label="Toggle navigation menu"
+                        aria-expanded="false"
+                    >
+                        <span class="toggle-bar"></span>
+                        <span class="toggle-bar"></span>
+                        <span class="toggle-bar"></span>
+                    </button>
+                </nav>
             </div>
         </header>
 
-        <!-- Mobile Drawer Navigation -->
-        <div class="mobile-nav-backdrop" id="mobile-nav-backdrop"></div>
-        <div class="mobile-nav-drawer" id="mobile-nav-drawer" role="dialog" aria-modal="true">
-            <div class="mobile-nav-header">
-                <div class="brand-text">
-                    <span class="brand-title">GDGoC UNM</span>
-                    <span class="brand-subtitle">Universitas Negeri Makassar</span>
-                </div>
-            </div>
-            <div class="mobile-nav-links">
-                <a href="index.html" class="nav-link"><span>Home</span></a>
-                <a href="index.html#events" class="nav-link"><span>Events</span></a>
-                <a href="learning-path.html" class="nav-link"><span>Learning Path</span></a>
-                <a href="index.html#team" class="nav-link"><span>Team</span></a>
-                <a href="gallery.html" class="nav-link active"><span>Gallery</span></a>
-                <a href="index.html#faq" class="nav-link"><span>FAQ</span></a>
-                <a href="dashboard.html" class="nav-link"><span>Dashboard</span></a>
+        <!-- Mobile Drawer Menu -->
+        <div class="mobile-drawer-backdrop" id="mobile-drawer-backdrop"></div>
+        <div
+            class="mobile-nav-drawer"
+            id="mobile-nav-drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobile Navigation"
+        >
+            <div class="mobile-nav-menu-list">
+                <a href="index.html#about" class="nav-link">
+                    <span>About</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" /></svg>
+                </a>
+                <a href="index.html#events" class="nav-link">
+                    <span>Events</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" /></svg>
+                </a>
+                <a href="learning-path.html" class="nav-link">
+                    <span>Learning Path</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" /></svg>
+                </a>
+                <a href="index.html#team" class="nav-link">
+                    <span>Team</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" /></svg>
+                </a>
+                <a href="gallery.html" class="nav-link active">
+                    <span>Gallery</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" /></svg>
+                </a>
+                <a href="index.html#faq" class="nav-link">
+                    <span>FAQ</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" /></svg>
+                </a>
+                <a href="dashboard.html" class="nav-link">
+                    <span>Dashboard</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" /></svg>
+                </a>
             </div>
             <div class="mobile-nav-actions" style="margin-top: 24px;">
                 <a
@@ -196,78 +159,70 @@
             </div>
         </div>
 
-        <!-- Main Content -->
-        <main class="page-main" id="main-content">
-            <!-- Hero Header -->
-            <section class="gallery-page-hero">
+        <!-- ========================================================================
+             Main Content: Activities Gallery Showcase
+             ======================================================================== -->
+        <main class="main-content" id="main-content">
+            <!-- Hero Header Section -->
+            <section class="section gallery-hero-section">
                 <div class="container">
-                    <div style="display: flex; justify-content: center; margin-bottom: 16px;">
-                        <span class="pill-badge">
+                    <div class="section-header">
+                        <div class="pill-badge">
                             <span class="pill-dot"></span>
                             <span>ACTIVITIES & DOCUMENTATION</span>
-                        </span>
+                        </div>
+                        <h1 class="section-title">Activities & Event Gallery</h1>
+                        <p class="section-subtitle">
+                            Kumpulan dokumentasi momen terbaik, workshop teknologi, study jam, dan kebersamaan di Google Developer Groups on Campus Universitas Negeri Makassar.
+                        </p>
                     </div>
-                    <h1 class="gallery-hero-title">Activities & Event Gallery</h1>
-                    <p class="gallery-hero-desc">
-                        Dokumentasi lengkap momen seru, workshop teknologi, study jam, dan kebersamaan komunitas Google Developer Groups on Campus Universitas Negeri Makassar.
-                    </p>
 
                     <!-- Search Input -->
-                    <div class="gallery-search-wrap">
-                        <svg class="gallery-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <div class="gallery-search-box">
+                        <svg class="gallery-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="11" cy="11" r="8"></circle>
                             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                         </svg>
                         <input
                             type="text"
-                            class="gallery-search-input"
                             id="gallerySearchInput"
-                            placeholder="Cari dokumentasi kegiatan..."
+                            placeholder="Cari dokumentasi kegiatan, topik, atau tanggal..."
                             oninput="filterGallery()"
                         />
                     </div>
-                </div>
-            </section>
 
-            <!-- Gallery Albums Section -->
-            <section class="section" style="padding-top: 0; padding-bottom: 80px;">
-                <div class="gallery-page-container">
-                    <!-- Filter Tabs -->
+                    <!-- Filter Bar & Counter -->
                     <div class="gallery-filter-bar">
                         <div class="gallery-category-tabs" id="galleryCategoryTabs">
-                            <button type="button" class="gallery-cat-tab active" data-category="all" onclick="selectCategory('all', this)">Semua Kegiatan</button>
-                            <button type="button" class="gallery-cat-tab" data-category="Workshop" onclick="selectCategory('Workshop', this)">Workshop</button>
-                            <button type="button" class="gallery-cat-tab" data-category="Weekly Class" onclick="selectCategory('Weekly Class', this)">Weekly Class</button>
-                            <button type="button" class="gallery-cat-tab" data-category="Onboarding" onclick="selectCategory('Onboarding', this)">Onboarding</button>
-                            <button type="button" class="gallery-cat-tab" data-category="Hackathon" onclick="selectCategory('Hackathon', this)">Hackathon</button>
-                            <button type="button" class="gallery-cat-tab" data-category="Community" onclick="selectCategory('Community', this)">Community</button>
-                            <button type="button" class="gallery-cat-tab" data-category="Robotics" onclick="selectCategory('Robotics', this)">Robotics</button>
+                            <!-- Populated dynamically -->
                         </div>
-                        <div id="galleryStatsCounter" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">
+                        <div class="gallery-stats-text" id="galleryStatsCounter">
                             Memuat dokumentasi...
                         </div>
                     </div>
 
                     <!-- Albums Grid -->
                     <div class="gallery-albums-grid" id="galleryAlbumsContainer">
-                        <!-- Dynamically populated -->
+                        <!-- Populated dynamically -->
                     </div>
                 </div>
             </section>
         </main>
 
-        <!-- Fullscreen Interactive Lightbox Modal -->
+        <!-- ========================================================================
+             Fullscreen Interactive Lightbox Modal
+             ======================================================================== -->
         <div class="gallery-lightbox-backdrop" id="galleryLightbox" role="dialog" aria-modal="true" aria-label="Photo Lightbox">
-            <!-- Header -->
+            <!-- Top Bar -->
             <div class="lightbox-header">
                 <div class="lightbox-title-area">
                     <h3 id="lightboxAlbumTitle" style="font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0;">Judul Kegiatan</h3>
-                    <span id="lightboxAlbumMeta" style="font-size: 0.76rem; color: var(--text-muted);">Tanggal • Kategori</span>
+                    <div id="lightboxAlbumMeta" style="font-size: 0.78rem; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px;">Tanggal • Kategori</div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 14px;">
-                    <span id="lightboxPhotoCounter" style="font-size: 0.82rem; font-weight: 600; color: var(--blue-light); font-family: var(--font-mono);">Foto 1 dari 1</span>
-                    <button type="button" class="dash-modal-close" style="color: #ffffff; font-size: 1.5rem; line-height: 1;" onclick="closeLightbox()" aria-label="Close Lightbox">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <span class="lightbox-counter-pill" id="lightboxPhotoCounter">Foto 1 dari 1</span>
+                    <button type="button" class="lightbox-close-btn" onclick="closeLightbox()" aria-label="Close Lightbox">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
                             <line x1="6" y1="6" x2="18" y2="18"></line>
                         </svg>
@@ -275,10 +230,10 @@
                 </div>
             </div>
 
-            <!-- View Area -->
+            <!-- Main Photo Stage with Prev/Next buttons -->
             <div class="lightbox-view-area">
                 <button type="button" class="lightbox-nav-btn prev" onclick="navigateLightbox(-1)" aria-label="Previous Photo">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                         <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
                 </button>
@@ -286,7 +241,7 @@
                 <img id="lightboxMainImg" src="" alt="Documentation Photo" class="lightbox-main-img" />
 
                 <button type="button" class="lightbox-nav-btn next" onclick="navigateLightbox(1)" aria-label="Next Photo">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                         <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
                 </button>
@@ -298,55 +253,84 @@
             </div>
         </div>
 
-        <!-- Site Footer (Strictly per design.md) -->
+        <!-- ========================================================================
+             Footer directly matching index.html
+             ======================================================================== -->
         <footer class="site-footer">
-            <div class="container footer-content">
+            <div class="container">
                 <div class="footer-top">
                     <div class="footer-brand">
-                        <div class="footer-logo-row">
+                        <div class="footer-brand-header">
                             <img
-                                src="assets/logo/gdgoc-logo.png"
+                                src="assets/logo/logo-gdgoc-full.png"
                                 alt="GDGoC UNM"
-                                class="footer-logo"
-                                onerror="this.src='assets/logo/favicon.png'"
+                                class="footer-logo-full"
                             />
-                            <div>
-                                <div class="footer-brand-title">Google Developer Groups</div>
-                                <div class="footer-brand-subtitle">On Campus • Universitas Negeri Makassar</div>
-                            </div>
                         </div>
-                        <p class="footer-desc">
-                            Komunitas teknologi mahasiswa resmi Universitas Negeri Makassar yang didukung oleh Google Developers. Wadah belajar, membangun proyek nyata, dan bertumbuh bersama.
+                        <p>
+                            Google Developer Group On Campus Universitas Negeri
+                            Makassar. An independent student community fostering
+                            tech innovation, peer learning, and collaborative
+                            digital solutions.
                         </p>
                     </div>
 
-                    <div class="footer-links-grid">
-                        <div class="footer-column">
-                            <h4 class="footer-col-title">Navigation</h4>
+                    <div class="footer-nav-wrapper">
+                        <div class="footer-col">
+                            <h4>Navigation</h4>
                             <ul class="footer-links">
-                                <li><a href="index.html">Home</a></li>
-                                <li><a href="index.html#events">Events & Workshops</a></li>
+                                <li><a href="index.html#about">About</a></li>
+                                <li><a href="index.html#events">Events</a></li>
                                 <li><a href="learning-path.html">Learning Path</a></li>
                                 <li><a href="index.html#team">Core Team</a></li>
                                 <li><a href="gallery.html">Activities Gallery</a></li>
+                                <li><a href="index.html#faq">FAQ</a></li>
                             </ul>
                         </div>
-                        <div class="footer-column">
-                            <h4 class="footer-col-title">Connect</h4>
-                            <ul class="footer-links">
-                                <li><a href="https://instagram.com/gdgoc.unm" target="_blank" rel="noopener">Instagram</a></li>
-                                <li><a href="https://linkedin.com/company/gdgoc-unm" target="_blank" rel="noopener">LinkedIn</a></li>
-                                <li><a href="https://github.com/gdgoc-unm" target="_blank" rel="noopener">GitHub</a></li>
-                                <li><a href="https://gdg.community.dev/gdg-on-campus-universitas-negeri-makassar-makassar-indonesia/" target="_blank" rel="noopener">Community Platform</a></li>
+
+                        <div class="footer-col">
+                            <h4>Contact</h4>
+                            <ul class="footer-links footer-contact-links">
+                                <li>
+                                    <a href="mailto:gdgoc.unm@gmail.com" target="_blank" rel="noopener noreferrer">
+                                        <svg class="contact-icon email" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                                        <span>Email</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://instagram.com/gdgoc.unm" target="_blank" rel="noopener noreferrer">
+                                        <svg class="contact-icon instagram" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                                        <span>Instagram</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://discord.gg/gdgoc-unm" target="_blank" rel="noopener noreferrer">
+                                        <svg class="contact-icon discord" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+                                        <span>Discord</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://tiktok.com/@gdgoc.unm" target="_blank" rel="noopener noreferrer">
+                                        <svg class="contact-icon tiktok" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z"/></svg>
+                                        <span>TikTok</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://youtube.com/@gdgoc-unm" target="_blank" rel="noopener noreferrer">
+                                        <svg class="contact-icon youtube" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 0 0-2.122 2.136C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.55 9.376.55 9.376.55s7.505 0 9.377-.55a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                                        <span>YouTube</span>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </div>
                 </div>
 
+                <!-- Copyright Bottom Bar -->
                 <div class="footer-bottom">
-                    <p class="footer-copyright">
-                        © 2026 GDGoC Universitas Negeri Makassar. All rights reserved.
-                    </p>
+                    <div>
+                        © 2026 <strong>GDGoC UNM</strong>. All Rights Reserved
+                    </div>
                 </div>
             </div>
         </footer>
@@ -375,32 +359,37 @@
                     red: '#EA4335'
                 };
 
-                // Initialize Mobile Nav
-                const mobileToggle = document.getElementById('mobile-toggle-btn');
+                // Mobile Navigation Handling
+                const mobileToggleBtn = document.getElementById('mobile-toggle-btn');
                 const mobileDrawer = document.getElementById('mobile-nav-drawer');
-                const mobileBackdrop = document.getElementById('mobile-nav-backdrop');
+                const mobileBackdrop = document.getElementById('mobile-drawer-backdrop');
 
-                function toggleMobileMenu() {
-                    const isOpen = mobileDrawer.classList.contains('open');
+                function toggleMobileNav() {
+                    const isOpen = mobileDrawer?.classList.contains('open');
                     if (isOpen) {
-                        mobileDrawer.classList.remove('open');
-                        mobileBackdrop.classList.remove('open');
-                        mobileToggle.classList.remove('active');
-                        document.body.style.overflow = '';
+                        closeMobileNav();
                     } else {
-                        mobileDrawer.classList.add('open');
-                        mobileBackdrop.classList.add('open');
-                        mobileToggle.classList.add('active');
+                        mobileDrawer?.classList.add('open');
+                        mobileBackdrop?.classList.add('open');
+                        mobileToggleBtn?.classList.add('active');
+                        mobileToggleBtn?.setAttribute('aria-expanded', 'true');
                         document.body.style.overflow = 'hidden';
                     }
                 }
 
-                mobileToggle?.addEventListener('click', toggleMobileMenu);
-                mobileBackdrop?.addEventListener('click', toggleMobileMenu);
+                function closeMobileNav() {
+                    mobileDrawer?.classList.remove('open');
+                    mobileBackdrop?.classList.remove('open');
+                    mobileToggleBtn?.classList.remove('active');
+                    mobileToggleBtn?.setAttribute('aria-expanded', 'false');
+                    document.body.style.overflow = '';
+                }
+
+                mobileToggleBtn?.addEventListener('click', toggleMobileNav);
+                mobileBackdrop?.addEventListener('click', closeMobileNav);
 
                 // Fetch Gallery Albums
                 async function loadGalleryAlbums() {
-                    const counter = document.getElementById('galleryStatsCounter');
                     try {
                         if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.getGallery === 'function') {
                             allAlbums = await window.GDG_SUPABASE.getGallery();
@@ -413,17 +402,54 @@
                         allAlbums = (window.GDG_DATA && window.GDG_DATA.gallery) || [];
                     }
 
+                    renderCategoryTabs();
                     filterGallery();
 
-                    // Check for URL parameter e.g. gallery.html?id=gal-1
+                    // Check for URL query param e.g. gallery.html?id=gal-1
                     const urlParams = new URLSearchParams(window.location.search);
                     const targetId = urlParams.get('id');
                     if (targetId) {
-                        const targetAlbum = allAlbums.find(a => String(a.id) === targetId || a.title === targetId);
+                        const targetAlbum = allAlbums.find(a => String(a.id) === targetId);
                         if (targetAlbum) {
                             openLightbox(targetAlbum, 0);
                         }
                     }
+                }
+
+                function renderCategoryTabs() {
+                    const tabsContainer = document.getElementById('galleryCategoryTabs');
+                    if (!tabsContainer) return;
+
+                    // Compute dynamic categories and counts
+                    const catCounts = { all: allAlbums.length };
+                    allAlbums.forEach(a => {
+                        const c = a.category || 'Other';
+                        catCounts[c] = (catCounts[c] || 0) + 1;
+                    });
+
+                    const categories = [
+                        { id: 'all', label: 'Semua Kegiatan', color: 'blue' },
+                        { id: 'Workshop', label: 'Workshop', color: 'blue' },
+                        { id: 'Weekly Class', label: 'Weekly Class', color: 'green' },
+                        { id: 'Info Session', label: 'Info Session', color: 'yellow' },
+                        { id: 'Hackathon', label: 'Hackathon', color: 'red' },
+                        { id: 'Community', label: 'Community', color: 'yellow' },
+                        { id: 'Robotics', label: 'Robotics', color: 'blue' }
+                    ];
+
+                    tabsContainer.innerHTML = categories
+                        .filter(cat => cat.id === 'all' || catCounts[cat.id])
+                        .map(cat => {
+                            const count = catCounts[cat.id] || 0;
+                            const isActive = currentCategory === cat.id ? 'active' : '';
+                            return `
+                                <button type="button" class="gallery-cat-tab ${isActive}" onclick="selectCategory('${cat.id}', this)">
+                                    <span class="gallery-cat-dot" style="color: ${colorMap[cat.color] || '#4285F4'};"></span>
+                                    <span>${cat.label}</span>
+                                    <span class="gallery-cat-count">${count}</span>
+                                </button>
+                            `;
+                        }).join('');
                 }
 
                 window.selectCategory = function (cat, btn) {
@@ -438,11 +464,13 @@
                     currentSearchQuery = (searchInput?.value || '').trim().toLowerCase();
 
                     const filtered = allAlbums.filter(album => {
-                        const matchCat = (currentCategory === 'all') || (album.category && album.category.toLowerCase() === currentCategory.toLowerCase());
+                        const matchCat = (currentCategory === 'all') || 
+                            (album.category && album.category.toLowerCase() === currentCategory.toLowerCase());
                         const matchSearch = !currentSearchQuery || 
                             (album.title && album.title.toLowerCase().includes(currentSearchQuery)) ||
                             (album.desc && album.desc.toLowerCase().includes(currentSearchQuery)) ||
-                            (album.category && album.category.toLowerCase().includes(currentSearchQuery));
+                            (album.category && album.category.toLowerCase().includes(currentSearchQuery)) ||
+                            (album.date && album.date.toLowerCase().includes(currentSearchQuery));
                         return matchCat && matchSearch;
                     });
 
@@ -459,58 +487,48 @@
                             const count = Array.isArray(a.images) && a.images.length > 0 ? a.images.length : (a.image ? 1 : 0);
                             return acc + count;
                         }, 0);
-                        counter.textContent = `Menampilkan ${albums.length} Album (${totalPhotos} Foto Dokumentasi)`;
+                        counter.textContent = `${albums.length} Album • ${totalPhotos} Foto Dokumentasi`;
                     }
 
                     if (albums.length === 0) {
                         container.innerHTML = `
-                            <div class="gallery-empty-state">
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 12px; opacity: 0.5;">
+                            <div style="grid-column: 1 / -1; text-align: center; padding: 64px 20px; background: rgba(22, 24, 34, 0.4); border: 1px dashed rgba(255, 255, 255, 0.12); border-radius: var(--radius-lg);">
+                                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 14px; opacity: 0.4; color: var(--text-muted);">
                                     <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                                     <circle cx="8.5" cy="8.5" r="1.5"></circle>
                                     <polyline points="21 15 16 10 5 21"></polyline>
                                 </svg>
-                                <p style="margin-bottom: 6px; font-weight: 600; color: #ffffff;">Tidak ada dokumentasi kegiatan ditemukan.</p>
-                                <p style="font-size: 0.85rem;">Coba ganti kata kunci pencarian atau pilih kategori lain.</p>
+                                <p style="margin-bottom: 6px; font-weight: 600; color: #ffffff; font-size: 1.05rem;">Tidak ada dokumentasi kegiatan ditemukan</p>
+                                <p style="font-size: 0.88rem; color: var(--text-secondary);">Coba kata kunci pencarian lain atau pilih kategori di atas.</p>
                             </div>
                         `;
                         return;
                     }
 
                     container.innerHTML = albums.map((album, idx) => {
-                        const col = colorMap[album.color] || '#4285F4';
-                        const photos = Array.isArray(album.images) && album.images.length > 0 ? album.images : (album.image ? [album.image] : []);
-                        const coverSrc = album.image || (photos.length > 0 ? photos[0] : 'assets/images/events/weekly-class-2.jpg');
-                        const photoCount = photos.length;
+                        const colorName = album.color || 'blue';
+                        const col = colorMap[colorName] || '#4285F4';
+                        const photos = Array.isArray(album.images) && album.images.length > 0 
+                            ? album.images 
+                            : (album.image ? [album.image] : []);
+                        const coverSrc = photos[0] || album.image || 'assets/images/events/weekly-class-2.jpg';
+                        const photoCount = photos.length || 1;
                         const otherThumbs = photos.slice(1, 5);
 
                         return `
-                            <article class="gallery-album-card" onclick="openLightboxByAlbumIndex(${idx})" tabindex="0" role="button" aria-label="Lihat album ${album.title}">
+                            <article class="gallery-album-card ${colorName}" onclick="openLightboxByAlbumIndex(${idx})" tabindex="0" role="button" aria-label="Lihat album ${album.title}">
                                 <div class="album-cover-wrapper">
-                                    <img src="${coverSrc}" alt="${album.title}" class="album-cover-img" onerror="this.src='assets/images/events/weekly-class-2.jpg'" />
-                                    <span class="gallery-tag-pill" style="border-left: 3px solid ${col}; position: absolute; top: 12px; left: 12px;">
+                                    <img src="${coverSrc}" alt="${album.title}" class="album-cover-img" loading="lazy" onerror="this.src='assets/images/events/weekly-class-2.jpg'" />
+                                    <span class="album-tag-pill" style="border-left: 3px solid ${col};">
                                         ${album.category || 'Activity'}
                                     </span>
                                     <span class="album-badge-count">
-                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                             <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
                                         </svg>
                                         <span>${photoCount} Foto</span>
                                     </span>
                                 </div>
-
-                                ${otherThumbs.length > 0 ? `
-                                    <div class="album-thumb-strip">
-                                        ${otherThumbs.map(thumb => `
-                                            <img src="${thumb}" alt="thumb" class="album-thumb-mini" onerror="this.style.display='none'" />
-                                        `).join('')}
-                                        ${photoCount > 5 ? `
-                                            <div style="width: 44px; height: 36px; border-radius: 4px; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">
-                                                +${photoCount - 5}
-                                            </div>
-                                        ` : ''}
-                                    </div>
-                                ` : ''}
 
                                 <div class="album-card-body">
                                     <div class="album-meta-row">
@@ -518,10 +536,23 @@
                                     </div>
                                     <h3 class="album-title">${album.title || 'Dokumentasi Kegiatan'}</h3>
                                     ${album.desc ? `<p class="album-desc">${album.desc}</p>` : ''}
+
+                                    ${otherThumbs.length > 0 ? `
+                                        <div class="album-thumb-strip">
+                                            ${otherThumbs.map(thumb => `
+                                                <img src="${thumb}" alt="thumb" class="album-thumb-mini" loading="lazy" onerror="this.style.display='none'" />
+                                            `).join('')}
+                                            ${photoCount > 5 ? `
+                                                <div class="album-thumb-more">
+                                                    +${photoCount - 5}
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                    ` : ''}
                                 </div>
 
                                 <div class="album-card-footer">
-                                    <span style="font-size: 0.8rem; color: var(--blue-light); font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                                    <span class="album-action-link">
                                         <span>Buka Album (${photoCount} Foto)</span>
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                             <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -533,9 +564,23 @@
                     }).join('');
                 }
 
-                // Lightbox Functionality
+                // Lightbox Implementation
                 window.openLightboxByAlbumIndex = function (index) {
-                    const album = allAlbums[index];
+                    const searchInput = document.getElementById('gallerySearchInput');
+                    const q = (searchInput?.value || '').trim().toLowerCase();
+
+                    const currentList = allAlbums.filter(album => {
+                        const matchCat = (currentCategory === 'all') || 
+                            (album.category && album.category.toLowerCase() === currentCategory.toLowerCase());
+                        const matchSearch = !q || 
+                            (album.title && album.title.toLowerCase().includes(q)) ||
+                            (album.desc && album.desc.toLowerCase().includes(q)) ||
+                            (album.category && album.category.toLowerCase().includes(q)) ||
+                            (album.date && album.date.toLowerCase().includes(q));
+                        return matchCat && matchSearch;
+                    });
+
+                    const album = currentList[index] || allAlbums[index];
                     if (album) openLightbox(album, 0);
                 };
 
@@ -559,16 +604,17 @@
                             alt="photo thumbnail"
                             class="lightbox-thumb-item ${i === activePhotoIndex ? 'active' : ''}"
                             onclick="setLightboxPhoto(${i})"
-                            onerror="this.src='assets/images/events/weekly-class-2.jpg'"
                         />
                     `).join('');
 
-                    document.getElementById('galleryLightbox').classList.add('open');
+                    const lightbox = document.getElementById('galleryLightbox');
+                    lightbox.classList.add('open');
                     document.body.style.overflow = 'hidden';
                 };
 
                 window.closeLightbox = function () {
-                    document.getElementById('galleryLightbox').classList.remove('open');
+                    const lightbox = document.getElementById('galleryLightbox');
+                    lightbox.classList.remove('open');
                     document.body.style.overflow = '';
                     activeAlbum = null;
                 };
