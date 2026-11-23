@@ -34,6 +34,8 @@ document.addEventListener("DOMContentLoaded", async () => {
  * Navbar Behavior
  * ------------------------------------------------------------------------- */
 function initNavbar() {
+    // If components.js is already managing navbar, let it handle navbar interactivity
+    if (window.GDG_COMPONENTS) return;
     const header = document.querySelector(".site-header");
     const navLinks = document.querySelectorAll(".nav-link");
     const sections = document.querySelectorAll("section[id]");
