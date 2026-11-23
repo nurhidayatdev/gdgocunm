@@ -29,9 +29,30 @@
             .dash-main-content {
                 flex: 1;
                 padding-top: 36px;
-                padding-bottom: 60px;
+                padding-bottom: 48px;
                 position: relative;
                 z-index: 1;
+            }
+
+            .dash-footer {
+                padding: 24px 0 30px;
+                border-top: 1px solid rgba(255, 255, 255, 0.08);
+                text-align: center;
+                background: rgba(14, 16, 24, 0.5);
+                backdrop-filter: blur(8px);
+                position: relative;
+                z-index: 1;
+            }
+
+            .dash-footer p {
+                margin: 0;
+                font-size: 0.85rem;
+                color: var(--text-muted);
+            }
+
+            .dash-footer strong {
+                color: #ffffff;
+                font-weight: 600;
             }
 
             /* Dashboard Top Header */
@@ -1265,6 +1286,13 @@
                     </div>
                 </div>
             </main>
+
+            <!-- Dashboard Footer -->
+            <footer class="dash-footer">
+                <div class="container">
+                    <p>© 2026 <strong>GDGoC UNM</strong>. All Rights Reserved</p>
+                </div>
+            </footer>
         </div>
 
         <!-- ========================================================================
