@@ -752,7 +752,7 @@ function moveTeamCarousel(dir) {
 }
 
 /* -------------------------------------------------------------------------
- * Gallery — Infinite Auto-Scroll Carousel (viewport + track pattern)
+ * Gallery — Infinite Dynamic Abstract Collage with 3s Random Auto-Switch
  * ------------------------------------------------------------------------- */
 async function renderGallery() {
     const container = document.getElementById("gallery-abstract-grid");
@@ -782,32 +782,34 @@ async function renderGallery() {
         red: "#EA4335",
     };
 
+    // Build photo pool from all activities in database
+    const photoPool = [];
+    galleryItems.forEach((item) => {
+        const itemPhotos = Array.isArray(item.images) && item.images.length > 0 
+            ? item.images 
+            : (item.image ? [item.image] : []);
+        itemPhotos.forEach((src) => {
+            if (src) {
+                photoPool.push({
+                    src: src,
+                    album: item
+                });
+            }
+        });
+    });
+
     container.innerHTML = showcaseItems.map((item, idx) => {
         const col = colorMap[item.color] || "#4285F4";
-        const photoCount = Array.isArray(item.images) && item.images.length > 0 ? item.images.length : (item.image ? 1 : 0);
-        const imgSrc = item.image || (Array.isArray(item.images) && item.images[0]) || '';
+        const photos = Array.isArray(item.images) && item.images.length > 0 ? item.images : (item.image ? [item.image] : []);
+        const imgSrc = photos[0] || item.image || 'assets/images/events/weekly-class-2.jpg';
         const dateStr = item.date || '';
 
         return `
-            <div class="gallery-abstract-item" onclick="window.location.href='gallery.html?id=${encodeURIComponent(item.id || idx)}'" role="button" tabindex="0" title="Buka dokumentasi: ${item.title}">
-                ${imgSrc ? `
-                    <img src="${imgSrc}" alt="${item.title}" class="gallery-abstract-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-                ` : ''}
-                <div class="gallery-fallback-graphic" style="${imgSrc ? 'display:none;' : 'display:flex;'} width:100%; height:100%; align-items:center; justify-content:center; background:#141722;">
-                    <svg viewBox="0 0 100 100" fill="none" style="width:48px; height:48px; opacity:0.35;">
-                        <circle cx="50" cy="50" r="40" stroke="${col}" stroke-width="2" stroke-dasharray="4 4"/>
-                        <rect x="35" y="35" width="30" height="30" rx="4" fill="${col}" fill-opacity="0.3"/>
-                    </svg>
-                </div>
+            <div class="gallery-abstract-item" data-collage-idx="${idx}" onclick="window.location.href='gallery.html?id=${encodeURIComponent(item.id || idx)}'" role="button" tabindex="0" title="View documentation: ${item.title}">
+                <img src="${imgSrc}" alt="${item.title}" class="gallery-abstract-img" onerror="this.src='assets/images/events/weekly-class-2.jpg'" />
                 <div class="gallery-abstract-overlay">
                     <div class="gallery-abstract-top">
                         <span class="gallery-tag-pill" style="border-left: 3px solid ${col}; font-size: 0.72rem;">${item.category || "Activity"}</span>
-                        ${photoCount > 0 ? `
-                            <span class="gallery-photo-count-pill">
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                                <span>${photoCount} ${photoCount === 1 ? 'Photo' : 'Photos'}</span>
-                            </span>
-                        ` : ''}
                     </div>
                     <div class="gallery-abstract-bottom">
                         <div class="gallery-abstract-title">${item.title || "GDGoC UNM Activity"}</div>
@@ -817,6 +819,57 @@ async function renderGallery() {
             </div>
         `;
     }).join("");
+
+    // Setup 3-second random photo auto-switch from database
+    if (window._galleryAutoSwitchInterval) {
+        clearInterval(window._galleryAutoSwitchInterval);
+    }
+
+    if (photoPool.length > 1) {
+        const boxes = container.querySelectorAll(".gallery-abstract-item");
+        if (boxes.length > 0) {
+            window._galleryAutoSwitchInterval = setInterval(() => {
+                // Select a random box in the collage
+                const randomBoxIdx = Math.floor(Math.random() * boxes.length);
+                const box = boxes[randomBoxIdx];
+                if (!box) return;
+
+                const img = box.querySelector(".gallery-abstract-img");
+                const titleEl = box.querySelector(".gallery-abstract-title");
+                const tagEl = box.querySelector(".gallery-tag-pill");
+                const metaEl = box.querySelector(".gallery-abstract-meta");
+                if (!img) return;
+
+                // Pick a random photo different from current image source
+                const curSrc = img.getAttribute("src");
+                const candidates = photoPool.filter(p => p.src !== curSrc);
+                const pick = candidates.length > 0 
+                    ? candidates[Math.floor(Math.random() * candidates.length)]
+                    : photoPool[Math.floor(Math.random() * photoPool.length)];
+
+                if (!pick) return;
+
+                // Smooth crossfade transition
+                img.style.opacity = "0.2";
+                setTimeout(() => {
+                    img.src = pick.src;
+                    if (pick.album) {
+                        if (titleEl && pick.album.title) titleEl.textContent = pick.album.title;
+                        if (tagEl && pick.album.category) {
+                            tagEl.textContent = pick.album.category;
+                            const newCol = colorMap[pick.album.color] || "#4285F4";
+                            tagEl.style.borderLeftColor = newCol;
+                        }
+                        if (metaEl && pick.album.date) metaEl.textContent = pick.album.date;
+                        box.onclick = () => {
+                            window.location.href = `gallery.html?id=${encodeURIComponent(pick.album.id || randomBoxIdx)}`;
+                        };
+                    }
+                    img.style.opacity = "1";
+                }, 350);
+            }, 3000);
+        }
+    }
 }
 
 /* -------------------------------------------------------------------------
