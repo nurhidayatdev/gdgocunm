@@ -296,7 +296,6 @@
         return {
             id: row.id,
             title: row.title || 'GDGoC UNM Event',
-            category: row.category || 'Weekly Class',
             poster: row.poster_url || 'assets/images/events/weekly-class-2.jpg',
             location: row.location || 'Offline / Online',
             date: row.date || '',
@@ -1017,7 +1016,6 @@
 
             const payload = {
                 title: eventData.title,
-                category: eventData.category || 'Weekly Class',
                 poster_url: eventData.poster || '',
                 location: eventData.location,
                 date: eventData.date,

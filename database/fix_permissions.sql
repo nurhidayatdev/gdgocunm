@@ -116,7 +116,6 @@ CREATE POLICY "Anon Full Access Gallery" ON activity_gallery
 CREATE TABLE IF NOT EXISTS events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title VARCHAR(250) NOT NULL,
-    category VARCHAR(100) DEFAULT 'Weekly Class',
     poster_url TEXT,
     location VARCHAR(200) NOT NULL,
     date VARCHAR(100) NOT NULL,
@@ -139,6 +138,7 @@ CREATE TABLE IF NOT EXISTS events (
 ALTER TABLE events ADD COLUMN IF NOT EXISTS raw_date VARCHAR(50);
 ALTER TABLE events ADD COLUMN IF NOT EXISTS raw_time VARCHAR(50);
 ALTER TABLE events ADD COLUMN IF NOT EXISTS speakers JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE events DROP COLUMN IF EXISTS category;
 
 GRANT ALL ON TABLE events TO anon, authenticated;
 ALTER TABLE events ENABLE ROW LEVEL SECURITY;

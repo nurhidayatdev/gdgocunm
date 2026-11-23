@@ -456,7 +456,6 @@ async function renderEvents() {
             <div class="event-details-wrapper">
                 <div>
                     <div class="event-header-row">
-                        <span class="event-category-pill">${featuredEvent.category || 'Event'}</span>
                         <span class="event-status-pill ${featuredStatus.isUpcoming ? 'upcoming' : 'completed'}">${featuredStatus.status}</span>
                     </div>
                     <h3 class="event-title" style="margin-top: 14px;">${featuredEvent.title}</h3>
@@ -537,21 +536,14 @@ async function renderEvents() {
                 ${compactEvents.map(ev => {
                     const statusInfo = getStatusInfo(ev);
                     const poster = ev.poster || 'assets/images/events/weekly-class-2.jpg';
-                    const speakers = (ev.speakers && Array.isArray(ev.speakers) && ev.speakers.length > 0)
-                        ? ev.speakers
-                        : (ev.speaker ? [{ name: ev.speaker, role: ev.speakerRole || 'Speaker' }] : []);
-                    const speakerText = speakers.length > 0
-                        ? (speakers.length > 1 ? `${speakers[0].name} +${speakers.length - 1} more` : speakers[0].name)
-                        : (ev.moderator || '');
 
                     return `
-                        <article class="event-compact-card">
+                        <article class="event-compact-card" onclick="window.open('${poster}', '_blank')" role="button" tabindex="0" title="View poster: ${ev.title}">
                             <div class="event-compact-poster-wrap">
                                 <img src="${poster}" alt="${ev.title}" class="event-compact-poster-img" onerror="this.src='assets/images/events/weekly-class-2.jpg'" />
                                 <span class="event-status-pill ${statusInfo.isUpcoming ? 'upcoming' : 'completed'} event-compact-status">${statusInfo.status}</span>
                             </div>
                             <div class="event-compact-body">
-                                <div class="event-compact-category">${ev.category || 'Event'}</div>
                                 <h4 class="event-compact-title" title="${ev.title}">${ev.title}</h4>
                                 <div class="event-compact-meta">
                                     <div class="event-compact-meta-item">
@@ -573,26 +565,6 @@ async function renderEvents() {
                                         </div>
                                     ` : ''}
                                 </div>
-                                ${speakerText ? `
-                                    <div class="event-compact-speaker">
-                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                            <circle cx="12" cy="7" r="4"></circle>
-                                        </svg>
-                                        <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${speakerText}</span>
-                                    </div>
-                                ` : ''}
-                            </div>
-                            <div class="event-compact-footer">
-                                ${ev.registrationUrl && ev.registrationUrl !== '#' ? `
-                                    <a href="${ev.registrationUrl}" target="_blank" rel="noopener noreferrer" class="event-compact-btn primary">
-                                        <span>Register</span>
-                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                                    </a>
-                                ` : ''}
-                                <a href="${poster}" target="_blank" rel="noopener" class="event-compact-btn">
-                                    <span>Poster</span>
-                                </a>
                             </div>
                         </article>
                     `;

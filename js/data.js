@@ -281,7 +281,6 @@ const GDG_DATA = {
         {
             id: "event-wc-2",
             title: "Weekly Class #2 Problem Statement & Figma Project Setup",
-            category: "Weekly Class #2 — UI/UX Design",
             poster: "assets/images/events/weekly-class-2.jpg",
             location: "Offline: Telkom AI Connect Makassar (*Limited for 30 Participants)",
             date: "Saturday, November 14, 2026",
@@ -302,7 +301,6 @@ const GDG_DATA = {
         {
             id: "event-onboarding-2627",
             title: "Onboarding Member GDGoC UNM 26/27",
-            category: "Onboarding",
             poster: "assets/images/events/weekly-class-2.jpg",
             location: "Makassar Government Center",
             date: "Saturday, November 7, 2026",
@@ -323,7 +321,6 @@ const GDG_DATA = {
         {
             id: "event-wc-1",
             title: "Weekly Class #1 Modern Web Architecture",
-            category: "Weekly Class #1 — Frontend",
             poster: "assets/images/events/weekly-class-2.jpg",
             location: "Offline: Telkom AI Connect Makassar",
             date: "Saturday, October 31, 2026",
@@ -344,7 +341,6 @@ const GDG_DATA = {
         {
             id: "event-info-session-2627",
             title: "Info Session GDGoC UNM 2026/2027",
-            category: "Info Session",
             poster: "assets/images/events/weekly-class-2.jpg",
             location: "Telkom AI Connect Makassar",
             date: "Saturday, October 17, 2026",
@@ -373,7 +369,6 @@ const GDG_DATA = {
         {
             id: "event-solution-challenge",
             title: "Google Solution Challenge Kickoff & Ideation Day",
-            category: "Hackathon",
             poster: "assets/images/events/weekly-class-2.jpg",
             location: "Online: Live via Google Meet",
             date: "Saturday, October 3, 2026",

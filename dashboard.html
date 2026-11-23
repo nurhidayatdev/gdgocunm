@@ -1131,7 +1131,6 @@
                                     <thead>
                                         <tr>
                                             <th>Event & Poster</th>
-                                            <th>Category</th>
                                             <th>Date & Time</th>
                                             <th>Location</th>
                                             <th>Speaker & Moderator</th>
@@ -1663,12 +1662,7 @@
                             <input type="text" id="eventFormTitle" class="dash-form-input" placeholder="e.g. Weekly Class #2 Problem Statement & Figma Project Setup" required />
                         </div>
 
-                        <div class="dash-form-group">
-                            <label class="dash-form-label">Category / Sub-header</label>
-                            <input type="text" id="eventFormCategory" class="dash-form-input" placeholder="e.g. Weekly Class #2 — UI/UX Design" required />
-                        </div>
-
-                        <div class="dash-form-group">
+                        <div class="dash-form-group dash-form-full">
                             <label class="dash-form-label">Status (Otomatis berdasarkan Waktu)</label>
                             <div style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 12px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-sm);">
                                 <span id="eventAutoStatusBadge" class="dash-badge badge-valid" style="font-size: 0.8rem; font-weight: 700; letter-spacing: 0.05em;">UPCOMING</span>
@@ -1970,7 +1964,6 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td><span class="dash-badge">${ev.category || 'Weekly Class'}</span></td>
                                 <td>
                                     <div style="color: #ffffff; font-weight: 500; font-size: 0.84rem;">${ev.date}</div>
                                     <div style="font-size: 0.74rem; color: var(--text-muted);">${ev.time}</div>
@@ -2232,7 +2225,6 @@
                     document.getElementById('eventFormId').value = '';
                     document.getElementById('eventOriginalId').value = '';
                     document.getElementById('eventFormTitle').value = '';
-                    document.getElementById('eventFormCategory').value = 'Weekly Class';
                     document.getElementById('eventFormLocation').value = 'Offline: Telkom AI Connect Makassar (*Limited for 30 Participants)';
                     document.getElementById('eventFormRegUrl').value = 'https://s.id/gdgoc-unm';
 
@@ -2279,7 +2271,6 @@
                     document.getElementById('eventFormId').value = ev.id || '';
                     document.getElementById('eventOriginalId').value = ev.id || '';
                     document.getElementById('eventFormTitle').value = ev.title || '';
-                    document.getElementById('eventFormCategory').value = ev.category || 'Weekly Class';
                     document.getElementById('eventFormLocation').value = ev.location || '';
                     document.getElementById('eventFormRegUrl').value = ev.registrationUrl || '';
 
@@ -2400,7 +2391,6 @@
                         const eventData = {
                             id: document.getElementById('eventFormId').value || undefined,
                             title: document.getElementById('eventFormTitle').value.trim(),
-                            category: document.getElementById('eventFormCategory').value.trim(),
                             poster: finalPoster || 'assets/images/events/weekly-class-2.jpg',
                             location: document.getElementById('eventFormLocation').value.trim(),
                             date: formattedDate,
