@@ -290,6 +290,9 @@ const GDG_DATA = {
             raw_time: "13:00",
             speaker: "Andi Muh. Yusran Haris",
             speakerRole: "Research & Development",
+            speakers: [
+                { name: "Andi Muh. Yusran Haris", role: "Research & Development" }
+            ],
             moderator: "Azzahra Suci Ramadhani",
             moderatorRole: "Relation & Communication",
             registrationUrl: "https://s.id/gdgoc-unm",

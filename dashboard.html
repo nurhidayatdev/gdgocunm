@@ -1693,26 +1693,23 @@
                             <input type="hidden" id="eventFormTime" />
                         </div>
 
-                        <!-- Speaker Selection + Manual Input -->
+                        <!-- Speaker Selection + Manual Input (Multi-Speaker Support) -->
                         <div class="dash-form-group dash-form-full" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: var(--radius-md); padding: 14px;">
-                            <label class="dash-form-label" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <span style="font-weight: 600; color: #ffffff;">Speaker</span>
-                                <span style="font-size: 0.74rem; color: var(--google-blue); font-weight: 500;">Pilih dari Core Team atau ketik manual</span>
-                            </label>
-                            <div style="margin-bottom: 8px;">
-                                <select id="eventSpeakerSelect" class="dash-form-select" onchange="handleSelectSpeaker(this.value)">
-                                    <option value="">-- Pilih dari Anggota Core Team --</option>
-                                </select>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <div>
+                                    <label class="dash-form-label" style="margin: 0; font-size: 0.95rem; font-weight: 600; color: #ffffff;">Speakers / Pembicara</label>
+                                    <span style="font-size: 0.74rem; color: var(--text-muted); display: block; margin-top: 2px;">Bisa menambahkan lebih dari 1 speaker (pilih Core Team atau ketik manual)</span>
+                                </div>
+                                <button type="button" class="btn-secondary" style="padding: 5px 12px; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 5px;" onclick="addEventSpeakerRow()">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                    <span>+ Tambah Speaker</span>
+                                </button>
                             </div>
-                            <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 10px;">
-                                <div>
-                                    <label style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 3px;">Nama Speaker</label>
-                                    <input type="text" id="eventFormSpeaker" class="dash-form-input" placeholder="e.g. Andi Muh. Yusran Haris" required />
-                                </div>
-                                <div>
-                                    <label style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 3px;">Role / Divisi Speaker</label>
-                                    <input type="text" id="eventFormSpeakerRole" class="dash-form-input" placeholder="e.g. Research & Development" />
-                                </div>
+                            <div id="eventSpeakersList" style="display: flex; flex-direction: column; gap: 10px;">
+                                <!-- Dynamic speaker rows -->
                             </div>
                         </div>
 
@@ -1929,6 +1926,12 @@
                         }
                         const isUpcoming = curStatus.toLowerCase() === 'upcoming';
                         const posterSrc = ev.poster || 'assets/images/events/weekly-class-2.jpg';
+                        const speakers = (ev.speakers && Array.isArray(ev.speakers) && ev.speakers.length > 0)
+                            ? ev.speakers
+                            : (ev.speaker ? [{ name: ev.speaker, role: ev.speakerRole || 'Speaker' }] : []);
+                        const speakersHtml = speakers.length > 0
+                            ? speakers.map(s => `<div style="margin-bottom: 2px;"><strong style="color: #ffffff;">${s.name}</strong> <span style="font-size: 0.72rem; color: var(--text-muted);">(${s.role || 'Speaker'})</span></div>`).join('')
+                            : `<span style="color: var(--text-muted);">-</span>`;
 
                         return `
                             <tr>
@@ -1949,8 +1952,8 @@
                                 </td>
                                 <td style="max-width: 220px; font-size: 0.82rem; color: var(--text-secondary);">${ev.location}</td>
                                 <td>
-                                    <div style="font-size: 0.84rem;"><strong style="color: #ffffff;">${ev.speaker}</strong> <span style="font-size: 0.72rem; color: var(--text-muted);">(${ev.speakerRole || 'Speaker'})</span></div>
-                                    <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px;">Mod: ${ev.moderator}</div>
+                                    <div style="font-size: 0.84rem;">${speakersHtml}</div>
+                                    <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 4px;">Mod: ${ev.moderator || '-'}</div>
                                 </td>
                                 <td>
                                     <span class="dash-badge ${isUpcoming ? 'badge-valid' : ''}">${curStatus}</span>
@@ -2062,46 +2065,126 @@
                     }
                 };
 
-                // Populate Core Team dropdown for Speaker & Moderator
-                window.populateEventSpeakerModeratorSelects = function () {
-                    const speakerSel = document.getElementById('eventSpeakerSelect');
-                    const modSel = document.getElementById('eventModeratorSelect');
-                    if (!speakerSel || !modSel) return;
-
+                // Generate core team options for dropdowns
+                function getCoreTeamOptionsHtml() {
                     const team = (allTeam && allTeam.length > 0) ? allTeam : ((window.GDG_DATA && window.GDG_DATA.teamMembers) || []);
-
-                    const teamOptions = team.map(m => {
+                    return team.map(m => {
                         const divOrRole = m.division || m.role || 'Core Team';
                         const val = `${m.name.replace(/"/g, '&quot;')}|${divOrRole.replace(/"/g, '&quot;')}`;
                         return `<option value="${val}">${m.name} (${divOrRole})</option>`;
                     }).join('');
+                }
 
-                    speakerSel.innerHTML = `
-                        <option value="">-- Pilih dari Core Team --</option>
-                        ${teamOptions}
-                        <option value="__custom__">+ Ketik Manual (Guest Speaker / Pembicara Luar)...</option>
+                // Add dynamic speaker row to #eventSpeakersList
+                window.addEventSpeakerRow = function (speakerData = { name: '', role: '' }) {
+                    const container = document.getElementById('eventSpeakersList');
+                    if (!container) return;
+
+                    const rowId = 'spk-row-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+                    const teamOptions = getCoreTeamOptionsHtml();
+
+                    const rowEl = document.createElement('div');
+                    rowEl.className = 'event-speaker-item';
+                    rowEl.id = rowId;
+                    rowEl.style.cssText = 'background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px; padding: 10px;';
+
+                    rowEl.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <span class="event-speaker-num" style="font-size: 0.74rem; font-weight: 700; color: var(--google-blue); text-transform: uppercase;">Speaker</span>
+                            <button type="button" class="event-speaker-del-btn dash-action-btn delete" style="padding: 2px 6px; font-size: 0.72rem; border: none; background: transparent;" onclick="removeEventSpeakerRow(this)">Hapus</button>
+                        </div>
+                        <div style="margin-bottom: 8px;">
+                            <select class="dash-form-select event-speaker-select" onchange="handleSelectSpeakerRow(this)">
+                                <option value="">-- Pilih dari Core Team --</option>
+                                ${teamOptions}
+                                <option value="__custom__">+ Ketik Manual (Guest Speaker / Pembicara Luar)...</option>
+                            </select>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 10px;">
+                            <div>
+                                <label style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 2px;">Nama Speaker</label>
+                                <input type="text" class="dash-form-input event-speaker-name" placeholder="Nama Speaker" value="${(speakerData.name || '').replace(/"/g, '&quot;')}" required />
+                            </div>
+                            <div>
+                                <label style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 2px;">Role / Divisi</label>
+                                <input type="text" class="dash-form-input event-speaker-role" placeholder="Divisi / Role" value="${(speakerData.role || '').replace(/"/g, '&quot;')}" />
+                            </div>
+                        </div>
                     `;
 
+                    container.appendChild(rowEl);
+
+                    // Auto-select in dropdown if name matches core team
+                    const sel = rowEl.querySelector('.event-speaker-select');
+                    if (sel && speakerData.name) {
+                        let matched = false;
+                        for (let opt of sel.options) {
+                            if (opt.value && opt.value.split('|')[0] === speakerData.name) {
+                                sel.value = opt.value;
+                                matched = true;
+                                break;
+                            }
+                        }
+                        if (!matched) sel.value = '__custom__';
+                    }
+
+                    updateSpeakerRowNumbers();
+                };
+
+                window.removeEventSpeakerRow = function (btn) {
+                    const row = btn.closest('.event-speaker-item');
+                    if (!row) return;
+                    const container = document.getElementById('eventSpeakersList');
+                    if (container.children.length <= 1) {
+                        alert('Minimal harus ada 1 speaker dalam event.');
+                        return;
+                    }
+                    row.remove();
+                    updateSpeakerRowNumbers();
+                };
+
+                window.handleSelectSpeakerRow = function (selectEl) {
+                    const row = selectEl.closest('.event-speaker-item');
+                    if (!row) return;
+                    const val = selectEl.value;
+                    const nameInput = row.querySelector('.event-speaker-name');
+                    const roleInput = row.querySelector('.event-speaker-role');
+
+                    if (!val) return;
+                    if (val === '__custom__') {
+                        if (nameInput) {
+                            nameInput.focus();
+                            nameInput.select();
+                        }
+                        return;
+                    }
+                    const [name, role] = val.split('|');
+                    if (nameInput && name) nameInput.value = name;
+                    if (roleInput && role) roleInput.value = role;
+                };
+
+                function updateSpeakerRowNumbers() {
+                    const container = document.getElementById('eventSpeakersList');
+                    if (!container) return;
+                    const rows = container.querySelectorAll('.event-speaker-item');
+                    rows.forEach((row, idx) => {
+                        const numLabel = row.querySelector('.event-speaker-num');
+                        if (numLabel) numLabel.textContent = rows.length > 1 ? `Speaker #${idx + 1}` : 'Speaker';
+                        const delBtn = row.querySelector('.event-speaker-del-btn');
+                        if (delBtn) delBtn.style.display = rows.length > 1 ? 'inline-block' : 'none';
+                    });
+                }
+
+                // Populate Moderator Core Team Select
+                window.populateEventModeratorSelect = function () {
+                    const modSel = document.getElementById('eventModeratorSelect');
+                    if (!modSel) return;
+                    const teamOptions = getCoreTeamOptionsHtml();
                     modSel.innerHTML = `
                         <option value="">-- Pilih dari Core Team --</option>
                         ${teamOptions}
                         <option value="__custom__">+ Ketik Manual (Guest Moderator / Moderator Luar)...</option>
                     `;
-                };
-
-                window.handleSelectSpeaker = function (val) {
-                    if (!val) return;
-                    if (val === '__custom__') {
-                        const spk = document.getElementById('eventFormSpeaker');
-                        if (spk) {
-                            spk.focus();
-                            spk.select();
-                        }
-                        return;
-                    }
-                    const [name, role] = val.split('|');
-                    if (name) document.getElementById('eventFormSpeaker').value = name;
-                    if (role) document.getElementById('eventFormSpeakerRole').value = role;
                 };
 
                 window.handleSelectModerator = function (val) {
@@ -2140,11 +2223,14 @@
                     document.getElementById('eventFormTimeInput').value = '13:00';
                     document.getElementById('eventFormTimeSuffix').value = 'WITA - Finish';
 
-                    populateEventSpeakerModeratorSelects();
-                    document.getElementById('eventSpeakerSelect').value = '';
+                    // Reset Speakers list with 1 empty speaker row
+                    const spkList = document.getElementById('eventSpeakersList');
+                    if (spkList) spkList.innerHTML = '';
+                    addEventSpeakerRow({ name: '', role: 'Research & Development' });
+
+                    // Moderator setup
+                    populateEventModeratorSelect();
                     document.getElementById('eventModeratorSelect').value = '';
-                    document.getElementById('eventFormSpeaker').value = '';
-                    document.getElementById('eventFormSpeakerRole').value = 'Research & Development';
                     document.getElementById('eventFormModerator').value = '';
                     document.getElementById('eventFormModeratorRole').value = 'Relation & Communication';
 
@@ -2181,26 +2267,19 @@
                     document.getElementById('eventFormTimeInput').value = rawTime;
                     document.getElementById('eventFormTimeSuffix').value = suffix;
 
-                    populateEventSpeakerModeratorSelects();
+                    // Speakers list
+                    const spkList = document.getElementById('eventSpeakersList');
+                    if (spkList) spkList.innerHTML = '';
+                    const speakers = (ev.speakers && Array.isArray(ev.speakers) && ev.speakers.length > 0)
+                        ? ev.speakers
+                        : (ev.speaker ? [{ name: ev.speaker, role: ev.speakerRole || 'Speaker' }] : [{ name: '', role: '' }]);
 
-                    document.getElementById('eventFormSpeaker').value = ev.speaker || '';
-                    document.getElementById('eventFormSpeakerRole').value = ev.speakerRole || '';
+                    speakers.forEach(spk => addEventSpeakerRow(spk));
+
+                    // Moderator setup
+                    populateEventModeratorSelect();
                     document.getElementById('eventFormModerator').value = ev.moderator || '';
                     document.getElementById('eventFormModeratorRole').value = ev.moderatorRole || '';
-
-                    // Match speaker select if from core team
-                    const spkSelect = document.getElementById('eventSpeakerSelect');
-                    if (spkSelect && ev.speaker) {
-                        let matched = false;
-                        for (let opt of spkSelect.options) {
-                            if (opt.value && opt.value.split('|')[0] === ev.speaker) {
-                                spkSelect.value = opt.value;
-                                matched = true;
-                                break;
-                            }
-                        }
-                        if (!matched) spkSelect.value = '__custom__';
-                    }
 
                     // Match moderator select if from core team
                     const modSelect = document.getElementById('eventModeratorSelect');
@@ -2263,6 +2342,24 @@
 
                     const originalId = document.getElementById('eventOriginalId').value.trim();
 
+                    // Collect all speakers
+                    const speakerItems = document.querySelectorAll('#eventSpeakersList .event-speaker-item');
+                    const speakers = [];
+                    speakerItems.forEach(item => {
+                        const name = item.querySelector('.event-speaker-name')?.value.trim();
+                        const role = item.querySelector('.event-speaker-role')?.value.trim();
+                        if (name) {
+                            speakers.push({ name, role: role || 'Speaker' });
+                        }
+                    });
+
+                    if (speakers.length === 0) {
+                        alert('Mohon masukkan minimal 1 nama speaker.');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = origBtnText;
+                        return;
+                    }
+
                     try {
                         let finalPoster = document.getElementById('eventFormPoster').value.trim();
                         if (selectedEventPosterFile) {
@@ -2287,8 +2384,9 @@
                             raw_time: rawTime,
                             rawDate: rawDate,
                             rawTime: rawTime,
-                            speaker: document.getElementById('eventFormSpeaker').value.trim(),
-                            speakerRole: document.getElementById('eventFormSpeakerRole').value.trim(),
+                            speakers: speakers,
+                            speaker: speakers.map(s => s.name).join(', '),
+                            speakerRole: speakers[0]?.role || 'Speaker',
                             moderator: document.getElementById('eventFormModerator').value.trim(),
                             moderatorRole: document.getElementById('eventFormModeratorRole').value.trim(),
                             registrationUrl: document.getElementById('eventFormRegUrl').value.trim() || '#',
@@ -2305,6 +2403,7 @@
                         submitBtn.disabled = false;
                         submitBtn.innerHTML = origBtnText;
                     }
+                };
                 };
 
                 window.confirmDeleteEvent = async function (id, title) {

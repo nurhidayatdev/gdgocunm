@@ -159,6 +159,7 @@ CREATE TABLE IF NOT EXISTS events (
     raw_time VARCHAR(50),
     speaker VARCHAR(150) NOT NULL,
     speaker_role VARCHAR(100) DEFAULT 'Speaker',
+    speakers JSONB DEFAULT '[]'::jsonb,
     moderator VARCHAR(150) NOT NULL,
     moderator_role VARCHAR(100) DEFAULT 'Moderator',
     registration_url TEXT DEFAULT '#',

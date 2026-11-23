@@ -127,9 +127,10 @@ CREATE TABLE IF NOT EXISTS events (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- In case table already exists without raw_date / raw_time
+-- In case table already exists without raw_date / raw_time / speakers
 ALTER TABLE events ADD COLUMN IF NOT EXISTS raw_date VARCHAR(50);
 ALTER TABLE events ADD COLUMN IF NOT EXISTS raw_time VARCHAR(50);
+ALTER TABLE events ADD COLUMN IF NOT EXISTS speakers JSONB DEFAULT '[]'::jsonb;
 
 GRANT ALL ON TABLE events TO anon, authenticated;
 ALTER TABLE events ENABLE ROW LEVEL SECURITY;

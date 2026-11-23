@@ -399,6 +399,9 @@ async function renderEvents() {
         }
         const isUpcoming = currentStatus.toLowerCase() === 'upcoming';
         const posterSrc = ev.poster || 'assets/images/events/weekly-class-2.jpg';
+        const speakers = (ev.speakers && Array.isArray(ev.speakers) && ev.speakers.length > 0)
+            ? ev.speakers
+            : (ev.speaker ? [{ name: ev.speaker, role: ev.speakerRole || 'Speaker' }] : []);
 
         return `
             <article class="event-showcase-card">
@@ -452,16 +455,20 @@ async function renderEvents() {
 
                     <!-- Speaker & Moderator -->
                     <div class="event-speakers-grid">
-                        <div class="event-person-card">
-                            <span class="event-person-badge">Speaker</span>
-                            <div class="event-person-name">${ev.speaker}</div>
-                            ${ev.speakerRole ? `<div class="event-person-role">${ev.speakerRole}</div>` : ''}
-                        </div>
-                        <div class="event-person-card">
-                            <span class="event-person-badge">Moderator</span>
-                            <div class="event-person-name">${ev.moderator}</div>
-                            ${ev.moderatorRole ? `<div class="event-person-role">${ev.moderatorRole}</div>` : ''}
-                        </div>
+                        ${speakers.map((spk, idx) => `
+                            <div class="event-person-card">
+                                <span class="event-person-badge">${speakers.length > 1 ? `Speaker #${idx + 1}` : 'Speaker'}</span>
+                                <div class="event-person-name">${spk.name}</div>
+                                ${spk.role ? `<div class="event-person-role">${spk.role}</div>` : ''}
+                            </div>
+                        `).join('')}
+                        ${ev.moderator ? `
+                            <div class="event-person-card">
+                                <span class="event-person-badge">Moderator</span>
+                                <div class="event-person-name">${ev.moderator}</div>
+                                ${ev.moderatorRole ? `<div class="event-person-role">${ev.moderatorRole}</div>` : ''}
+                            </div>
+                        ` : ''}
                     </div>
 
                     <!-- Actions -->

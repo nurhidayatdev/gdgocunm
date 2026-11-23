@@ -235,6 +235,23 @@
 
     function mapEventRow(row) {
         const autoStatus = getEventAutoStatus(row);
+        let speakers = [];
+        if (Array.isArray(row.speakers)) {
+            speakers = row.speakers;
+        } else if (typeof row.speakers === 'string' && row.speakers.trim().startsWith('[')) {
+            try {
+                speakers = JSON.parse(row.speakers);
+            } catch (e) {}
+        }
+        if (!speakers || speakers.length === 0) {
+            if (row.speaker) {
+                speakers = [{ name: row.speaker, role: row.speaker_role || row.speakerRole || 'Speaker' }];
+            }
+        }
+
+        const primarySpeaker = speakers[0]?.name || row.speaker || '';
+        const primarySpeakerRole = speakers[0]?.role || row.speaker_role || row.speakerRole || 'Speaker';
+
         return {
             id: row.id,
             title: row.title || 'GDGoC UNM Event',
@@ -245,8 +262,9 @@
             time: row.time || '',
             rawDate: row.raw_date || '',
             rawTime: row.raw_time || '',
-            speaker: row.speaker || '',
-            speakerRole: row.speaker_role || 'Speaker',
+            speaker: primarySpeaker,
+            speakerRole: primarySpeakerRole,
+            speakers: speakers,
             moderator: row.moderator || '',
             moderatorRole: row.moderator_role || 'Moderator',
             registrationUrl: row.registration_url || '#',
@@ -963,6 +981,14 @@
         async saveEvent(eventData, originalId = '') {
             const client = initSupabase();
             const autoStatus = getEventAutoStatus(eventData);
+
+            const speakers = Array.isArray(eventData.speakers) && eventData.speakers.length > 0
+                ? eventData.speakers
+                : (eventData.speaker ? [{ name: eventData.speaker, role: eventData.speakerRole || 'Speaker' }] : []);
+
+            const primarySpeaker = speakers[0]?.name || eventData.speaker || '';
+            const primarySpeakerRole = speakers[0]?.role || eventData.speakerRole || 'Speaker';
+
             const payload = {
                 title: eventData.title,
                 category: eventData.category || 'Weekly Class',
@@ -972,8 +998,9 @@
                 time: eventData.time,
                 raw_date: eventData.rawDate || eventData.raw_date || null,
                 raw_time: eventData.rawTime || eventData.raw_time || null,
-                speaker: eventData.speaker,
-                speaker_role: eventData.speakerRole || 'Speaker',
+                speaker: primarySpeaker,
+                speaker_role: primarySpeakerRole,
+                speakers: speakers,
                 moderator: eventData.moderator,
                 moderator_role: eventData.moderatorRole || 'Moderator',
                 registration_url: eventData.registrationUrl || '#',
@@ -999,16 +1026,29 @@
             let savedId = eventData.id;
             if (client) {
                 try {
+                    let res;
                     if (eventData.id && !String(eventData.id).startsWith('temp-')) {
-                        const { data } = await client.from('events').update(payload).eq('id', eventData.id).select().single();
-                        if (data) savedId = data.id;
+                        res = await client.from('events').update(payload).eq('id', eventData.id).select().single();
                     } else if (originalId && !String(originalId).startsWith('temp-')) {
-                        const { data } = await client.from('events').update(payload).eq('id', originalId).select().single();
-                        if (data) savedId = data.id;
+                        res = await client.from('events').update(payload).eq('id', originalId).select().single();
                     } else {
-                        const { data } = await client.from('events').insert(payload).select().single();
-                        if (data) savedId = data.id;
+                        res = await client.from('events').insert(payload).select().single();
                     }
+
+                    // Fallback if 'speakers' column does not exist yet in DB
+                    if (res && res.error && (res.error.message?.includes('speakers') || res.error.code === 'PGRST204')) {
+                        const fallbackPayload = { ...payload };
+                        delete fallbackPayload.speakers;
+                        if (eventData.id && !String(eventData.id).startsWith('temp-')) {
+                            res = await client.from('events').update(fallbackPayload).eq('id', eventData.id).select().single();
+                        } else if (originalId && !String(originalId).startsWith('temp-')) {
+                            res = await client.from('events').update(fallbackPayload).eq('id', originalId).select().single();
+                        } else {
+                            res = await client.from('events').insert(fallbackPayload).select().single();
+                        }
+                    }
+
+                    if (res && res.data) savedId = res.data.id;
                 } catch (err) {
                     console.warn('[Supabase Event Save]', err);
                 }
@@ -1025,7 +1065,10 @@
                 id: savedId || eventData.id || 'temp-' + Date.now(),
                 status: autoStatus,
                 rawDate: payload.raw_date,
-                rawTime: payload.raw_time
+                rawTime: payload.raw_time,
+                speaker: primarySpeaker,
+                speakerRole: primarySpeakerRole,
+                speakers: speakers
             };
             const idx = events.findIndex(ev => (eventData.id && ev.id === eventData.id) || (originalId && ev.id === originalId) || ev.title === eventData.title);
             if (idx >= 0) {
