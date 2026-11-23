@@ -136,9 +136,9 @@
             /* Metric Cards Grid */
             .dash-metrics-grid {
                 display: grid;
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(5, 1fr);
                 gap: 20px;
-                margin-bottom: 36px;
+                margin-bottom: 32px;
             }
 
             .metric-card {
@@ -151,6 +151,10 @@
                 overflow: hidden;
                 box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
                 transition: all var(--transition-normal);
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
             }
 
             .metric-card:hover {
@@ -803,16 +807,25 @@
             }
 
             /* Responsive */
-            @media (max-width: 1024px) {
+            @media (max-width: 1200px) {
+                .dash-metrics-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                }
+            }
+
+            @media (max-width: 768px) {
                 .dash-metrics-grid {
                     grid-template-columns: repeat(2, 1fr);
                 }
             }
 
-            @media (max-width: 640px) {
+            @media (max-width: 500px) {
                 .dash-metrics-grid {
                     grid-template-columns: 1fr;
                 }
+            }
+
+            @media (max-width: 640px) {
                 .dash-form-grid {
                     grid-template-columns: 1fr;
                 }
@@ -919,130 +932,82 @@
                        ==================================================================== -->
                     <div class="dash-section-pane active" id="tab-overview">
                         <div class="dash-metrics-grid">
-                            <div class="metric-card">
-                                <div class="metric-icon-wrap">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                                        <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
-                                    </svg>
+                            <!-- 1. Learning Paths -->
+                            <div class="metric-card" onclick="switchTab('tab-tracks');" title="Manage Learning Paths">
+                                <div>
+                                    <div class="metric-icon-wrap" style="color: var(--blue-light);">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                                            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="metric-value" id="statTracksCount">7</div>
+                                    <div class="metric-label">Active Learning Paths</div>
                                 </div>
-                                <div class="metric-value" id="statTracksCount">7</div>
-                                <div class="metric-label">Active Learning Paths</div>
-                                <div class="metric-sub">UI/UX to Robotics Cohort 2026/2027</div>
+                                <div class="metric-sub">UI/UX to Robotics Cohort</div>
                             </div>
 
-                            <div class="metric-card">
-                                <div class="metric-icon-wrap">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                        <circle cx="9" cy="7" r="4"></circle>
-                                    </svg>
+                            <!-- 2. Events & Workshops -->
+                            <div class="metric-card" onclick="switchTab('tab-events');" title="Manage Events">
+                                <div>
+                                    <div class="metric-icon-wrap" style="color: var(--red-light);">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                                        </svg>
+                                    </div>
+                                    <div class="metric-value" id="statEventsCount">...</div>
+                                    <div class="metric-label">Events & Workshops</div>
                                 </div>
-                                <div class="metric-value" id="statTeamCount">29</div>
-                                <div class="metric-label">Core Team Members</div>
+                                <div class="metric-sub">Scheduled Sessions</div>
+                            </div>
+
+                            <!-- 3. Core Team Members -->
+                            <div class="metric-card" onclick="switchTab('tab-team');" title="Manage Core Team">
+                                <div>
+                                    <div class="metric-icon-wrap" style="color: var(--yellow-light);">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="9" cy="7" r="4"></circle>
+                                        </svg>
+                                    </div>
+                                    <div class="metric-value" id="statTeamCount">29</div>
+                                    <div class="metric-label">Core Team Members</div>
+                                </div>
                                 <div class="metric-sub">5 Operational Divisions</div>
                             </div>
 
-                            <div class="metric-card">
-                                <div class="metric-icon-wrap">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="12" cy="8" r="7"></circle>
-                                        <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
-                                    </svg>
+                            <!-- 4. Activity Gallery -->
+                            <div class="metric-card" onclick="switchTab('tab-gallery');" title="Manage Activity Gallery">
+                                <div>
+                                    <div class="metric-icon-wrap" style="color: var(--green-light);">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                            <polyline points="21 15 16 10 5 21"></polyline>
+                                        </svg>
+                                    </div>
+                                    <div class="metric-value" id="statGalleryCount">...</div>
+                                    <div class="metric-label">Gallery Photos</div>
                                 </div>
-                                <div class="metric-value" id="statCertsCount">...</div>
-                                <div class="metric-label">Certificates Issued</div>
-                                <div class="metric-sub">Live from Google Spreadsheet</div>
-                            </div>
-
-                            <div class="metric-card">
-                                <div class="metric-icon-wrap">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                                    </svg>
-                                </div>
-                                <div class="metric-value" id="statValidCertsCount">...</div>
-                                <div class="metric-label">Valid Credentials</div>
-                                <div class="metric-sub">Status VALID in Database</div>
-                            </div>
-
-                            <div class="metric-card">
-                                <div class="metric-icon-wrap" style="color: var(--google-yellow);">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                        <polyline points="21 15 16 10 5 21"></polyline>
-                                    </svg>
-                                </div>
-                                <div class="metric-value" id="statGalleryCount">...</div>
-                                <div class="metric-label">Gallery Photos</div>
                                 <div class="metric-sub">Event & Activity Moments</div>
                             </div>
 
-                            <div class="metric-card">
-                                <div class="metric-icon-wrap" style="color: var(--google-blue);">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                                    </svg>
-                                </div>
-                                <div class="metric-value" id="statEventsCount">...</div>
-                                <div class="metric-label">Events & Workshops</div>
-                                <div class="metric-sub">Scheduled Sessions</div>
-                            </div>
-                        </div>
-
-                        <!-- Quick Action Panels -->
-                        <div class="dash-panel">
-                            <div class="dash-panel-header">
+                            <!-- 5. Certificates Issued (Single Card) -->
+                            <div class="metric-card" onclick="switchTab('tab-certificates');" title="View Certificates Database">
                                 <div>
-                                    <h2 class="dash-panel-title">Quick Administration Actions</h2>
-                                    <p class="dash-panel-desc">Direct shortcuts to manage the core modules of GDGoC UNM</p>
+                                    <div class="metric-icon-wrap" style="color: var(--blue-light);">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="8" r="7"></circle>
+                                            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                                        </svg>
+                                    </div>
+                                    <div class="metric-value" id="statCertsCount">...</div>
+                                    <div class="metric-label">Certificates Issued</div>
                                 </div>
-                            </div>
-                            <div style="display: flex; gap: 14px; flex-wrap: wrap;">
-                                <button class="btn-primary" onclick="switchTab('tab-events'); openAddEventModal();">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                                    </svg>
-                                    <span>Create Event</span>
-                                </button>
-                                <button class="btn-primary" onclick="switchTab('tab-tracks'); openAddTrackModal();">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    </svg>
-                                    <span>Create Learning Path</span>
-                                </button>
-                                <button class="btn-primary" onclick="switchTab('tab-team'); openAddMemberModal();">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    </svg>
-                                    <span>Add Team Member</span>
-                                </button>
-                                <button class="btn-primary" onclick="switchTab('tab-gallery'); openAddGalleryModal();">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                        <polyline points="21 15 16 10 5 21"></polyline>
-                                    </svg>
-                                    <span>Upload Activity Photos</span>
-                                </button>
-                                <a href="https://docs.google.com/spreadsheets/d/1wxe4WThXlGSj2iocQ4NPnqmZRcJvYl3sMDLJLwQRTM8/edit" target="_blank" rel="noopener" class="btn-secondary">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                        <polyline points="15 3 21 3 21 9"></polyline>
-                                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                                    </svg>
-                                    <span>Open Spreadsheet Database</span>
-                                </a>
+                                <div class="metric-sub">Live from Google Spreadsheet</div>
                             </div>
                         </div>
                     </div>
@@ -2503,8 +2468,12 @@
                         ]);
                         allCerts = certs;
 
-                        document.getElementById('statCertsCount').textContent = stats.totalCertificates;
-                        document.getElementById('statValidCertsCount').textContent = stats.validCertificates;
+                        if (document.getElementById('statCertsCount')) {
+                            document.getElementById('statCertsCount').textContent = stats.totalCertificates;
+                        }
+                        if (document.getElementById('statValidCertsCount')) {
+                            document.getElementById('statValidCertsCount').textContent = stats.validCertificates;
+                        }
 
                         renderCertsTable(certs);
                         if (force) showToast('Certificates re-synced with Google Spreadsheet.');
