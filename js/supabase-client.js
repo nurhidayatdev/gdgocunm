@@ -216,12 +216,11 @@
         return {
             id: row.id,
             title: row.title || 'GDGoC UNM Activity',
-            category: row.category || 'Activity',
             image: cover,
             images: images,
             date: dateVal,
+            location: row.location || descVal,
             desc: descVal,
-            color: row.color || 'blue',
             createdAt: row.created_at
         };
     }
@@ -869,14 +868,14 @@
                 : (itemData.image ? [itemData.image] : []);
             const coverImage = itemData.image || (images.length > 0 ? images[0] : '');
 
+            const locationVal = itemData.location || itemData.desc || itemData.description || '';
             const payload = {
                 title: itemData.title,
-                category: itemData.category || 'Activity',
                 image_url: coverImage,
                 images: images,
                 date: itemData.date || '',
-                description: itemData.desc || itemData.description || '',
-                color: itemData.color || 'blue'
+                location: locationVal,
+                description: locationVal
             };
             if (itemData.id && !String(itemData.id).startsWith('temp-')) {
                 payload.id = itemData.id;
@@ -894,20 +893,18 @@
 
                     // Fallback without new columns if DB doesn't have them yet:
                     // Losslessly encode images list and date into description metadata so all photos are safely stored!
-                    if (res && res.error && (res.error.message?.includes('images') || res.error.message?.includes('date'))) {
-                        console.warn('[Supabase Gallery Save] DB table lacks images/date column, packing into metadata fallback...');
+                    if (res && res.error && (res.error.message?.includes('images') || res.error.message?.includes('date') || res.error.message?.includes('location'))) {
+                        console.warn('[Supabase Gallery Save] DB table lacks columns, packing into metadata fallback...');
                         const metaJson = JSON.stringify({
                             images: images,
-                            date: itemData.date || ''
+                            date: itemData.date || '',
+                            location: locationVal
                         });
-                        const rawDesc = itemData.desc || itemData.description || '';
-                        const fallbackDesc = rawDesc + `\n\n<!--GDG_ALBUM_META:${metaJson}-->`;
+                        const fallbackDesc = locationVal + `\n\n<!--GDG_ALBUM_META:${metaJson}-->`;
                         const fallbackPayload = {
                             title: itemData.title,
-                            category: itemData.category || 'Activity',
                             image_url: coverImage,
-                            description: fallbackDesc,
-                            color: itemData.color || 'blue'
+                            description: fallbackDesc
                         };
                         if (itemData.id && !String(itemData.id).startsWith('temp-')) {
                             res = await client.from('activity_gallery').update(fallbackPayload).eq('id', itemData.id).select().single();

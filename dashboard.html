@@ -1278,22 +1278,11 @@
                                     <p class="dash-panel-desc">Manage photos of GDGoC UNM workshops, hackathons, and community sessions on landing page</p>
                                 </div>
                                 <div class="dash-panel-actions">
-                                    <select class="dash-form-select" id="galleryCategoryFilter" style="padding: 8px 14px; border-radius: var(--radius-pill);">
-                                        <option value="all">All Categories</option>
-                                        <option value="Workshop">Workshop</option>
-                                        <option value="Info Session">Info Session</option>
-                                        <option value="Weekly Class">Weekly Class</option>
-                                        <option value="Hackathon">Hackathon</option>
-                                        <option value="Community">Community</option>
-                                        <option value="Robotics">Robotics</option>
-                                        <option value="Tech Talk">Tech Talk</option>
-                                        <option value="Other">Other</option>
-                                    </select>
                                     <input
                                         type="text"
                                         class="dash-search-input"
                                         id="searchGalleryInput"
-                                        placeholder="Search photo title..."
+                                        placeholder="Search activities..."
                                     />
                                     <button class="btn-primary" onclick="openAddGalleryModal()">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -1560,30 +1549,8 @@
                             <input type="text" id="galleryFormTitle" class="dash-form-input" placeholder="e.g. Info Session & Grand Onboarding 2026" required />
                         </div>
                         <div class="dash-form-group">
-                            <label class="dash-form-label">Category</label>
-                            <select id="galleryFormCategory" class="dash-form-select" required>
-                                <option value="Workshop">Workshop</option>
-                                <option value="Info Session">Info Session</option>
-                                <option value="Weekly Class">Weekly Class</option>
-                                <option value="Hackathon">Hackathon</option>
-                                <option value="Community">Community</option>
-                                <option value="Robotics">Robotics</option>
-                                <option value="Tech Talk">Tech Talk</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                        <div class="dash-form-group">
                             <label class="dash-form-label">Activity Date</label>
                             <input type="date" id="galleryFormDate" class="dash-form-input" required />
-                        </div>
-                        <div class="dash-form-group">
-                            <label class="dash-form-label">Color Accent</label>
-                            <select id="galleryFormColor" class="dash-form-select">
-                                <option value="blue">Blue</option>
-                                <option value="yellow">Yellow</option>
-                                <option value="green">Green</option>
-                                <option value="red">Red</option>
-                            </select>
                         </div>
                         <div class="dash-form-group">
                             <label class="dash-form-label">Event Location / Venue</label>
@@ -2720,10 +2687,8 @@
                     document.getElementById('galleryModalTitle').textContent = 'Add Activity Album';
                     document.getElementById('galleryFormId').value = '';
                     document.getElementById('galleryFormTitle').value = '';
-                    document.getElementById('galleryFormCategory').value = 'Workshop';
                     // Default to today's date formatted as YYYY-MM-DD
                     document.getElementById('galleryFormDate').value = new Date().toISOString().split('T')[0];
-                    document.getElementById('galleryFormColor').value = 'blue';
                     document.getElementById('galleryFormLocation').value = '';
                     document.getElementById('galleryMultiFileInput').value = '';
 
@@ -2748,9 +2713,7 @@
                     document.getElementById('galleryModalTitle').textContent = 'Edit Activity Album';
                     document.getElementById('galleryFormId').value = item.id;
                     document.getElementById('galleryFormTitle').value = item.title || '';
-                    document.getElementById('galleryFormCategory').value = item.category || 'Workshop';
                     document.getElementById('galleryFormDate').value = toDateInputValue(item.date);
-                    document.getElementById('galleryFormColor').value = item.color || 'blue';
                     document.getElementById('galleryFormLocation').value = item.location || item.desc || '';
                     document.getElementById('galleryMultiFileInput').value = '';
 
@@ -2907,9 +2870,7 @@
                         const albumData = {
                             id: albumId,
                             title: document.getElementById('galleryFormTitle').value.trim(),
-                            category: document.getElementById('galleryFormCategory').value,
                             date: document.getElementById('galleryFormDate').value.trim(),
-                            color: document.getElementById('galleryFormColor').value,
                             location: locationVal,
                             desc: locationVal,
                             description: locationVal,
@@ -2948,18 +2909,17 @@
                 };
 
                 document.getElementById('searchGalleryInput')?.addEventListener('input', applyGalleryFilters);
-                document.getElementById('galleryCategoryFilter')?.addEventListener('change', applyGalleryFilters);
 
                 function applyGalleryFilters() {
                     const q = (document.getElementById('searchGalleryInput')?.value || '').toLowerCase();
-                    const cat = document.getElementById('galleryCategoryFilter')?.value || 'all';
 
                     const filtered = allGallery.filter(item => {
-                        const matchCat = (cat === 'all') || (item.category === cat);
-                        const matchQ = (item.title && item.title.toLowerCase().includes(q)) || 
+                        const matchQ = !q || 
+                                       (item.title && item.title.toLowerCase().includes(q)) || 
+                                       (item.location && item.location.toLowerCase().includes(q)) ||
                                        (item.desc && item.desc.toLowerCase().includes(q)) ||
                                        (item.date && item.date.toLowerCase().includes(q));
-                        return matchCat && matchQ;
+                        return matchQ;
                     });
                     renderGalleryCards(filtered);
                 }

@@ -82,12 +82,11 @@ CREATE POLICY "Anon Delete Objects" ON storage.objects
 CREATE TABLE IF NOT EXISTS activity_gallery (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title VARCHAR(200) NOT NULL,
-    category VARCHAR(100) DEFAULT 'Activity',
     image_url TEXT,
     images JSONB DEFAULT '[]'::jsonb,
     date VARCHAR(100),
+    location VARCHAR(255),
     description TEXT,
-    color VARCHAR(20) DEFAULT 'blue',
     order_index INT DEFAULT 0,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -97,6 +96,8 @@ ALTER TABLE activity_gallery ADD COLUMN IF NOT EXISTS images JSONB DEFAULT '[]':
 ALTER TABLE activity_gallery ADD COLUMN IF NOT EXISTS date VARCHAR(100);
 ALTER TABLE activity_gallery ADD COLUMN IF NOT EXISTS location VARCHAR(255);
 ALTER TABLE activity_gallery ALTER COLUMN image_url DROP NOT NULL;
+ALTER TABLE activity_gallery DROP COLUMN IF EXISTS category;
+ALTER TABLE activity_gallery DROP COLUMN IF EXISTS color;
 
 GRANT ALL ON TABLE activity_gallery TO anon, authenticated;
 

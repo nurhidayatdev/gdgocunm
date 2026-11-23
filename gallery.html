@@ -64,10 +64,7 @@
                     </div>
 
                     <!-- Filter Bar & Counter -->
-                    <div class="gallery-filter-bar">
-                        <div class="gallery-category-tabs" id="galleryCategoryTabs">
-                            <!-- Populated dynamically -->
-                        </div>
+                    <div class="gallery-filter-bar" style="justify-content: flex-end;">
                         <div class="gallery-stats-text" id="galleryStatsCounter">
                             Loading activities...
                         </div>
@@ -167,7 +164,6 @@
                         allAlbums = (window.GDG_DATA && window.GDG_DATA.gallery) || [];
                     }
 
-                    renderCategoryTabs();
                     filterGallery();
 
                     // Check for URL query param e.g. gallery.html?id=gal-1
@@ -181,62 +177,17 @@
                     }
                 }
 
-                function renderCategoryTabs() {
-                    const tabsContainer = document.getElementById('galleryCategoryTabs');
-                    if (!tabsContainer) return;
-
-                    // Compute dynamic categories and counts
-                    const catCounts = { all: allAlbums.length };
-                    allAlbums.forEach(a => {
-                        const c = a.category || 'Other';
-                        catCounts[c] = (catCounts[c] || 0) + 1;
-                    });
-
-                    const categories = [
-                        { id: 'all', label: 'All Activities', color: 'blue' },
-                        { id: 'Workshop', label: 'Workshop', color: 'blue' },
-                        { id: 'Weekly Class', label: 'Weekly Class', color: 'green' },
-                        { id: 'Info Session', label: 'Info Session', color: 'yellow' },
-                        { id: 'Hackathon', label: 'Hackathon', color: 'red' },
-                        { id: 'Community', label: 'Community', color: 'yellow' },
-                        { id: 'Robotics', label: 'Robotics', color: 'blue' }
-                    ];
-
-                    tabsContainer.innerHTML = categories
-                        .filter(cat => cat.id === 'all' || catCounts[cat.id])
-                        .map(cat => {
-                            const count = catCounts[cat.id] || 0;
-                            const isActive = currentCategory === cat.id ? 'active' : '';
-                            return `
-                                <button type="button" class="gallery-cat-tab ${isActive}" onclick="selectCategory('${cat.id}', this)">
-                                    <span class="gallery-cat-dot" style="color: ${colorMap[cat.color] || '#4285F4'};"></span>
-                                    <span>${cat.label}</span>
-                                    <span class="gallery-cat-count">${count}</span>
-                                </button>
-                            `;
-                        }).join('');
-                }
-
-                window.selectCategory = function (cat, btn) {
-                    currentCategory = cat;
-                    document.querySelectorAll('.gallery-cat-tab').forEach(b => b.classList.remove('active'));
-                    if (btn) btn.classList.add('active');
-                    filterGallery();
-                };
-
                 window.filterGallery = function () {
                     const searchInput = document.getElementById('gallerySearchInput');
                     currentSearchQuery = (searchInput?.value || '').trim().toLowerCase();
 
                     const filtered = allAlbums.filter(album => {
-                        const matchCat = (currentCategory === 'all') || 
-                            (album.category && album.category.toLowerCase() === currentCategory.toLowerCase());
                         const matchSearch = !currentSearchQuery || 
                             (album.title && album.title.toLowerCase().includes(currentSearchQuery)) ||
+                            (album.location && album.location.toLowerCase().includes(currentSearchQuery)) ||
                             (album.desc && album.desc.toLowerCase().includes(currentSearchQuery)) ||
-                            (album.category && album.category.toLowerCase().includes(currentSearchQuery)) ||
                             (album.date && album.date.toLowerCase().includes(currentSearchQuery));
-                        return matchCat && matchSearch;
+                        return matchSearch;
                     });
 
                     renderAlbums(filtered);
@@ -282,15 +233,13 @@
                                     <polyline points="21 15 16 10 5 21"></polyline>
                                 </svg>
                                 <p style="margin-bottom: 6px; font-weight: 600; color: #ffffff; font-size: 1.05rem;">No activity albums found</p>
-                                <p style="font-size: 0.88rem; color: var(--text-secondary);">Try different search keywords or select another category above.</p>
+                                <p style="font-size: 0.88rem; color: var(--text-secondary);">Try different search keywords above.</p>
                             </div>
                         `;
                         return;
                     }
 
                     container.innerHTML = albums.map((album, idx) => {
-                        const colorName = album.color || 'blue';
-                        const col = colorMap[colorName] || '#4285F4';
                         const photos = Array.isArray(album.images) && album.images.length > 0 
                             ? album.images 
                             : (album.image ? [album.image] : []);
@@ -301,16 +250,15 @@
                         const locationText = album.location || album.desc || '';
 
                         return `
-                            <article class="gallery-album-card ${colorName}" onclick="openLightboxByAlbumIndex(${idx})" tabindex="0" role="button" aria-label="View album ${album.title}">
+                            <article class="gallery-album-card" onclick="openLightboxByAlbumIndex(${idx})" tabindex="0" role="button" aria-label="View album ${album.title}">
                                 <div class="album-cover-wrapper">
                                     <img src="${coverSrc}" alt="${album.title}" class="album-cover-img" loading="lazy" onerror="this.src='assets/images/events/weekly-class-2.jpg'" />
                                 </div>
 
                                 <div class="album-card-body">
                                     <div class="album-meta-row">
-                                        <span class="album-category-label" style="color: ${col}; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;">${album.category || 'Activity'}</span>
                                         ${displayDate ? `<span class="album-date-label">${displayDate}</span>` : ''}
-                                        ${locationText ? `<span class="album-location-badge" style="color: var(--text-muted); font-size: 0.74rem; font-family: var(--font-mono);">• ${locationText}</span>` : ''}
+                                        ${locationText ? `<span class="album-location-badge" style="color: var(--text-muted); font-size: 0.74rem; font-family: var(--font-mono);">${displayDate ? '• ' : ''}${locationText}</span>` : ''}
                                     </div>
                                     <h3 class="album-title">${album.title || 'Activity Documentation'}</h3>
 
@@ -331,6 +279,15 @@
                                 <div class="album-card-footer">
                                     <span class="album-action-link">
                                         <span>View Album (${photoCount} ${photoCount === 1 ? 'Photo' : 'Photos'})</span>
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                                        </svg>
+                                    </span>
+                                </div>
+                            </article>
+                        `;
+                    }).join('');
+                }
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                             <path d="M5 12h14M12 5l7 7-7 7"/>
                                         </svg>
@@ -373,7 +330,6 @@
                     const metaParts = [];
                     if (displayDate) metaParts.push(displayDate);
                     if (locationText) metaParts.push(locationText);
-                    if (album.category) metaParts.push(album.category);
 
                     document.getElementById('lightboxAlbumTitle').textContent = album.title || 'Activity Documentation';
                     document.getElementById('lightboxAlbumMeta').textContent = metaParts.length > 0 ? metaParts.join(' • ') : 'GDGoC UNM Activity';

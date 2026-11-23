@@ -828,9 +828,6 @@ async function renderGallery() {
             <div class="gallery-abstract-item" data-collage-idx="${idx}" onclick="window.location.href='gallery.html?id=${encodeURIComponent(item.id || idx)}'" role="button" tabindex="0" title="View documentation: ${item.title}">
                 <img src="${imgSrc}" alt="${item.title}" class="gallery-abstract-img" onerror="this.src='assets/images/events/weekly-class-2.jpg'" />
                 <div class="gallery-abstract-overlay">
-                    <div class="gallery-abstract-top">
-                        <span class="gallery-tag-pill" style="border-left: 3px solid ${col}; font-size: 0.72rem;">${item.category || "Activity"}</span>
-                    </div>
                     <div class="gallery-abstract-bottom">
                         <div class="gallery-abstract-title">${item.title || "GDGoC UNM Activity"}</div>
                         ${metaText ? `<div class="gallery-abstract-meta">${metaText}</div>` : ''}
@@ -862,7 +859,6 @@ async function renderGallery() {
                     boxes.forEach((box, i) => {
                         const img = box.querySelector(".gallery-abstract-img");
                         const titleEl = box.querySelector(".gallery-abstract-title");
-                        const tagEl = box.querySelector(".gallery-tag-pill");
                         const metaEl = box.querySelector(".gallery-abstract-meta");
                         if (!img) return;
 
@@ -872,11 +868,6 @@ async function renderGallery() {
                         img.src = pick.src;
                         if (pick.album) {
                             if (titleEl && pick.album.title) titleEl.textContent = pick.album.title;
-                            if (tagEl && pick.album.category) {
-                                tagEl.textContent = pick.album.category;
-                                const newCol = colorMap[pick.album.color] || "#4285F4";
-                                tagEl.style.borderLeftColor = newCol;
-                            }
                             const pickDate = formatGalleryDate(pick.album.date);
                             const pickLoc = pick.album.location || pick.album.desc || '';
                             const pickMeta = pickDate ? (pickDate + (pickLoc ? ` • ${pickLoc}` : '')) : pickLoc;
