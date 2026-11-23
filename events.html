@@ -87,8 +87,8 @@
                         </div>
                     </div>
 
-                    <!-- Events Catalog Grid -->
-                    <div class="events-catalog-grid" id="eventsContainer">
+                    <!-- Events Catalog Grid (4 Columns Matching Landing Page) -->
+                    <div class="events-catalog-grid events-compact-grid" id="eventsContainer">
                         <!-- Populated dynamically via JavaScript -->
                     </div>
                 </div>
@@ -389,7 +389,10 @@
                     });
 
                     if (stats) {
-                        stats.textContent = `Showing ${filtered.length} of ${allEvents.length} events`;
+                        stats.innerHTML = `
+                            <span style="width: 7px; height: 7px; border-radius: 50%; background: var(--google-blue); display: inline-block;"></span>
+                            <span>Showing ${filtered.length} of ${allEvents.length} events</span>
+                        `;
                     }
 
                     if (filtered.length === 0) {
@@ -407,29 +410,24 @@
                     }
 
                     container.innerHTML = filtered.map(ev => {
-                        const st = getStatusInfo(ev);
                         const poster = ev.poster || 'assets/images/events/weekly-class-2.jpg';
-                        const speakers = (ev.speakers && Array.isArray(ev.speakers) && ev.speakers.length > 0)
-                            ? ev.speakers
-                            : (ev.speaker ? [{ name: ev.speaker, role: ev.speakerRole || 'Speaker' }] : []);
-                        const primarySpeaker = speakers[0]?.name || '';
 
                         return `
-                            <article class="event-catalog-card" data-id="${ev.id}">
-                                <div class="event-catalog-poster-wrap">
+                            <article class="event-compact-card" onclick="openEventDetailsModal('${ev.id}')" onkeydown="if(event.key==='Enter'||event.key===' ')openEventDetailsModal('${ev.id}')" role="button" tabindex="0" title="View details: ${ev.title}">
+                                <div class="event-compact-poster-wrap">
                                     <img
                                         src="${poster}"
                                         alt="${ev.title}"
-                                        class="event-catalog-poster-img"
+                                        class="event-compact-poster-img"
                                         loading="lazy"
                                         onerror="this.src='assets/images/events/weekly-class-2.jpg'"
                                     />
                                 </div>
-                                <div class="event-catalog-body">
-                                    <h3 class="event-catalog-title" title="${ev.title}">${ev.title}</h3>
-                                    <div class="event-catalog-meta">
-                                        <div class="event-catalog-meta-item">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <div class="event-compact-body">
+                                    <h4 class="event-compact-title" title="${ev.title}">${ev.title}</h4>
+                                    <div class="event-compact-meta">
+                                        <div class="event-compact-meta-item">
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--google-yellow);">
                                                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                                                 <line x1="16" y1="2" x2="16" y2="6"></line>
                                                 <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -438,56 +436,19 @@
                                             <span>${ev.date || 'TBA'}</span>
                                         </div>
                                         ${ev.location ? `
-                                            <div class="event-catalog-meta-item">
-                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <div class="event-compact-meta-item">
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--google-blue);">
                                                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                                     <circle cx="12" cy="10" r="3"></circle>
                                                 </svg>
-                                                <span>${ev.location.split(':')[0]}</span>
+                                                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${ev.location.split(':')[0]}</span>
                                             </div>
-                                        ` : ''}
-                                    </div>
-                                    <div class="event-catalog-actions">
-                                        <button
-                                            type="button"
-                                            class="event-catalog-btn"
-                                            onclick="openEventDetailsModal('${ev.id}')"
-                                        >
-                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <circle cx="12" cy="12" r="10"></circle>
-                                                <line x1="12" y1="16" x2="12" y2="12"></line>
-                                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                                            </svg>
-                                            <span>View Details</span>
-                                        </button>
-                                        ${st.isUpcoming && ev.registrationUrl && ev.registrationUrl !== '#' ? `
-                                            <a
-                                                href="${ev.registrationUrl}"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                class="event-catalog-btn primary"
-                                                onclick="event.stopPropagation();"
-                                            >
-                                                <span>Register</span>
-                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                                    <path d="M5 12h14M12 5l7 7-7 7" />
-                                                </svg>
-                                            </a>
                                         ` : ''}
                                     </div>
                                 </div>
                             </article>
                         `;
                     }).join('');
-
-                    // Make entire card clickable to open details
-                    container.querySelectorAll('.event-catalog-card').forEach(card => {
-                        card.addEventListener('click', function (e) {
-                            if (e.target.closest('a') || e.target.closest('button')) return;
-                            const evId = this.getAttribute('data-id');
-                            if (evId) openEventDetailsModal(evId);
-                        });
-                    });
                 }
 
                 // Modal interactions
