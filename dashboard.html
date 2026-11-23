@@ -1573,8 +1573,8 @@
                             </select>
                         </div>
                         <div class="dash-form-group">
-                            <label class="dash-form-label">Activity Date / Month</label>
-                            <input type="text" id="galleryFormDate" class="dash-form-input" placeholder="e.g. November 2026 atau 14 Nov 2026" />
+                            <label class="dash-form-label">Activity Date</label>
+                            <input type="date" id="galleryFormDate" class="dash-form-input" required />
                         </div>
                         <div class="dash-form-group">
                             <label class="dash-form-label">Color Accent</label>
@@ -1586,8 +1586,17 @@
                             </select>
                         </div>
                         <div class="dash-form-group">
-                            <label class="dash-form-label">Description (Optional)</label>
-                            <input type="text" id="galleryFormDesc" class="dash-form-input" placeholder="e.g. Sesi onboarding dan pengenalan roadmap GDGoC UNM..." />
+                            <label class="dash-form-label">Event Location / Venue</label>
+                            <input type="text" id="galleryFormLocation" class="dash-form-input" placeholder="e.g. Online (Google Meet) or Kampus UNM" list="galleryLocationOptions" />
+                            <datalist id="galleryLocationOptions">
+                                <option value="Online (Google Meet)">
+                                <option value="Online (Zoom)">
+                                <option value="Online (YouTube Live)">
+                                <option value="Auditorium Teater UNM">
+                                <option value="Ruang Lab Komputer PTIK UNM">
+                                <option value="Gedung Phinisi Lt. 3 UNM">
+                                <option value="Offline (Kampus UNM)">
+                            </datalist>
                         </div>
 
                         <!-- Multi-File Picker -->
@@ -2599,6 +2608,37 @@
                     renderGalleryCards(allGallery);
                 }
 
+                function toDateInputValue(str) {
+                    if (!str) return '';
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+                    const d = new Date(str);
+                    if (!isNaN(d.getTime())) {
+                        const y = d.getFullYear();
+                        const m = String(d.getMonth() + 1).padStart(2, '0');
+                        const day = String(d.getDate()).padStart(2, '0');
+                        return `${y}-${m}-${day}`;
+                    }
+                    return '';
+                }
+
+                function formatGalleryDate(dateStr) {
+                    if (!dateStr) return '';
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+                        try {
+                            const [y, m, d] = dateStr.split('-');
+                            const dateObj = new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10));
+                            return dateObj.toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric'
+                            });
+                        } catch (e) {
+                            return dateStr;
+                        }
+                    }
+                    return dateStr;
+                }
+
                 function renderGalleryCards(items) {
                     const container = document.getElementById('galleryGridContainer');
                     if (!container) return;
@@ -2633,6 +2673,8 @@
                             : (item.image ? [item.image] : []);
                         const coverImg = photos[0] || item.image || '';
                         const photoCount = photos.length || 1;
+                        const displayDate = formatGalleryDate(item.date) || (item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Documentation');
+                        const locationText = item.location || item.desc || '';
 
                         return `
                             <div class="dash-gallery-card">
@@ -2653,8 +2695,9 @@
                                 </div>
                                 <div class="dash-gallery-info">
                                     <h4 class="dash-gallery-title">${item.title || 'GDGoC UNM Activity'}</h4>
-                                    <div style="font-size: 0.74rem; color: var(--text-muted); font-family: var(--font-mono); margin-top: -2px;">${item.date || (item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Dokumentasi')}</div>
-                                    ${item.desc ? `<p class="dash-gallery-desc">${item.desc}</p>` : ''}
+                                    <div style="font-size: 0.74rem; color: var(--text-muted); font-family: var(--font-mono); margin-top: -2px;">
+                                        ${displayDate}${locationText ? ` • ${locationText}` : ''}
+                                    </div>
                                 </div>
                                 <div class="dash-gallery-footer">
                                     <button class="dash-action-btn" onclick="openEditGalleryModal('${item.id}')">
@@ -2678,9 +2721,10 @@
                     document.getElementById('galleryFormId').value = '';
                     document.getElementById('galleryFormTitle').value = '';
                     document.getElementById('galleryFormCategory').value = 'Workshop';
-                    document.getElementById('galleryFormDate').value = '';
+                    // Default to today's date formatted as YYYY-MM-DD
+                    document.getElementById('galleryFormDate').value = new Date().toISOString().split('T')[0];
                     document.getElementById('galleryFormColor').value = 'blue';
-                    document.getElementById('galleryFormDesc').value = '';
+                    document.getElementById('galleryFormLocation').value = '';
                     document.getElementById('galleryMultiFileInput').value = '';
 
                     document.getElementById('galleryUploadProgressWrap').style.display = 'none';
@@ -2705,9 +2749,9 @@
                     document.getElementById('galleryFormId').value = item.id;
                     document.getElementById('galleryFormTitle').value = item.title || '';
                     document.getElementById('galleryFormCategory').value = item.category || 'Workshop';
-                    document.getElementById('galleryFormDate').value = item.date || '';
+                    document.getElementById('galleryFormDate').value = toDateInputValue(item.date);
                     document.getElementById('galleryFormColor').value = item.color || 'blue';
-                    document.getElementById('galleryFormDesc').value = item.desc || '';
+                    document.getElementById('galleryFormLocation').value = item.location || item.desc || '';
                     document.getElementById('galleryMultiFileInput').value = '';
 
                     document.getElementById('galleryUploadProgressWrap').style.display = 'none';
@@ -2859,13 +2903,16 @@
                         const allImages = [...existingGalleryImages, ...uploadedUrls];
                         const albumId = document.getElementById('galleryFormId').value.trim() || undefined;
 
+                        const locationVal = (document.getElementById('galleryFormLocation')?.value || '').trim();
                         const albumData = {
                             id: albumId,
                             title: document.getElementById('galleryFormTitle').value.trim(),
                             category: document.getElementById('galleryFormCategory').value,
                             date: document.getElementById('galleryFormDate').value.trim(),
                             color: document.getElementById('galleryFormColor').value,
-                            desc: document.getElementById('galleryFormDesc').value.trim(),
+                            location: locationVal,
+                            desc: locationVal,
+                            description: locationVal,
                             images: allImages,
                             image: allImages[0] || ''
                         };

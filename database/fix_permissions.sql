@@ -95,6 +95,7 @@ CREATE TABLE IF NOT EXISTS activity_gallery (
 
 ALTER TABLE activity_gallery ADD COLUMN IF NOT EXISTS images JSONB DEFAULT '[]'::jsonb;
 ALTER TABLE activity_gallery ADD COLUMN IF NOT EXISTS date VARCHAR(100);
+ALTER TABLE activity_gallery ADD COLUMN IF NOT EXISTS location VARCHAR(255);
 ALTER TABLE activity_gallery ALTER COLUMN image_url DROP NOT NULL;
 
 GRANT ALL ON TABLE activity_gallery TO anon, authenticated;

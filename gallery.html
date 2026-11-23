@@ -242,6 +242,24 @@
                     renderAlbums(filtered);
                 };
 
+                function formatGalleryDate(dateStr) {
+                    if (!dateStr) return '';
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+                        try {
+                            const [y, m, d] = dateStr.split('-');
+                            const dateObj = new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10));
+                            return dateObj.toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric'
+                            });
+                        } catch (e) {
+                            return dateStr;
+                        }
+                    }
+                    return dateStr;
+                }
+
                 function renderAlbums(albums) {
                     const container = document.getElementById('galleryAlbumsContainer');
                     const counter = document.getElementById('galleryStatsCounter');
@@ -279,6 +297,8 @@
                         const coverSrc = photos[0] || album.image || 'assets/images/events/weekly-class-2.jpg';
                         const photoCount = photos.length || 1;
                         const otherThumbs = photos.slice(1, 5);
+                        const displayDate = formatGalleryDate(album.date);
+                        const locationText = album.location || album.desc || '';
 
                         return `
                             <article class="gallery-album-card ${colorName}" onclick="openLightboxByAlbumIndex(${idx})" tabindex="0" role="button" aria-label="View album ${album.title}">
@@ -289,7 +309,8 @@
                                 <div class="album-card-body">
                                     <div class="album-meta-row">
                                         <span class="album-category-label" style="color: ${col}; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;">${album.category || 'Activity'}</span>
-                                        ${album.date ? `<span class="album-date-label">${album.date}</span>` : ''}
+                                        ${displayDate ? `<span class="album-date-label">${displayDate}</span>` : ''}
+                                        ${locationText ? `<span class="album-location-badge" style="color: var(--text-muted); font-size: 0.74rem; font-family: var(--font-mono);">• ${locationText}</span>` : ''}
                                     </div>
                                     <h3 class="album-title">${album.title || 'Activity Documentation'}</h3>
 
@@ -347,8 +368,15 @@
                     const photos = Array.isArray(album.images) && album.images.length > 0 ? album.images : (album.image ? [album.image] : []);
                     if (photos.length === 0) return;
 
+                    const displayDate = formatGalleryDate(album.date);
+                    const locationText = album.location || album.desc || '';
+                    const metaParts = [];
+                    if (displayDate) metaParts.push(displayDate);
+                    if (locationText) metaParts.push(locationText);
+                    if (album.category) metaParts.push(album.category);
+
                     document.getElementById('lightboxAlbumTitle').textContent = album.title || 'Activity Documentation';
-                    document.getElementById('lightboxAlbumMeta').textContent = `${album.date || 'GDGoC UNM'} • ${album.category || 'Activity'}`;
+                    document.getElementById('lightboxAlbumMeta').textContent = metaParts.length > 0 ? metaParts.join(' • ') : 'GDGoC UNM Activity';
 
                     updateLightboxPhoto();
 
