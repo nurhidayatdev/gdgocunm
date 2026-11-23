@@ -19,7 +19,7 @@ Desain GDGoC UNM memadukan estetika *modern developer tool* seperti **Google AI 
 1. **Dark & Focused**: Background gelap bertingkat (`#171B21`, `#111319`, `#161822`) yang nyaman di mata pengembang dan menonjolkan konten utama.
 2. **Subtle Tech Textures**: Overlay grid geometris halus (`48px x 48px`) dengan radial mask dan ambient light gradients lembut (blur 80–100px).
 3. **Google Quad-Color Accents**: Sentuhan warna Google (Biru, Merah, Kuning, Hijau) digunakan secara presisi sebagai aksen batas (border gradients), dot indikator, badge status, dan hover glow.
-4. **Pill & Frosted Glass Surfaces**: Komponen floating navigation, tombol, badge, dan modal memanfaatkan `backdrop-filter: blur()`, rounded pills, dan gradien metalik gelap (`linear-gradient(55deg, #222222, #404040)`).
+4. **Pill & Frosted Glass Surfaces**: Komponen navigation bar, tombol, badge, dan modal memanfaatkan `backdrop-filter: blur()`, rounded pills, dan gradien metalik gelap (`linear-gradient(55deg, #222222, #404040)`).
 
 ---
 
@@ -278,6 +278,9 @@ Untuk menjamin konsistensi 100% di semua halaman website tanpa duplikasi ratusan
 ```
 
 **Kunci CSS Navbar**:
+- **Posisi Menetap di Atas (Static / Absolute Header — Tidak Mengikuti Saat Scroll)**:
+  - Navbar menggunakan `position: absolute;` (bukan `fixed` atau `sticky`), dengan `top: 16px; left: 0; right: 0; z-index: 100;` (pada layar mobile `<= 560px`: `top: 8px;`).
+  - **Aturan Mutlak**: Navbar **WAJIB MENETAP DI ATAS** dan **DILARANG MENGIKUTI LAYAR SAAT DI-SCROLL** agar seluruh halaman bersih, fokus, dan tidak ada floating header yang menghalangi keterbacaan konten saat pengguna menggulir ke bawah.
 - `background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%) padding-box, linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%) border-box;`
 - `border: 1.82px solid transparent;`
 - `backdrop-filter: blur(20px);`

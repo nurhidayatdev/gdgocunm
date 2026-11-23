@@ -215,7 +215,7 @@ a {
    Header Navbar (Floating Frosted Glass Pill)
    ========================================================================== */
 .site-header {
-    position: fixed;
+    position: absolute;
     top: 16px;
     left: 0;
     right: 0;
