@@ -409,171 +409,47 @@ async function renderEvents() {
     // Sort: Newest / Most recent event date first
     const sortedEvents = [...eventsList].sort((a, b) => getEventTimestamp(b) - getEventTimestamp(a));
 
-    // Limit to max 5 latest events on landing page
-    const topEvents = sortedEvents.slice(0, 5);
-    const featuredEvent = topEvents[0];
-    const compactEvents = topEvents.slice(1);
+    // Limit to max 4 latest events in compact cards grid
+    const displayEvents = sortedEvents.slice(0, 4);
 
-    function getStatusInfo(ev) {
-        let currentStatus = ev.status || 'Upcoming';
-        if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.getEventAutoStatus === 'function') {
-            currentStatus = window.GDG_SUPABASE.getEventAutoStatus(ev);
-        } else if (ev.raw_date || ev.rawDate) {
-            const rawD = ev.raw_date || ev.rawDate;
-            const rawT = ev.raw_time || ev.rawTime || '23:59:59';
-            const dt = new Date(`${rawD}T${rawT.length === 5 ? rawT + ':00' : rawT}`);
-            if (!isNaN(dt.getTime())) {
-                currentStatus = dt >= new Date() ? 'Upcoming' : 'Completed';
-            }
-        }
-        return {
-            status: currentStatus,
-            isUpcoming: currentStatus.toLowerCase() === 'upcoming'
-        };
-    }
+    container.innerHTML = `
+        <div class="events-compact-grid">
+            ${displayEvents.map(ev => {
+                const poster = ev.poster || 'assets/images/events/weekly-class-2.jpg';
 
-    // 1. Featured Large Event Card (Newest Event)
-    const featuredStatus = getStatusInfo(featuredEvent);
-    const featuredPoster = featuredEvent.poster || 'assets/images/events/weekly-class-2.jpg';
-    const featuredSpeakers = (featuredEvent.speakers && Array.isArray(featuredEvent.speakers) && featuredEvent.speakers.length > 0)
-        ? featuredEvent.speakers
-        : (featuredEvent.speaker ? [{ name: featuredEvent.speaker, role: featuredEvent.speakerRole || 'Speaker' }] : []);
-
-    const featuredHtml = `
-        <article class="event-showcase-card event-featured-card">
-            <div class="event-poster-wrapper">
-                <img src="${featuredPoster}" alt="${featuredEvent.title}" class="event-poster-img" onerror="this.src='assets/images/events/weekly-class-2.jpg'" />
-                <a href="${featuredPoster}" target="_blank" rel="noopener" class="event-poster-zoom-btn">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <polyline points="15 3 21 3 21 9"></polyline>
-                        <polyline points="9 21 3 21 3 15"></polyline>
-                        <line x1="21" y1="3" x2="14" y2="10"></line>
-                        <line x1="3" y1="21" x2="10" y2="14"></line>
-                    </svg>
-                    <span>View Poster</span>
-                </a>
-            </div>
-            <div class="event-details-wrapper">
-                <div>
-                    <div class="event-header-row">
-                        <span class="event-status-pill ${featuredStatus.isUpcoming ? 'upcoming' : 'completed'}">${featuredStatus.status}</span>
-                    </div>
-                    <h3 class="event-title" style="margin-top: 14px;">${featuredEvent.title}</h3>
-                </div>
-
-                <!-- Date, Time, Venue -->
-                <div class="event-meta-grid">
-                    <div class="event-meta-item">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        <span>${featuredEvent.date || 'TBA'}</span>
-                    </div>
-                    ${featuredEvent.time ? `
-                        <div class="event-meta-item">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12 6 12 12 16 14"></polyline>
-                            </svg>
-                            <span>${featuredEvent.time}</span>
+                return `
+                    <article class="event-compact-card" onclick="window.open('${poster}', '_blank')" role="button" tabindex="0" title="View poster: ${ev.title}">
+                        <div class="event-compact-poster-wrap">
+                            <img src="${poster}" alt="${ev.title}" class="event-compact-poster-img" onerror="this.src='assets/images/events/weekly-class-2.jpg'" />
                         </div>
-                    ` : ''}
-                    ${featuredEvent.location ? `
-                        <div class="event-meta-item">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                <circle cx="12" cy="10" r="3"></circle>
-                            </svg>
-                            <span>${featuredEvent.location}</span>
-                        </div>
-                    ` : ''}
-                </div>
-
-                <!-- Speaker & Moderator Grid (Adaptive to many speakers) -->
-                <div class="event-speakers-grid">
-                    ${featuredSpeakers.map((spk, idx) => `
-                        <div class="event-person-card">
-                            <span class="event-person-badge">${featuredSpeakers.length > 1 ? `SPEAKER #${idx + 1}` : 'SPEAKER'}</span>
-                            <div class="event-person-name">${spk.name}</div>
-                            ${spk.role ? `<div class="event-person-role">${spk.role}</div>` : ''}
-                        </div>
-                    `).join('')}
-                    ${featuredEvent.moderator ? `
-                        <div class="event-person-card">
-                            <span class="event-person-badge">MODERATOR</span>
-                            <div class="event-person-name">${featuredEvent.moderator}</div>
-                            ${featuredEvent.moderatorRole ? `<div class="event-person-role">${featuredEvent.moderatorRole}</div>` : ''}
-                        </div>
-                    ` : ''}
-                </div>
-
-                <!-- Actions -->
-                <div class="event-footer-actions">
-                    ${featuredEvent.registrationUrl && featuredEvent.registrationUrl !== '#' ? `
-                        <a href="${featuredEvent.registrationUrl}" target="_blank" rel="noopener noreferrer" class="btn-primary">
-                            <span>Register / Location</span>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </a>
-                    ` : ''}
-                    <a href="${featuredPoster}" target="_blank" rel="noopener" class="btn-secondary">
-                        <span>Open Full Poster</span>
-                    </a>
-                </div>
-            </div>
-        </article>
-    `;
-
-    // 2. Compact Events Grid (Row 2 — 4 Columns)
-    let compactHtml = '';
-    if (compactEvents.length > 0) {
-        compactHtml = `
-            <div class="events-compact-grid">
-                ${compactEvents.map(ev => {
-                    const statusInfo = getStatusInfo(ev);
-                    const poster = ev.poster || 'assets/images/events/weekly-class-2.jpg';
-
-                    return `
-                        <article class="event-compact-card" onclick="window.open('${poster}', '_blank')" role="button" tabindex="0" title="View poster: ${ev.title}">
-                            <div class="event-compact-poster-wrap">
-                                <img src="${poster}" alt="${ev.title}" class="event-compact-poster-img" onerror="this.src='assets/images/events/weekly-class-2.jpg'" />
-                                <span class="event-status-pill ${statusInfo.isUpcoming ? 'upcoming' : 'completed'} event-compact-status">${statusInfo.status}</span>
-                            </div>
-                            <div class="event-compact-body">
-                                <h4 class="event-compact-title" title="${ev.title}">${ev.title}</h4>
-                                <div class="event-compact-meta">
+                        <div class="event-compact-body">
+                            <h4 class="event-compact-title" title="${ev.title}">${ev.title}</h4>
+                            <div class="event-compact-meta">
+                                <div class="event-compact-meta-item">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    </svg>
+                                    <span>${ev.date || 'TBA'}</span>
+                                </div>
+                                ${ev.location ? `
                                     <div class="event-compact-meta-item">
                                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                            <circle cx="12" cy="10" r="3"></circle>
                                         </svg>
-                                        <span>${ev.date || 'TBA'}</span>
+                                        <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${ev.location.split(':')[0]}</span>
                                     </div>
-                                    ${ev.location ? `
-                                        <div class="event-compact-meta-item">
-                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                                <circle cx="12" cy="10" r="3"></circle>
-                                            </svg>
-                                            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${ev.location.split(':')[0]}</span>
-                                        </div>
-                                    ` : ''}
-                                </div>
+                                ` : ''}
                             </div>
-                        </article>
-                    `;
-                }).join('')}
-            </div>
-        `;
-    }
-
-    container.innerHTML = featuredHtml + compactHtml;
+                        </div>
+                    </article>
+                `;
+            }).join('')}
+        </div>
+    `;
 }
 
 /* -------------------------------------------------------------------------
