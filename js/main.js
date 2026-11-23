@@ -820,7 +820,7 @@ async function renderGallery() {
         `;
     }).join("");
 
-    // Setup 3-second random photo auto-switch from database
+    // Setup 3-second random photo auto-switch from database (all 6 boxes change simultaneously)
     if (window._galleryAutoSwitchInterval) {
         clearInterval(window._galleryAutoSwitchInterval);
     }
@@ -829,43 +829,41 @@ async function renderGallery() {
         const boxes = container.querySelectorAll(".gallery-abstract-item");
         if (boxes.length > 0) {
             window._galleryAutoSwitchInterval = setInterval(() => {
-                // Select a random box in the collage
-                const randomBoxIdx = Math.floor(Math.random() * boxes.length);
-                const box = boxes[randomBoxIdx];
-                if (!box) return;
+                // Fade out all boxes simultaneously
+                boxes.forEach((box) => {
+                    const img = box.querySelector(".gallery-abstract-img");
+                    if (img) img.style.opacity = "0.2";
+                });
 
-                const img = box.querySelector(".gallery-abstract-img");
-                const titleEl = box.querySelector(".gallery-abstract-title");
-                const tagEl = box.querySelector(".gallery-tag-pill");
-                const metaEl = box.querySelector(".gallery-abstract-meta");
-                if (!img) return;
-
-                // Pick a random photo different from current image source
-                const curSrc = img.getAttribute("src");
-                const candidates = photoPool.filter(p => p.src !== curSrc);
-                const pick = candidates.length > 0 
-                    ? candidates[Math.floor(Math.random() * candidates.length)]
-                    : photoPool[Math.floor(Math.random() * photoPool.length)];
-
-                if (!pick) return;
-
-                // Smooth crossfade transition
-                img.style.opacity = "0.2";
                 setTimeout(() => {
-                    img.src = pick.src;
-                    if (pick.album) {
-                        if (titleEl && pick.album.title) titleEl.textContent = pick.album.title;
-                        if (tagEl && pick.album.category) {
-                            tagEl.textContent = pick.album.category;
-                            const newCol = colorMap[pick.album.color] || "#4285F4";
-                            tagEl.style.borderLeftColor = newCol;
+                    // Shuffle photoPool so all boxes get different photos if possible
+                    const shuffled = [...photoPool].sort(() => 0.5 - Math.random());
+
+                    boxes.forEach((box, i) => {
+                        const img = box.querySelector(".gallery-abstract-img");
+                        const titleEl = box.querySelector(".gallery-abstract-title");
+                        const tagEl = box.querySelector(".gallery-tag-pill");
+                        const metaEl = box.querySelector(".gallery-abstract-meta");
+                        if (!img) return;
+
+                        const pick = shuffled[i % shuffled.length];
+                        if (!pick) return;
+
+                        img.src = pick.src;
+                        if (pick.album) {
+                            if (titleEl && pick.album.title) titleEl.textContent = pick.album.title;
+                            if (tagEl && pick.album.category) {
+                                tagEl.textContent = pick.album.category;
+                                const newCol = colorMap[pick.album.color] || "#4285F4";
+                                tagEl.style.borderLeftColor = newCol;
+                            }
+                            if (metaEl && pick.album.date) metaEl.textContent = pick.album.date;
+                            box.onclick = () => {
+                                window.location.href = `gallery.html?id=${encodeURIComponent(pick.album.id || i)}`;
+                            };
                         }
-                        if (metaEl && pick.album.date) metaEl.textContent = pick.album.date;
-                        box.onclick = () => {
-                            window.location.href = `gallery.html?id=${encodeURIComponent(pick.album.id || randomBoxIdx)}`;
-                        };
-                    }
-                    img.style.opacity = "1";
+                        img.style.opacity = "1";
+                    });
                 }, 350);
             }, 3000);
         }
