@@ -91,20 +91,26 @@ Seluruh variabel CSS didefinisikan pada root [`css/style.css`](file:///d:/Coding
 
 ---
 
-## 3. Global Ambient & Background Layers
+## 3. Global Background & Tech Grid Layer
 
-Setiap halaman di proyek ini **wajib** menggunakan lapisan background global berikut agar tidak terasa datar (*flat*):
+Setiap halaman di proyek ini **wajib** menggunakan lapisan background global berikut:
 
 ### 3.1 Struktur HTML Background Layer
 Letakkan tepat setelah tag pembuka `<body>`:
 ```html
 <body id="top">
-    <!-- Tech Grid Lines Overlay -->
+    <!-- Tech Grid Lines Overlay (Satu-satunya background overlay yang diizinkan) -->
     <div class="tech-grid-overlay" aria-hidden="true"></div>
 
     <!-- Konten Halaman Dimulai Di Sini -->
 </body>
 ```
+
+> [!CAUTION]
+> **DILARANG MENGGUNAKAN AMBIENT GLOW WARNA GOOGLE (`.ambient-glow` / `.ambient-bottom-glow`)**:
+> **JANGAN PERNAH** menambahkan elemen `<div class="ambient-glow">`, `.ambient-bottom-glow`, atau div lingkaran gradien warna Google (merah, biru, kuning, hijau dengan blur besar) di latar belakang halaman baru!
+> Glow warna-warni yang menyebar di background membuat tampilan halaman kotor, tidak profesional, dan merusak keterbacaan teks.
+> Latar belakang halaman **HANYA** berupa dark surface `#171B21` bersih dengan **satu-satunya overlay** yaitu `<div class="tech-grid-overlay" aria-hidden="true"></div>`.
 
 ### 3.2 Spesifikasi CSS Lapis Background
 - **Body Background**:
@@ -580,7 +586,7 @@ Sistem breakpoint GDGoC UNM:
 Saat Anda atau agen AI membuat halaman baru di repositori ini (misal `events.html`, `verify.html`, `photobooth.html`), pastikan:
 
 1. [ ] **Head Tag Lengkap**: Mengimpor font `'Google Sans'`, favicon resmi GDGoC, meta viewport, dan link ke `css/style.css` serta `css/animations.css`.
-2. [ ] **Background Overlay**: Memasang `.tech-grid-overlay` di awal tag `<body>`.
+2. [ ] **Background Overlay (Tanpa Ambient Glow)**: Memasang HANYA `<div class="tech-grid-overlay" aria-hidden="true"></div>` di awal tag `<body>`. DILARANG KERAS memasang `.ambient-glow` atau elemen glow warna Google di background.
 3. [ ] **Header & Footer Modular**: Menggunakan placeholder `<div id="navbar-placeholder"></div>` dan `<div id="footer-placeholder"></div>` serta mengimpor `js/components.js`.
 4. [ ] **Kebersihan Header (No Artificial Badges)**: Header langsung menampilkan `h1`/`h2.section-title` dan `p.section-subtitle` tanpa badge/pill artifisial atau teks uppercase berulang di atasnya.
 5. [ ] **Strict English UI (100% Bahasa Inggris)**: Seluruh teks judul, deskripsi, tombol, placeholder, modal, dan status wajib menggunakan bahasa Inggris.
