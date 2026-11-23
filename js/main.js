@@ -805,7 +805,7 @@ async function renderGallery() {
                         ${photoCount > 0 ? `
                             <span class="gallery-photo-count-pill">
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                                <span>${photoCount} Foto</span>
+                                <span>${photoCount} ${photoCount === 1 ? 'Photo' : 'Photos'}</span>
                             </span>
                         ` : ''}
                     </div>

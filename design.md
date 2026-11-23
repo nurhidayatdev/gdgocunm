@@ -145,31 +145,36 @@ Gunakan class `.container` untuk membatasi lebar konten:
 | **Tag / Pill Label**| `.section-tag`, `.badge-pill` | `0.78rem - 0.82rem`| 600 | `+0.04em` | Beragam (Google Aksen)| Uppercase/Cap status pill |
 | **Caption / Meta** | `.stat-sub`, `.team-major` | `0.76rem - 0.78rem`| 500 | Normal | `var(--text-muted)` | Keterangan tambahan |
 
-### 4.1 Kebersihan Header & Aturan Badge
+### 4.1 Kebersihan Header & Larangan Badge Artifisial
 
 > [!WARNING]
-> **KEBERSIHAN HEADER CARD & PANEL (DILARANG MENAMBAH BADGE ARTIFISIAL)**:
-> Jangan menambahkan badge/tag artifisial (seperti `STUDIO CONFIG` atau label buatan serupa) di atas judul panel atau card yang membuat tampilan padat dan kotor.
-> Header panel, form, atau kartu interaktif harus bersih, minimalis, dan langsung berfokus pada judul (`h1`/`h2`/`h3`) serta deskripsi pengantar secara profesional tanpa badge berlebihan.
+> **KEBERSIHAN HEADER (DILARANG KERAS MENAMBAH BADGE / PILL ARTIFISIAL)**:
+> Jangan menambahkan badge/pill artifisial atau dekorasi teks uppercase berlebihan (seperti `ACTIVITIES & DOCUMENTATION`, `STUDIO CONFIG`, atau label buatan serupa) di atas judul seksi atau judul halaman (`h1` / `h2`).
+> Header halaman, seksi, panel, form, atau kartu interaktif **harus bersih, minimalis, dan elegan**: langsung berfokus pada judul (`h1` / `h2`) serta paragraf deskripsi pengantar (`p.section-subtitle`) tanpa badge yang mengotori tampilan.
+
+> [!CAUTION]
+> **ATURAN BAHASA ANTARMUKA (STRICT ENGLISH UI COPY POLICY)**:
+> Seluruh teks antarmuka publik pada website GDGoC UNM **WAJIB MENGGUNAKAN BAHASA INGGRIS (100% ENGLISH)**:
+> - Judul dan subjudul seksi (misal: *Activities & Event Gallery*, *Frequently Asked Questions*).
+> - Label navigasi dan tombol CTA (misal: *Explore Full Gallery*, *Register Member*, *View Album*, *View All*).
+> - Placeholder input form dan search bar (misal: *Search activities, workshops, or topics...*).
+> - Tab kategori dan status counter (misal: *All Activities*, *Loading activities...*, *6 Albums • 6 Photos*).
+> - Dialog modal, aria-labels, dan notifikasi (misal: *Activity Title*, *Photo 1 of 1*, *Close Lightbox*).
+> 
+> *Bahasa Indonesia HANYA diperbolehkan untuk nama resmi organisasi/institusi kampus (`Universitas Negeri Makassar`, `Menara Pinisi`) atau judul kegiatan lokal jika secara resmi dinamai dalam bahasa Indonesia oleh panitia.*
 
 > [!CAUTION]
 > **DILARANG MENGGUNAKAN EMOJI (STRICT NO-EMOJI POLICY)**:
 > Seluruh elemen antarmuka, teks tombol, opsi dropdown select, label, badge, modal, dan notifikasi toast **DILARANG KERAS** menggunakan karakter emoji (seperti 📸, ☀️, 🎞️, 📼, ⚡, 💾, 🚀, dll.).
 > Gunakan ikon SVG garis bersih (*clean stroke SVG*) yang terukur dan profesional, atau gunakan teks teknis/deskriptif yang lugas.
 
-### 4.2 Section Header Standard Template (Landing Pages Only)
-Hanya untuk seksi utama pada halaman landing umum (bukan untuk panel/card internal):
+### 4.2 Standard Clean Section Header Template
+Format baku header yang bersih untuk halaman landing maupun halaman spesifik:
 ```html
 <div class="section-header">
-    <span class="section-tag">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <!-- Icon SVG -->
-        </svg>
-        NAMA SEKSI
-    </span>
-    <h2 class="section-title">Judul Seksi yang Kuat & Menarik</h2>
+    <h1 class="section-title">Activities & Event Gallery</h1>
     <p class="section-subtitle">
-        Deskripsi pengantar singkat mengenai apa yang ada pada seksi ini secara jelas dan informatif.
+        A curated showcase of memorable moments, technical workshops, hackathons, and community study jams at Google Developer Groups on Campus Universitas Negeri Makassar.
     </p>
 </div>
 ```
@@ -178,45 +183,65 @@ Hanya untuk seksi utama pada halaman landing umum (bukan untuk panel/card intern
 
 ## 5. UI Component Library (HTML & CSS Blueprints)
 
-### 5.1 Floating Frosted Pill Navbar (`.site-header`)
-Navbar khas GDGoC UNM melayang di bagian atas halaman dengan rounded pill, frosted glass blur, dan bingkai gradien 4 warna Google:
+### 5.1 Modular Architecture: External Navbar & Footer Components
 
+Untuk menjamin konsistensi 100% di semua halaman website tanpa duplikasi ratusan baris HTML, navigasi header dan footer dikelola melalui **komponen eksternal modular**:
+- `components/navbar.html`: Berisi struktur kanonik `.site-header`, logo branding, desktop `.nav-links`, tombol `.btn-primary` (Register Member), tombol hamburger `.mobile-toggle`, serta `.mobile-nav-backdrop` dan `.mobile-nav-drawer`.
+- `components/footer.html`: Berisi struktur kanonik `.site-footer`, deskripsi brand, link navigasi, tautan sosial media resmi, dan baris copyright `footer-bottom`.
+- `js/components.js`: Skrip loader komponen universal yang secara otomatis menginjeksi navbar dan footer secara instan dan bersih, menangani deteksi link aktif (`.active`), interaksi mobile drawer, dan smooth scrolling.
+
+#### Cara Menggunakan di Setiap Halaman:
 ```html
-<header class="site-header" id="navbar">
+<!-- Di bagian atas <body> -->
+<div id="navbar-placeholder"></div>
+
+<!-- Konten halaman -->
+<main>...</main>
+
+<!-- Di bagian bawah <body> -->
+<div id="footer-placeholder"></div>
+
+<!-- Scripts -->
+<script src="js/components.js"></script>
+```
+
+#### Struktur Blueprint Navbar Kanonik:
+```html
+<header class="site-header" id="main-header">
     <div class="container">
         <nav class="nav-inner" aria-label="Main Navigation">
             <!-- Brand Logo -->
-            <a href="index.html" class="nav-brand">
+            <a href="index.html#hero" class="nav-brand">
                 <div class="nav-logo-icon">
-                    <img src="assets/images/logo-gdgoc.png" alt="GDGoC Logo" width="36" height="24">
+                    <img src="assets/logo/GDGoC-Logo.png" alt="GDGoC Logo" width="32" height="22">
                 </div>
                 <div class="nav-brand-text">
                     <span class="nav-brand-title">
-                        GDG <span class="campus-tag">on Campus</span>
+                        GDGoC <span class="campus-tag">UNM</span>
                     </span>
                     <span class="nav-brand-sub">Universitas Negeri Makassar</span>
                 </div>
             </a>
 
-            <!-- Desktop Links -->
+            <!-- Desktop Links (English Standard) -->
             <ul class="nav-links">
-                <li><a href="#about" class="nav-link active">Tentang</a></li>
-                <li><a href="#activities" class="nav-link">Kegiatan</a></li>
-                <li><a href="#learning-paths" class="nav-link">Learning Paths</a></li>
-                <li><a href="#team" class="nav-link">Core Team</a></li>
-                <li><a href="#faq" class="nav-link">FAQ</a></li>
+                <li><a href="index.html#about" class="nav-link" data-nav="about">About</a></li>
+                <li><a href="index.html#events" class="nav-link" data-nav="events">Events</a></li>
+                <li><a href="learning-path.html" class="nav-link" data-nav="learning-path">Learning Path</a></li>
+                <li><a href="index.html#team" class="nav-link" data-nav="team">Team</a></li>
+                <li><a href="gallery.html" class="nav-link" data-nav="gallery">Gallery</a></li>
+                <li><a href="index.html#faq" class="nav-link" data-nav="faq">FAQ</a></li>
             </ul>
 
             <!-- Actions & Mobile Toggle -->
             <div class="nav-actions">
-                <a href="#join" class="btn-primary nav-cta">
-                    <span>Gabung Sekarang</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
+                <a href="https://gdg.community.dev/gdg-on-campus-universitas-negeri-makassar-makassar-indonesia/" target="_blank" rel="noopener noreferrer" class="btn-primary" id="btn-nav-join">
+                    <span>Register Member</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
                     </svg>
                 </a>
-                <button class="mobile-toggle" id="mobileNavToggle" aria-label="Buka Menu">
+                <button class="mobile-toggle" id="mobile-toggle-btn" aria-label="Toggle navigation menu" aria-expanded="false">
                     <span class="hamburger-line"></span>
                     <span class="hamburger-line"></span>
                     <span class="hamburger-line"></span>
@@ -227,17 +252,21 @@ Navbar khas GDGoC UNM melayang di bagian atas halaman dengan rounded pill, frost
 </header>
 
 <!-- Mobile Navigation Drawer & Backdrop -->
-<div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
-<div class="mobile-nav-drawer" id="mobileNavDrawer">
+<div class="mobile-nav-backdrop" id="mobile-nav-backdrop" aria-hidden="true"></div>
+<div class="mobile-nav-drawer" id="mobile-nav-drawer" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
     <div class="mobile-nav-menu-list">
-        <a href="#about" class="nav-link">Tentang</a>
-        <a href="#activities" class="nav-link">Kegiatan</a>
-        <a href="#learning-paths" class="nav-link">Learning Paths</a>
-        <a href="#team" class="nav-link">Core Team</a>
-        <a href="#faq" class="nav-link">FAQ</a>
+        <a href="index.html#about" class="nav-link" data-nav="about"><span>About</span>...</a>
+        <a href="index.html#events" class="nav-link" data-nav="events"><span>Events</span>...</a>
+        <a href="learning-path.html" class="nav-link" data-nav="learning-path"><span>Learning Path</span>...</a>
+        <a href="index.html#team" class="nav-link" data-nav="team"><span>Team</span>...</a>
+        <a href="gallery.html" class="nav-link" data-nav="gallery"><span>Gallery</span>...</a>
+        <a href="index.html#faq" class="nav-link" data-nav="faq"><span>FAQ</span>...</a>
     </div>
     <div class="mobile-drawer-cta-box">
-        <a href="#join" class="btn-primary">Gabung GDGoC UNM</a>
+        <a href="https://gdg.community.dev/gdg-on-campus-universitas-negeri-makassar-makassar-indonesia/" target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-align: center; justify-content: center; padding: 12px 20px;">
+            <span>Register Member</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+        </a>
     </div>
 </div>
 ```
@@ -466,54 +495,48 @@ Komponen FAQ yang bersih dengan panah SVG yang berputar mulus saat dibuka:
 ```
 ---
 
-### 5.8 Footer Ekosistem (`.site-footer`)
-Footer universal yang wajib disematkan di semua halaman:
+### 5.8 Canonical Ecosystem Footer (`.site-footer`)
+Footer universal yang dipanggil via `<div id="footer-placeholder"></div>` dan `js/components.js`:
 ```html
 <footer class="site-footer">
     <div class="container">
         <div class="footer-top">
             <div class="footer-brand">
                 <div class="footer-brand-header">
-                    <img src="assets/images/gdgoc-logo.webp" alt="GDGoC Logo" class="footer-logo-full">
+                    <img src="assets/logo/logo-gdgoc-full.png" alt="GDGoC UNM" class="footer-logo-full">
                 </div>
-                <p>Komunitas pengembang mahasiswa berbasis di Universitas Negeri Makassar yang didukung oleh Google Developers.</p>
-                <a href="https://gdg.community.dev/gdg-on-campus-universitas-negeri-makassar-makassar-indonesia/" target="_blank" rel="noopener" class="footer-community-link">
-                    <span class="community-dot"></span>
-                    <span>GDG Community Platform</span>
-                </a>
+                <p>Google Developer Group On Campus Universitas Negeri Makassar. An independent student community fostering tech innovation, peer learning, and collaborative digital solutions.</p>
             </div>
             
             <div class="footer-nav-wrapper">
                 <div class="footer-col">
-                    <h4>Navigasi</h4>
+                    <h4>Navigation</h4>
                     <ul class="footer-links">
-                        <li><a href="#about">Tentang Kami</a></li>
-                        <li><a href="#activities">Kegiatan</a></li>
-                        <li><a href="#learning-paths">Learning Paths</a></li>
-                        <li><a href="#team">Core Team</a></li>
+                        <li><a href="index.html#about">About</a></li>
+                        <li><a href="index.html#events">Events</a></li>
+                        <li><a href="learning-path.html">Learning Path</a></li>
+                        <li><a href="index.html#team">Core Team</a></li>
+                        <li><a href="gallery.html">Activities Gallery</a></li>
+                        <li><a href="index.html#faq">FAQ</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
-                    <h4>Program</h4>
-                    <ul class="footer-links">
-                        <li><a href="#">Solution Challenge</a></li>
-                        <li><a href="#">Tech Workshop</a></li>
-                        <li><a href="#">Study Jams</a></li>
-                        <li><a href="photobooth.html">Photobooth Studio</a></li>
+                    <h4>Contact</h4>
+                    <ul class="footer-links footer-contact-links">
+                        <li><a href="mailto:gdgoc.unm@gmail.com" target="_blank" rel="noopener noreferrer">...<span>Email</span></a></li>
+                        <li><a href="https://instagram.com/gdgoc.unm" target="_blank" rel="noopener noreferrer">...<span>Instagram</span></a></li>
+                        <li><a href="https://discord.gg/gdgoc-unm" target="_blank" rel="noopener noreferrer">...<span>Discord</span></a></li>
+                        <li><a href="https://tiktok.com/@gdgoc.unm" target="_blank" rel="noopener noreferrer">...<span>TikTok</span></a></li>
+                        <li><a href="https://youtube.com/@gdgoc-unm" target="_blank" rel="noopener noreferrer">...<span>YouTube</span></a></li>
                     </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Media Sosial</h4>
-                    <div class="footer-social-icons">
-                        <!-- Instagram, LinkedIn, GitHub, YouTube SVG Links -->
-                    </div>
                 </div>
             </div>
         </div>
 
         <div class="footer-bottom">
-            <p>&copy; 2024 - 2026 GDGoC Universitas Negeri Makassar. All rights reserved.</p>
-            <p class="footer-disclaimer">Google Developer Groups on Campus is an independent group; the activities and the opinions expressed here should in no way be linked to Google, the corporation.</p>
+            <div>
+                &copy; 2026 <strong>GDGoC UNM</strong>. All Rights Reserved
+            </div>
         </div>
     </div>
 </footer>
@@ -556,14 +579,15 @@ Sistem breakpoint GDGoC UNM:
 
 Saat Anda atau agen AI membuat halaman baru di repositori ini (misal `events.html`, `verify.html`, `photobooth.html`), pastikan:
 
-1. [ ] **Head Tag Lengkap**: Mengimpor font `'Google Sans'` atau Inter, favicon resmi GDGoC, meta viewport, dan link ke `css/style.css` serta `css/animations.css`.
+1. [ ] **Head Tag Lengkap**: Mengimpor font `'Google Sans'`, favicon resmi GDGoC, meta viewport, dan link ke `css/style.css` serta `css/animations.css`.
 2. [ ] **Background Overlay**: Memasang `.tech-grid-overlay` di awal tag `<body>`.
-3. [ ] **Header Konsisten**: Menggunakan `.site-header` dengan floating frosted pill dan link navigasi yang sesuai.
-4. [ ] **Palet Warna**: Selalu gunakan variabel CSS `--google-blue`, `--bg-primary`, `--bg-card`, `--border-card` dan jangan gunakan *hardcoded hex* acak di luar design system.
-5. [ ] **Buttons & Actions (Aturan 2 Tipe)**: HANYA gunakan Style Putih (`.btn-primary`) untuk aksi utama dan Style Hitam (`.btn-secondary`) untuk aksi sekunder. DILARANG membuat tombol dengan background berwarna solid (biru, hijau, dsb).
-6. [ ] **No Emojis & Clean Headers**: DILARANG keras menggunakan karakter emoji pada teks UI/tombol/modal, serta hindari badge artifisial yang menumpuk di atas judul panel.
-7. [ ] **Footer Lengkap**: Memasang `.site-footer` dengan disclaimer resmi Google Developer Group di baris bawah.
-8. [ ] **Mobile Responsiveness**: Uji tampilan pada viewport mobile (`< 480px`) agar tidak terjadi *horizontal overflow* dan menu drawer berfungsi lancar.
+3. [ ] **Header & Footer Modular**: Menggunakan placeholder `<div id="navbar-placeholder"></div>` dan `<div id="footer-placeholder"></div>` serta mengimpor `js/components.js`.
+4. [ ] **Kebersihan Header (No Artificial Badges)**: Header langsung menampilkan `h1`/`h2.section-title` dan `p.section-subtitle` tanpa badge/pill artifisial atau teks uppercase berulang di atasnya.
+5. [ ] **Strict English UI (100% Bahasa Inggris)**: Seluruh teks judul, deskripsi, tombol, placeholder, modal, dan status wajib menggunakan bahasa Inggris.
+6. [ ] **Palet Warna**: Selalu gunakan variabel CSS `--google-blue`, `--bg-primary`, `--bg-card`, `--border-card` dan jangan gunakan hardcoded hex acak di luar design system.
+7. [ ] **Buttons & Actions (Aturan 2 Tipe)**: HANYA gunakan Style Putih (`.btn-primary`) untuk aksi utama dan Style Hitam (`.btn-secondary`) untuk aksi sekunder. DILARANG membuat tombol dengan background solid.
+8. [ ] **No Emojis Policy**: DILARANG keras menggunakan karakter emoji pada teks UI/tombol/modal/badge. Gunakan SVG inline bersih.
+9. [ ] **Mobile Responsiveness**: Uji tampilan pada viewport mobile (`< 480px`) agar tidak terjadi horizontal overflow dan menu drawer berfungsi lancar.
 
 ---
 
