@@ -120,10 +120,6 @@
             <span>FAQ</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" /></svg>
         </a>
-        <a href="dashboard.html" class="nav-link" data-nav="dashboard">
-            <span>Dashboard</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" /></svg>
-        </a>
     </div>
 
     <div class="mobile-drawer-cta-box">
@@ -226,25 +222,22 @@
 </footer>
 `;
 
-    // Initialize Components
-    async function loadComponent(placeholderId, externalPath, fallbackHtml) {
+    // Render component cleanly into DOM
+    function renderComponent(placeholderId, html) {
         const placeholder = document.getElementById(placeholderId);
-        if (!placeholder) return null;
+        if (!placeholder) return false;
 
-        let content = fallbackHtml;
-        // Try fetching external file if served over HTTP/HTTPS
-        if (window.location.protocol.startsWith('http')) {
-            try {
-                const response = await fetch(externalPath);
-                if (response.ok) {
-                    content = await response.text();
-                }
-            } catch (e) {
-                // Silently fallback to embedded template
-            }
+        const path = window.location.pathname.toLowerCase();
+        const isIndex = path.endsWith('index.html') || path === '/' || path.endsWith('/') || !!document.getElementById('hero');
+
+        let finalHtml = html;
+        if (isIndex) {
+            // Optimize hash links for smooth in-page navigation on index.html
+            finalHtml = finalHtml.replace(/href="index\.html#/g, 'href="#');
         }
 
-        placeholder.outerHTML = content;
+        placeholder.insertAdjacentHTML('beforebegin', finalHtml);
+        placeholder.remove();
         return true;
     }
 
@@ -306,8 +299,6 @@
             activeNav = 'learning-path';
         } else if (path.endsWith('team.html')) {
             activeNav = 'team';
-        } else if (path.endsWith('dashboard.html')) {
-            activeNav = 'dashboard';
         }
 
         if (activeNav) {
@@ -317,18 +308,18 @@
         }
 
         // Smooth scroll for in-page anchors on index.html
-        const isIndex = path.endsWith('index.html') || path === '/' || path.endsWith('/') || document.getElementById('about');
+        const isIndex = path.endsWith('index.html') || path === '/' || path.endsWith('/') || !!document.getElementById('hero');
         if (isIndex) {
-            document.querySelectorAll('a[href*="index.html#"]').forEach((a) => {
+            document.querySelectorAll('a[href^="#"]').forEach((a) => {
                 a.addEventListener('click', (e) => {
-                    const hash = a.getAttribute('href').split('#')[1];
-                    if (hash) {
-                        const target = document.getElementById(hash);
+                    const hash = a.getAttribute('href');
+                    if (hash && hash !== '#') {
+                        const target = document.querySelector(hash);
                         if (target) {
                             e.preventDefault();
                             target.scrollIntoView({ behavior: 'smooth' });
                             if (window.history && window.history.pushState) {
-                                window.history.pushState(null, '', `#${hash}`);
+                                window.history.pushState(null, '', hash);
                             }
                         }
                     }
@@ -365,12 +356,9 @@
         }
     }
 
-    async function init() {
-        await Promise.all([
-            loadComponent('navbar-placeholder', 'components/navbar.html', NAVBAR_TEMPLATE),
-            loadComponent('footer-placeholder', 'components/footer.html', FOOTER_TEMPLATE)
-        ]);
-
+    function init() {
+        renderComponent('navbar-placeholder', NAVBAR_TEMPLATE);
+        renderComponent('footer-placeholder', FOOTER_TEMPLATE);
         initNavbarInteractive();
     }
 
