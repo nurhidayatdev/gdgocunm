@@ -1900,12 +1900,34 @@
                 // --------------------------------------------------------------------
                 // Events & Workshops Management
                 // --------------------------------------------------------------------
-                async function loadEvents() {
-                    if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.getEvents === 'function') {
-                        allEvents = await window.GDG_SUPABASE.getEvents();
-                    } else {
-                        allEvents = (window.GDG_DATA && window.GDG_DATA.events) || [];
+                function getEventTimestamp(ev) {
+                    if (ev.raw_date || ev.rawDate) {
+                        const rawD = ev.raw_date || ev.rawDate;
+                        const rawT = ev.raw_time || ev.rawTime || '00:00:00';
+                        const dt = new Date(`${rawD}T${rawT.length === 5 ? rawT + ':00' : rawT}`);
+                        if (!isNaN(dt.getTime())) return dt.getTime();
                     }
+                    if (ev.date) {
+                        const parsed = new Date(ev.date);
+                        if (!isNaN(parsed.getTime())) return parsed.getTime();
+                    }
+                    if (ev.created_at || ev.createdAt) {
+                        const parsed = new Date(ev.created_at || ev.createdAt);
+                        if (!isNaN(parsed.getTime())) return parsed.getTime();
+                    }
+                    return 0;
+                }
+
+                async function loadEvents() {
+                    let list = [];
+                    if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.getEvents === 'function') {
+                        list = await window.GDG_SUPABASE.getEvents();
+                    } else {
+                        list = (window.GDG_DATA && window.GDG_DATA.events) || [];
+                    }
+                    // Sort newest events first
+                    allEvents = [...list].sort((a, b) => getEventTimestamp(b) - getEventTimestamp(a));
+
                     const statEl = document.getElementById('statEventsCount');
                     if (statEl) statEl.textContent = allEvents.length;
 
@@ -2547,12 +2569,32 @@
                 // --------------------------------------------------------------------
                 // Activity Gallery Album Management (Multi-Photo Album CRUD)
                 // --------------------------------------------------------------------
-                async function loadGallery() {
-                    if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.getGallery === 'function') {
-                        allGallery = await window.GDG_SUPABASE.getGallery();
-                    } else {
-                        allGallery = (window.GDG_DATA && window.GDG_DATA.gallery) || [];
+                function getGalleryTimestamp(item) {
+                    if (item.date) {
+                        if (/^\d{4}-\d{2}-\d{2}$/.test(item.date)) {
+                            const dt = new Date(item.date + 'T00:00:00');
+                            if (!isNaN(dt.getTime())) return dt.getTime();
+                        }
+                        const parsed = new Date(item.date);
+                        if (!isNaN(parsed.getTime())) return parsed.getTime();
                     }
+                    if (item.created_at || item.createdAt) {
+                        const parsed = new Date(item.created_at || item.createdAt);
+                        if (!isNaN(parsed.getTime())) return parsed.getTime();
+                    }
+                    return 0;
+                }
+
+                async function loadGallery() {
+                    let list = [];
+                    if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.getGallery === 'function') {
+                        list = await window.GDG_SUPABASE.getGallery();
+                    } else {
+                        list = (window.GDG_DATA && window.GDG_DATA.gallery) || [];
+                    }
+                    // Sort newest albums first
+                    allGallery = [...list].sort((a, b) => getGalleryTimestamp(b) - getGalleryTimestamp(a));
+
                     const countEl = document.getElementById('statGalleryCount');
                     if (countEl) countEl.textContent = allGallery.length;
 
