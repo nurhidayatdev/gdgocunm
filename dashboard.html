@@ -1594,7 +1594,7 @@
                         <div class="dash-form-group dash-form-full">
                             <label class="dash-form-label">Photos (Bisa Tambah Lebih dari 1 Foto Sekaligus)</label>
                             <div class="dash-upload-multi-zone" id="galleryMultiDropZone" onclick="document.getElementById('galleryMultiFileInput').click()">
-                                <input type="file" id="galleryMultiFileInput" multiple accept="image/*" style="display: none;" onchange="handleGalleryMultiFileSelect(event)" />
+                                <input type="file" id="galleryMultiFileInput" multiple accept="image/*" style="display: none;" onclick="event.stopPropagation()" onchange="handleGalleryMultiFileSelect(event)" />
                                 <div class="dash-upload-multi-icon">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -2726,6 +2726,9 @@
                             stagedGalleryFiles.push(f);
                         }
                     });
+
+                    // Clear input value so selecting again (or adding more photos) always triggers change event
+                    e.target.value = '';
 
                     renderGalleryAlbumPreviews();
                 };

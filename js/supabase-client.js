@@ -174,6 +174,10 @@
 
     function mapGalleryRow(row) {
         let images = [];
+        let dateVal = row.date || '';
+        let descVal = row.description || '';
+
+        // Check if images is provided directly by column
         if (Array.isArray(row.images)) {
             images = row.images;
         } else if (typeof row.images === 'string' && row.images.trim().startsWith('[')) {
@@ -181,6 +185,25 @@
                 images = JSON.parse(row.images);
             } catch (e) {}
         }
+
+        // Backward compatibility: check if metadata was encoded in description (if images/date column was missing in DB)
+        if (typeof descVal === 'string' && descVal.includes('<!--GDG_ALBUM_META:')) {
+            const metaMatch = descVal.match(/<!--GDG_ALBUM_META:(.*?)-->/s);
+            if (metaMatch && metaMatch[1]) {
+                try {
+                    const parsedMeta = JSON.parse(metaMatch[1]);
+                    if (Array.isArray(parsedMeta.images) && parsedMeta.images.length > 0 && images.length === 0) {
+                        images = parsedMeta.images;
+                    }
+                    if (parsedMeta.date && !dateVal) {
+                        dateVal = parsedMeta.date;
+                    }
+                } catch (e) {}
+                descVal = descVal.replace(/<!--GDG_ALBUM_META:.*?-->/s, '').trim();
+            }
+        }
+
+        // Fallback if images array is still empty
         if (!images || images.length === 0) {
             if (row.image_url) {
                 images = [row.image_url];
@@ -196,8 +219,8 @@
             category: row.category || 'Activity',
             image: cover,
             images: images,
-            date: row.date || '',
-            desc: row.description || '',
+            date: dateVal,
+            desc: descVal,
             color: row.color || 'blue',
             createdAt: row.created_at
         };
@@ -764,7 +787,8 @@
                     const ext = (file.name.split('.').pop() || 'png').toLowerCase();
                     const cleanBase = file.name.substring(0, file.name.lastIndexOf('.')) || 'image';
                     const safeName = cleanBase.replace(/[^a-zA-Z0-9_-]/g, '_');
-                    const fileName = `${folder}/${Date.now()}_${safeName}.${ext}`;
+                    const randSuffix = Math.random().toString(36).substring(2, 8);
+                    const fileName = `${folder}/${Date.now()}_${randSuffix}_${safeName}.${ext}`;
 
                     const { data, error } = await client.storage
                         .from('team-avatars')
@@ -868,13 +892,21 @@
                         res = await client.from('activity_gallery').insert(payload).select().single();
                     }
 
-                    // Fallback without new columns if DB doesn't have them yet
+                    // Fallback without new columns if DB doesn't have them yet:
+                    // Losslessly encode images list and date into description metadata so all photos are safely stored!
                     if (res && res.error && (res.error.message?.includes('images') || res.error.message?.includes('date'))) {
+                        console.warn('[Supabase Gallery Save] DB table lacks images/date column, packing into metadata fallback...');
+                        const metaJson = JSON.stringify({
+                            images: images,
+                            date: itemData.date || ''
+                        });
+                        const rawDesc = itemData.desc || itemData.description || '';
+                        const fallbackDesc = rawDesc + `\n\n<!--GDG_ALBUM_META:${metaJson}-->`;
                         const fallbackPayload = {
                             title: itemData.title,
                             category: itemData.category || 'Activity',
                             image_url: coverImage,
-                            description: itemData.desc || itemData.description || '',
+                            description: fallbackDesc,
                             color: itemData.color || 'blue'
                         };
                         if (itemData.id && !String(itemData.id).startsWith('temp-')) {
