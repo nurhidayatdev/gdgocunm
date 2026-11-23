@@ -285,23 +285,14 @@
                             <article class="gallery-album-card ${colorName}" onclick="openLightboxByAlbumIndex(${idx})" tabindex="0" role="button" aria-label="View album ${album.title}">
                                 <div class="album-cover-wrapper">
                                     <img src="${coverSrc}" alt="${album.title}" class="album-cover-img" loading="lazy" onerror="this.src='assets/images/events/weekly-class-2.jpg'" />
-                                    <span class="album-tag-pill" style="border-left: 3px solid ${col};">
-                                        ${album.category || 'Activity'}
-                                    </span>
-                                    <span class="album-badge-count">
-                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
-                                        </svg>
-                                        <span>${photoCount} ${photoCount === 1 ? 'Photo' : 'Photos'}</span>
-                                    </span>
                                 </div>
 
                                 <div class="album-card-body">
                                     <div class="album-meta-row">
-                                        <span>${album.date || 'GDGoC UNM'}</span>
+                                        <span class="album-category-label" style="color: ${col}; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;">${album.category || 'Activity'}</span>
+                                        ${album.date ? `<span class="album-date-label">${album.date}</span>` : ''}
                                     </div>
                                     <h3 class="album-title">${album.title || 'Activity Documentation'}</h3>
-                                    ${album.desc ? `<p class="album-desc">${album.desc}</p>` : ''}
 
                                     ${otherThumbs.length > 0 ? `
                                         <div class="album-thumb-strip">
