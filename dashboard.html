@@ -1825,21 +1825,31 @@
                 async function checkConnection() {
                     const dot = document.getElementById('dbStatusDot');
                     const text = document.getElementById('dbStatusText');
-                    if (!window.GDG_SUPABASE) return;
-
-                    if (!window.GDG_SUPABASE.isConfigured()) {
+                    if (!dot || !text) return;
+                    if (!window.GDG_SUPABASE) {
                         dot.className = 'dash-status-dot';
-                        text.textContent = 'Using Local Data (Configure Keys in Settings)';
+                        text.textContent = 'Using Local Data';
                         return;
                     }
 
-                    const res = await window.GDG_SUPABASE.testConnection();
-                    if (res.success) {
-                        dot.className = 'dash-status-dot connected';
-                        text.textContent = 'Supabase Connected';
-                    } else {
+                    if (!window.GDG_SUPABASE.isConfigured()) {
                         dot.className = 'dash-status-dot';
-                        text.textContent = 'Connection Issue (Check Settings)';
+                        text.textContent = 'Using Local Data';
+                        return;
+                    }
+
+                    try {
+                        const res = await window.GDG_SUPABASE.testConnection();
+                        if (res && res.success) {
+                            dot.className = 'dash-status-dot connected';
+                            text.textContent = 'Supabase Connected';
+                        } else {
+                            dot.className = 'dash-status-dot';
+                            text.textContent = res?.message ? `Supabase Issue: ${res.message}` : 'Supabase Offline (Using Local)';
+                        }
+                    } catch (err) {
+                        dot.className = 'dash-status-dot';
+                        text.textContent = 'Supabase Offline (Using Local)';
                     }
                 }
 
@@ -2403,7 +2413,6 @@
                         submitBtn.disabled = false;
                         submitBtn.innerHTML = origBtnText;
                     }
-                };
                 };
 
                 window.confirmDeleteEvent = async function (id, title) {
@@ -3112,8 +3121,8 @@
                         if (cm && (cm === '[]' || JSON.parse(cm).length === 0)) localStorage.removeItem('GDG_LOCAL_TEAM');
                     } catch (e) {}
 
-                    await checkConnection();
-                    await Promise.all([
+                    checkConnection();
+                    await Promise.allSettled([
                         loadTracks(),
                         loadEvents(),
                         loadTeam(),
