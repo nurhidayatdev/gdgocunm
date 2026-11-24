@@ -1,7 +1,7 @@
 -- ========================================================================
 -- Seed Data: core_team
 -- Auto-generated from js/data.js
--- Total Members: 29
+-- Total Members: 28
 -- ========================================================================
 
 -- Clean up existing team records
@@ -248,20 +248,6 @@ INSERT INTO core_team (
 INSERT INTO core_team (
     name, role, division, sub_role, badge_color, image_url, is_lead, order_index, socials, is_active
 ) VALUES (
-    'Akhtar Naury',
-    'Event Planner',
-    'Event Management',
-    'Event Planner',
-    'red',
-    'assets/images/team/em-akhtar.png',
-    false,
-    18,
-    '{"linkedin":"#","github":"#","instagram":"https://instagram.com/gdgoc.unm"}'::jsonb,
-    true
-);
-INSERT INTO core_team (
-    name, role, division, sub_role, badge_color, image_url, is_lead, order_index, socials, is_active
-) VALUES (
     'Salsabilah',
     'Event Planner',
     'Event Management',
@@ -269,7 +255,7 @@ INSERT INTO core_team (
     'red',
     'assets/images/team/em-salsabilah.png',
     false,
-    19,
+    18,
     '{"linkedin":"#","github":"#","instagram":"https://instagram.com/gdgoc.unm"}'::jsonb,
     true
 );
@@ -283,7 +269,7 @@ INSERT INTO core_team (
     'red',
     'assets/images/team/em-firson.png',
     false,
-    20,
+    19,
     '{"linkedin":"#","github":"#","instagram":"https://instagram.com/gdgoc.unm"}'::jsonb,
     true
 );
@@ -297,7 +283,7 @@ INSERT INTO core_team (
     'red',
     'assets/images/team/em-mustamin.png',
     false,
-    21,
+    20,
     '{"linkedin":"#","github":"#","instagram":"https://instagram.com/gdgoc.unm"}'::jsonb,
     true
 );
@@ -311,7 +297,7 @@ INSERT INTO core_team (
     'red',
     'assets/images/team/em-andhini.png',
     false,
-    22,
+    21,
     '{"linkedin":"#","github":"#","instagram":"https://instagram.com/gdgoc.unm"}'::jsonb,
     true
 );
@@ -325,7 +311,7 @@ INSERT INTO core_team (
     'blue',
     'assets/images/team/bd-rafli.png',
     false,
-    23,
+    22,
     '{"linkedin":"#","github":"#","instagram":"https://instagram.com/gdgoc.unm"}'::jsonb,
     true
 );
@@ -339,7 +325,7 @@ INSERT INTO core_team (
     'blue',
     'assets/images/team/bd-zakharia.png',
     false,
-    24,
+    23,
     '{"linkedin":"#","github":"#","instagram":"https://instagram.com/gdgoc.unm"}'::jsonb,
     true
 );
@@ -353,7 +339,7 @@ INSERT INTO core_team (
     'blue',
     'assets/images/team/bd-rahyan.png',
     false,
-    25,
+    24,
     '{"linkedin":"#","github":"#","instagram":"https://instagram.com/gdgoc.unm"}'::jsonb,
     true
 );
@@ -367,7 +353,7 @@ INSERT INTO core_team (
     'blue',
     'assets/images/team/bd-juhariah.png',
     false,
-    26,
+    25,
     '{"linkedin":"#","github":"#","instagram":"https://instagram.com/gdgoc.unm"}'::jsonb,
     true
 );
@@ -381,7 +367,7 @@ INSERT INTO core_team (
     'blue',
     'assets/images/team/bd-syahrur.png',
     false,
-    27,
+    26,
     '{"linkedin":"#","github":"#","instagram":"https://instagram.com/gdgoc.unm"}'::jsonb,
     true
 );
@@ -395,7 +381,7 @@ INSERT INTO core_team (
     'blue',
     'assets/images/team/bd-wulan.png',
     false,
-    28,
+    27,
     '{"linkedin":"#","github":"#","instagram":"https://instagram.com/gdgoc.unm"}'::jsonb,
     true
 );
@@ -409,7 +395,7 @@ INSERT INTO core_team (
     'blue',
     'assets/images/team/bd-fahril.png',
     false,
-    29,
+    28,
     '{"linkedin":"#","github":"#","instagram":"https://instagram.com/gdgoc.unm"}'::jsonb,
     true
 );

@@ -629,19 +629,6 @@ const GDG_DATA = {
             },
         },
         {
-            name: "Akhtar Naury",
-            role: "Event Planner",
-            division: "Event Management",
-            subRole: "Event Planner",
-            color: "red",
-            image: "assets/images/team/em-akhtar.png",
-            socials: {
-                linkedin: "#",
-                github: "#",
-                instagram: "https://instagram.com/gdgoc.unm",
-            },
-        },
-        {
             name: "Salsabilah",
             role: "Event Planner",
             division: "Event Management",

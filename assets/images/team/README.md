@@ -48,7 +48,6 @@ tersedia.
 | --------------------- | ------------------ | ------------------- |
 | Siti Fachriza Aulia   | Secretary          | `em-fachriza.jpg`   |
 | Alif Anugrah Syam     | Finance            | `em-alif.jpg`       |
-| Akhtar Naury          | Event Planner      | `em-akhtar.jpg`     |
 | Salsabilah            | Event Planner      | `em-salsabilah.jpg` |
 | Firson Siwan Ta'gan   | Event Registration | `em-firson.jpg`     |
 | Mustamin              | Event Registration | `em-mustamin.jpg`   |
