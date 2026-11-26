@@ -401,11 +401,22 @@
                     }
 
                     try {
-                        showAlert('Redirecting to Google Sign-In...', 'info');
-                        const { error } = await window.GDG_SUPABASE.signInWithOAuth('google');
-                        if (error) throw error;
+                        showAlert('Connecting to Google Sign-In...', 'info');
+                        const { data, error } = await window.GDG_SUPABASE.signInWithOAuth('google');
+                        if (error) {
+                            if (error.message && error.message.toLowerCase().includes('not enabled')) {
+                                showAlert('Google Provider is not enabled in your Supabase project (Auth > Providers > Google). Please sign in using Email & Password above.', 'error');
+                                return;
+                            }
+                            throw error;
+                        }
                     } catch (err) {
-                        showAlert(err.message || 'Failed to initiate Google Sign-In.', 'error');
+                        const errMsg = err.message || '';
+                        if (errMsg.toLowerCase().includes('not enabled') || errMsg.toLowerCase().includes('provider')) {
+                            showAlert('Google Provider is not enabled in your Supabase project yet. Please sign in using Email & Password above.', 'error');
+                        } else {
+                            showAlert(errMsg || 'Failed to initiate Google Sign-In. Please use Email & Password above.', 'error');
+                        }
                     }
                 };
             })();
