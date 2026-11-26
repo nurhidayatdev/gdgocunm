@@ -131,15 +131,14 @@ Digunakan untuk aksen garis, border gradient, dot status, badge kategori, dan gl
 #### 2. Dark Surface & Background Hierarchy
 Digunakan untuk struktur layering halaman agar konsisten dengan estetika *Google AI Studio*:
 
-| Token CSS | Nilai Warna | Peruntukan & Hirarki |
+| Token / Surface | Nilai Warna / Gradien | Peruntukan & Hirarki |
 | :--- | :--- | :--- |
 | `--bg-primary` | `#171B21` | Latar belakang utama seluruh halaman web (body base). |
 | `--bg-secondary` | `#111319` | Latar belakang input form keadaan normal, kontras lebih pekat. |
 | `--bg-tertiary` | `#161822` | Latar belakang input form saat `:focus`, baris selang-seling tabel. |
-| `--bg-card` | `rgba(20, 23, 32, 0.78)` | Kartu standar transparan dengan `backdrop-filter: blur(14px)`. |
-| `--bg-card-hover` | `rgba(26, 30, 42, 0.92)` | Kartu saat kursor hover. |
-| `--bg-glass` | `rgba(14, 16, 24, 0.82)` | Surface floating navigation bar & container modal. |
-| *Dark Metallic Glass* | `linear-gradient(145deg, rgba(24, 27, 36, 0.94) 0%, rgba(17, 19, 27, 0.98) 100%)` | Kartu login, panel admin, kartu fitur utama. |
+| *Dark Metallic Card* | `linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%)` | **Standar Mutlak Seluruh Card**: Digunakan untuk seluruh jenis kartu (`.event-card`, `.track-card`, `.gallery-card`, `.login-card`, modal, dsb.). |
+| `--bg-card-hover` | `rgba(26, 30, 42, 0.92)` | Hover state penekanan kartu sekunder. |
+| `--bg-glass` | `rgba(14, 16, 24, 0.82)` | Surface floating navigation bar & backdrop modal. |
 | *Dark Capsule Button* | `linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%)` | Background tombol sekunder (`.btn-secondary`). |
 
 #### 3. Typography & Text Hierarchy Tokens
@@ -513,8 +512,20 @@ Mengikuti style hitam atau putih bulat:
 
 ### 5.4 Card Surfaces & Styles
 
+> [!IMPORTANT]
+> **ATURAN MUTLAK PERMUKAAN CARD (STRICT DARK METALLIC GRADIENT CARD POLICY)**:
+> Di seluruh ekosistem website GDGoC UNM, seluruh jenis kartu (**Events Card, Learning Path Track Card, Gallery Album Card, Pillars Card, Login Card, Modal Content Card**) **WAJIB MENGGUNAKAN SATU JENIS BACKGROUND GRADIENT HITAM BAKU**: yaitu **`linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%)`**.
+>
+> **KETENTUAN BAKU KARTU**:
+> 1. **Background**: Wajib menggunakan gradien metalik gelap `linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%)`.
+> 2. **Border**: Menggunakan garis halus `1.5px solid rgba(255, 255, 255, 0.12)`.
+> 3. **Border Radius**: Menggunakan `var(--radius-lg)` (20px).
+> 4. **Backdrop Filter**: `backdrop-filter: blur(14px - 18px);`.
+> 5. **Garis Aksen Atas**: Selalu sertakan garis aksen 3px Google Quad-Color di tepi paling atas kartu (`::before`).
+> 6. **Larangan**: DILARANG KERAS membuat kartu berlatar hitam flat pekat polos, abu-abu polos, atau warna transparan acak di luar aturan ini.
+
 #### Pola Card Standar (Dark Metallic Glass)
-Semua card di ekosistem ini menggunakan gradien sudut 55 derajat khas:
+Semua card di ekosistem ini menggunakan struktur baku berikut:
 ```html
 <div class="card-metallic">
     <!-- Card Content -->
@@ -523,17 +534,30 @@ Semua card di ekosistem ini menggunakan gradien sudut 55 derajat khas:
 ```css
 .card-metallic {
     background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
-    backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
     border-radius: var(--radius-lg);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    position: relative;
+    overflow: hidden;
     transition: all var(--transition-normal);
+}
+
+.card-metallic::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%);
 }
 
 .card-metallic:hover {
     transform: translateY(-4px);
     border-color: rgba(255, 255, 255, 0.25);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(66, 133, 244, 0.12);
 }
 ```
 
@@ -684,8 +708,9 @@ Saat Anda atau agen AI membuat halaman baru di repositori ini (misal `events.htm
 5. [ ] **Strict English UI (100% Bahasa Inggris)**: Seluruh teks judul, deskripsi, tombol, placeholder, modal, dan status wajib menggunakan bahasa Inggris.
 6. [ ] **Aturan Baku Palet Warna Tertutup (Strict Closed Palette)**: HANYA gunakan warna resmi yang terdaftar di Bab 2. DILARANG KERAS menggunakan warna di luar daftar ini (seperti ungu, cyan neon, pink, oranye non-Google, cokelat, dsb.) atau menulis kode HEX/RGB acak baru. Seluruh styling wajib memanggil CSS variables resmi (`--google-blue`, `--bg-primary`, `--bg-card`, `--border-card`, dsb.).
 7. [ ] **Buttons & Actions (Aturan 2 Tipe)**: HANYA gunakan Style Putih (`.btn-primary`) untuk aksi utama dan Style Hitam (`.btn-secondary`) untuk aksi sekunder. DILARANG membuat tombol dengan background solid.
-8. [ ] **No Emojis Policy**: DILARANG keras menggunakan karakter emoji pada teks UI/tombol/modal/badge. Gunakan SVG inline bersih.
-9. [ ] **Mobile Responsiveness**: Uji tampilan pada viewport mobile (`< 480px`) agar tidak terjadi horizontal overflow dan menu drawer berfungsi lancar.
+8. [ ] **Permukaan Card Gradien Hitam Metalik**: Seluruh jenis kartu (Events, Tracks, Gallery, Login, Modal) WAJIB menggunakan gradien hitam metalik baku (`linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%)`) dengan border `1.5px solid rgba(255, 255, 255, 0.12)` dan aksen atas 3px Quad-Color.
+9. [ ] **No Emojis Policy**: DILARANG keras menggunakan karakter emoji pada teks UI/tombol/modal/badge. Gunakan SVG inline bersih.
+10. [ ] **Mobile Responsiveness**: Uji tampilan pada viewport mobile (`< 480px`) agar tidak terjadi horizontal overflow dan menu drawer berfungsi lancar.
 
 ---
 
