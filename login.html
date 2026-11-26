@@ -55,7 +55,7 @@
                     <!-- Header -->
                     <div class="login-header">
                         <a href="index.html" class="login-brand-logo" title="Back to Homepage">
-                            <img src="assets/logo/GDGoC-Logo.png" alt="GDGoC Logo" width="46" height="auto" />
+                            <img src="assets/logo/logo-gdgoc-full.png" alt="Google Developer Groups On Campus Universitas Negeri Makassar" style="max-height: 44px; width: auto; object-fit: contain;" />
                         </a>
                         <div class="login-badge-pill">
                             <span class="login-badge-dot"></span>
@@ -63,7 +63,7 @@
                         </div>
                         <h1 class="login-title">Sign In to Dashboard</h1>
                         <p class="login-subtitle">
-                            Management access is strictly reserved for authorized administrator <strong>nurhidayatxy@gmail.com</strong>.
+                            Management access is strictly reserved for authorized administrators.
                         </p>
                     </div>
 
@@ -82,17 +82,16 @@
                         <!-- Email Input -->
                         <div class="login-form-group">
                             <label for="loginEmail" class="login-form-label">
-                                <span>Administrator Email</span>
-                                <span style="font-size: 0.72rem; color: var(--blue-light); font-family: var(--font-mono);">Authorized Only</span>
+                                <span>Email Address</span>
                             </label>
                             <div class="login-input-wrap">
                                 <input
                                     type="email"
                                     id="loginEmail"
                                     class="login-input"
-                                    value="nurhidayatxy@gmail.com"
-                                    placeholder="nurhidayatxy@gmail.com"
-                                    autocomplete="username"
+                                    value=""
+                                    placeholder="Enter your administrator email"
+                                    autocomplete="email"
                                     required
                                 />
                                 <svg class="login-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -180,7 +179,7 @@
                 if (urlParams.get('logged_out') === '1') {
                     showAlert('You have successfully signed out.', 'info');
                 } else if (urlParams.get('error') === 'unauthorized') {
-                    showAlert('Access denied: Only nurhidayatxy@gmail.com is authorized to access the dashboard.', 'error');
+                    showAlert('Access denied: Unauthorized account. Please sign in with administrator credentials.', 'error');
                 } else if (urlParams.get('redirect')) {
                     showAlert('Please sign in to access the management dashboard.', 'info');
                 }
@@ -271,13 +270,7 @@
                     const password = (passwordInput?.value || '').trim();
 
                     if (!email) {
-                        showAlert('Please enter your administrator email address.', 'error');
-                        return;
-                    }
-
-                    // STRICT RESTRICTION: Only nurhidayatxy@gmail.com is permitted
-                    if (email.toLowerCase() !== ALLOWED_ADMIN_EMAIL.toLowerCase()) {
-                        showAlert(`Access Denied: Only ${ALLOWED_ADMIN_EMAIL} is authorized to access the dashboard.`, 'error');
+                        showAlert('Please enter your email address.', 'error');
                         return;
                     }
 
@@ -286,9 +279,9 @@
                         return;
                     }
 
-                    // Strict Password Verification
-                    if (password !== REQUIRED_ADMIN_PASSWORD) {
-                        showAlert('Incorrect password. Please verify your administrator credentials.', 'error');
+                    // Strict Credential Verification (Without leaking authorized email)
+                    if (email.toLowerCase() !== ALLOWED_ADMIN_EMAIL.toLowerCase() || password !== REQUIRED_ADMIN_PASSWORD) {
+                        showAlert('Invalid email or password. Access is restricted to authorized administrators.', 'error');
                         return;
                     }
 
