@@ -134,22 +134,6 @@
                                 class="event-detail-poster-img"
                             />
                         </div>
-                        <a
-                            id="modalOpenPosterBtn"
-                            href="#"
-                            target="_blank"
-                            rel="noopener"
-                            class="event-catalog-btn"
-                            style="width: 100%;"
-                        >
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="15 3 21 3 21 9"></polyline>
-                                <polyline points="9 21 3 21 3 15"></polyline>
-                                <line x1="21" y1="3" x2="14" y2="10"></line>
-                                <line x1="3" y1="21" x2="10" y2="14"></line>
-                            </svg>
-                            <span>Open Full Resolution Poster</span>
-                        </a>
                     </div>
 
                     <!-- Right: Info Column -->
@@ -224,25 +208,13 @@
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 class="btn-primary"
-                                style="flex: 1; justify-content: center;"
+                                style="width: 100%; justify-content: center;"
                             >
                                 <span>Register / Location</span>
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                     <path d="M5 12h14M12 5l7 7-7 7" />
                                 </svg>
                             </a>
-                            <button
-                                type="button"
-                                id="modalShareBtn"
-                                class="event-catalog-btn"
-                                style="flex-shrink: 0; padding: 10px 16px;"
-                            >
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                                </svg>
-                                <span>Share Link</span>
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -470,9 +442,6 @@
                     posterImg.src = poster;
                     posterImg.onerror = () => { posterImg.src = 'assets/images/events/weekly-class-2.jpg'; };
 
-                    const openPosterBtn = document.getElementById('modalOpenPosterBtn');
-                    openPosterBtn.href = poster;
-
                     // Update Titles & Meta
                     document.getElementById('modalEventTitle').textContent = ev.title;
                     document.getElementById('modalEventDate').textContent = ev.date || 'TBA';
@@ -521,21 +490,6 @@
                     } else {
                         regBtn.style.display = 'none';
                     }
-
-                    // Share button setup
-                    const shareBtn = document.getElementById('modalShareBtn');
-                    shareBtn.onclick = function () {
-                        const shareUrl = `${window.location.origin}${window.location.pathname}?event=${encodeURIComponent(ev.id)}`;
-                        if (navigator.clipboard && navigator.clipboard.writeText) {
-                            navigator.clipboard.writeText(shareUrl).then(() => {
-                                showToast('Event link copied to clipboard!');
-                            }).catch(() => {
-                                fallbackCopyText(shareUrl);
-                            });
-                        } else {
-                            fallbackCopyText(shareUrl);
-                        }
-                    };
 
                     // Sync URL param
                     if (window.history && window.history.replaceState) {
