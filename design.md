@@ -89,6 +89,95 @@ Seluruh variabel CSS didefinisikan pada root [`css/style.css`](file:///d:/Coding
 }
 ```
 
+### 2.1 Aturan Baku Palet Warna Tertutup (Strict Closed Color Palette Policy)
+
+> [!CAUTION]
+> **ATURAN MUTLAK: HANYA MENGGUNAKAN WARNA RESMI YANG SUDAH DITETAPKAN (DILARANG MEMAKAI WARNA DI LUAR PALET)**:
+> Di seluruh ekosistem website GDGoC UNM, seluruh halaman, komponen, kartu, tombol, teks, background, border, glow, badge, modal, dan elemen interaktif **HANYA BOLEH MENGGUNAKAN PALET WARNA RESMI YANG TERCANTUM DI BAB INI**.
+>
+> **LARANGAN KERAS**:
+> 1. **Dilarang memakai warna asing**: Jangan pernah memasukkan warna ungu (*purple*), cyan neon, pink/magenta, oranye non-Google, cokelat, atau warna acak lain di luar palet resmi.
+> 2. **Dilarang menulis kode HEX/RGB acak**: Pengembang dan AI **WAJIB** memanggil token CSS variable yang sudah ada (`var(--token-name)`). Jangan menuliskan hardcoded hex yang berbeda seperti `#1e2025`, `#0f172a`, `#1a202c`, dsb.
+> 3. **Aksen warna HANYA Google Quad-Color**: Setiap aksen grafis, badge kategori, indikator, atau status **HANYA** boleh memilih satu dari 4 warna resmi Google (Biru, Merah, Kuning, Hijau) atau varian terang (*light variants*) resminya.
+
+---
+
+### 2.2 Tabel Master Direktori Palet Warna Resmi
+
+Berikut adalah daftar lengkap dan tertutup (*exhaustive closed palette*) seluruh warna yang diizinkan di ekosistem GDGoC UNM:
+
+#### 1. Google Quad-Color Brand & Accent Tokens
+Digunakan untuk aksen garis, border gradient, dot status, badge kategori, dan glow interaktif:
+
+| Kategori | Token CSS | Nilai Warna | Preview | Peruntukan Utama |
+| :--- | :--- | :--- | :--- | :--- |
+| **Google Blue** | `--google-blue` | `#4285f4` | 🟦 | Aksen primer, focus border input, active indicator |
+| **Blue Light** | `--blue-light` | `#8ab4f8` | 🔹 | Teks aksen biru di atas gelap, badge teks workshop |
+| **Blue Glow** | `--blue-glow` | `rgba(66, 133, 244, 0.22)` | 💡 | Box shadow focus & hover glow biru |
+| **Blue Tint** | *Surface Tint* | `rgba(66, 133, 244, 0.12)` | ◽ | Background badge / alert info |
+| **Google Red** | `--google-red` | `#ea4335` | 🟥 | Aksen merah, border error, alert failure |
+| **Red Light** | `--red-light` | `#f28b82` | 🔸 | Teks alert error di atas gelap, badge teks kompetisi |
+| **Red Glow** | `--red-glow` | `rgba(234, 67, 53, 0.22)` | 💡 | Hover glow aksen merah |
+| **Red Tint** | *Surface Tint* | `rgba(234, 67, 53, 0.12)` | ◽ | Background alert error / destructive pill |
+| **Google Yellow** | `--google-yellow` | `#fbbc04` | 🟨 | Aksen kuning, warning badge, highlight |
+| **Yellow Light** | `--yellow-light` | `#fdd663` | ▫️ | Teks warning di atas gelap, badge showcase |
+| **Yellow Glow** | `--yellow-glow` | `rgba(251, 188, 4, 0.22)` | 💡 | Hover glow aksen kuning |
+| **Yellow Tint** | *Surface Tint* | `rgba(251, 188, 4, 0.12)` | ◽ | Background badge kuning |
+| **Google Green** | `--google-green` | `#34a853` | 🟩 | Aksen hijau, success indicator, verified badge |
+| **Green Light** | `--green-light` | `#81c995` | 🔹 | Teks alert success di atas gelap, badge study jam |
+| **Green Glow** | `--green-glow` | `rgba(52, 168, 83, 0.22)` | 💡 | Hover glow aksen hijau |
+| **Green Tint** | *Surface Tint* | `rgba(52, 168, 83, 0.12)` | ◽ | Background alert success |
+
+#### 2. Dark Surface & Background Hierarchy
+Digunakan untuk struktur layering halaman agar konsisten dengan estetika *Google AI Studio*:
+
+| Token CSS | Nilai Warna | Peruntukan & Hirarki |
+| :--- | :--- | :--- |
+| `--bg-primary` | `#171B21` | Latar belakang utama seluruh halaman web (body base). |
+| `--bg-secondary` | `#111319` | Latar belakang input form keadaan normal, kontras lebih pekat. |
+| `--bg-tertiary` | `#161822` | Latar belakang input form saat `:focus`, baris selang-seling tabel. |
+| `--bg-card` | `rgba(20, 23, 32, 0.78)` | Kartu standar transparan dengan `backdrop-filter: blur(14px)`. |
+| `--bg-card-hover` | `rgba(26, 30, 42, 0.92)` | Kartu saat kursor hover. |
+| `--bg-glass` | `rgba(14, 16, 24, 0.82)` | Surface floating navigation bar & container modal. |
+| *Dark Metallic Glass* | `linear-gradient(145deg, rgba(24, 27, 36, 0.94) 0%, rgba(17, 19, 27, 0.98) 100%)` | Kartu login, panel admin, kartu fitur utama. |
+| *Dark Capsule Button* | `linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%)` | Background tombol sekunder (`.btn-secondary`). |
+
+#### 3. Typography & Text Hierarchy Tokens
+
+| Token CSS | Nilai Warna | Peruntukan |
+| :--- | :--- | :--- |
+| `--text-primary` | `#f5f7fc` (atau `#ffffff`) | Judul (`h1`, `h2`, `h3`), label aktif, teks utama kartu. |
+| `--text-secondary` | `#9aa0a6` | Paragraf pengantar, deskripsi isi, ikon normal, tautan non-aktif. |
+| `--text-muted` | `#6b7280` | Placeholder input, tanggal kegiatan, teks metadata, label counter. |
+| `--text-code` | `#bdc1c6` | Teks monospace, slug URL, ID teknis, badge kode. |
+
+#### 4. Border, Line, & Stroke Tokens
+
+| Token CSS | Nilai Warna | Peruntukan |
+| :--- | :--- | :--- |
+| `--border-subtle` | `rgba(255, 255, 255, 0.08)` | Garis batas tipis, divider horizontal, garis pemisah header footer. |
+| `--border-card` | `#232734` | Border baku kartu, border normal input form, border modal. |
+| `--border-card-hover` | `rgba(66, 133, 244, 0.45)` | Border kartu saat di-hover (memunculkan sentuhan biru Google). |
+| `--border-focus` | `#4285f4` | Border form control saat keadaan fokus aktif (`:focus`). |
+
+#### 5. Signature Google Quad-Color Accent Strip
+Garis aksen 4 warna resmi Google dengan proporsi seimbang:
+```css
+/* Signature Google Quad-Color Linear Gradient */
+background: linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%);
+```
+- **Ketebalan standar**: `3px` di bagian tepi paling atas kartu (`.login-card::before`, `.event-card::before`, dsb.) atau sebagai `border-box` transparan pada `.nav-inner`.
+
+#### 6. Button Surface Colors (Hanya 2 Tipe)
+- **Tombol Utama (`.btn-primary`)**:
+  - Background: `linear-gradient(180deg, #ffffff 0%, #a4a4a4 100%)`
+  - Teks: `#111111` (hitam pekat kontras)
+  - Border: `1px solid rgba(255, 255, 255, 0.6)`
+- **Tombol Sekunder (`.btn-secondary`)**:
+  - Background: `linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%)`
+  - Teks: `#f5f7fc`
+  - Border: `1.5px solid rgba(255, 255, 255, 0.12)` (hover: border gradien 4 warna Google)
+
 ---
 
 ## 3. Global Background & Tech Grid Layer
@@ -593,7 +682,7 @@ Saat Anda atau agen AI membuat halaman baru di repositori ini (misal `events.htm
 3. [ ] **Header & Footer Modular**: Menggunakan placeholder `<div id="navbar-placeholder"></div>` dan `<div id="footer-placeholder"></div>` serta mengimpor `js/components.js`.
 4. [ ] **Kebersihan Header (No Artificial Badges)**: Header langsung menampilkan `h1`/`h2.section-title` dan `p.section-subtitle` tanpa badge/pill artifisial atau teks uppercase berulang di atasnya.
 5. [ ] **Strict English UI (100% Bahasa Inggris)**: Seluruh teks judul, deskripsi, tombol, placeholder, modal, dan status wajib menggunakan bahasa Inggris.
-6. [ ] **Palet Warna**: Selalu gunakan variabel CSS `--google-blue`, `--bg-primary`, `--bg-card`, `--border-card` dan jangan gunakan hardcoded hex acak di luar design system.
+6. [ ] **Aturan Baku Palet Warna Tertutup (Strict Closed Palette)**: HANYA gunakan warna resmi yang terdaftar di Bab 2. DILARANG KERAS menggunakan warna di luar daftar ini (seperti ungu, cyan neon, pink, oranye non-Google, cokelat, dsb.) atau menulis kode HEX/RGB acak baru. Seluruh styling wajib memanggil CSS variables resmi (`--google-blue`, `--bg-primary`, `--bg-card`, `--border-card`, dsb.).
 7. [ ] **Buttons & Actions (Aturan 2 Tipe)**: HANYA gunakan Style Putih (`.btn-primary`) untuk aksi utama dan Style Hitam (`.btn-secondary`) untuk aksi sekunder. DILARANG membuat tombol dengan background solid.
 8. [ ] **No Emojis Policy**: DILARANG keras menggunakan karakter emoji pada teks UI/tombol/modal/badge. Gunakan SVG inline bersih.
 9. [ ] **Mobile Responsiveness**: Uji tampilan pada viewport mobile (`< 480px`) agar tidak terjadi horizontal overflow dan menu drawer berfungsi lancar.
