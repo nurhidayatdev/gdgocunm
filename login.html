@@ -135,15 +135,12 @@
                             </div>
                         </div>
 
-                        <!-- Remember Option & Status -->
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; font-size: 0.8rem;">
+                        <!-- Remember Option -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; font-size: 0.8rem;">
                             <label style="display: flex; align-items: center; gap: 8px; color: var(--text-secondary); cursor: pointer;">
                                 <input type="checkbox" id="rememberMe" checked style="accent-color: var(--google-blue); cursor: pointer;" />
                                 <span>Remember this session</span>
                             </label>
-                            <a href="#" onclick="handleMagicLink(event)" style="color: var(--blue-light); text-decoration: none; font-size: 0.78rem;">
-                                Send Magic Link
-                            </a>
                         </div>
 
                         <!-- Primary Submit Button -->
@@ -154,24 +151,6 @@
                             </svg>
                         </button>
                     </form>
-
-                    <!-- Divider -->
-                    <div class="login-divider">
-                        <span>Or continue with</span>
-                    </div>
-
-                    <!-- Alternate Auth Actions -->
-                    <div class="login-alt-buttons">
-                        <button type="button" class="login-btn-alt" onclick="handleGoogleSignIn()">
-                            <svg width="16" height="16" viewBox="0 0 24 24">
-                                <path fill="#EA4335" d="M12 5c1.54 0 2.93.53 4.02 1.41l3.01-3.01C17.21 1.7 14.78 1 12 1 7.42 1 3.56 3.61 1.7 7.4l3.66 2.84C6.24 7.41 8.87 5 12 5z" />
-                                <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58l3.68 2.86c2.16-1.99 3.74-4.94 3.74-8.68z" />
-                                <path fill="#FBBC04" d="M5.36 14.24A7.05 7.05 0 0 1 5 12c0-.79.13-1.55.36-2.24L1.7 6.92C.62 9.07 0 11.46 0 12c0 2.54.62 4.93 1.7 7.08l3.66-2.84z" />
-                                <path fill="#34A853" d="M12 23c3.24 0 5.95-1.08 7.93-2.91l-3.68-2.86c-1.02.68-2.33 1.09-4.25 1.09-3.13 0-5.76-2.41-6.64-5.24L1.7 16.92C3.56 20.71 7.42 23 12 23z" />
-                            </svg>
-                            <span>Sign in with Google</span>
-                        </button>
-                    </div>
 
                     <!-- Footer Back Link -->
                     <div class="login-footer-links">
@@ -278,6 +257,8 @@
                     }
                 }
 
+                const REQUIRED_ADMIN_PASSWORD = 'GDGoCUNM2627';
+
                 // Handle Email + Password Login
                 window.handleAdminLogin = async function (e) {
                     e.preventDefault();
@@ -305,118 +286,37 @@
                         return;
                     }
 
+                    // Strict Password Verification
+                    if (password !== REQUIRED_ADMIN_PASSWORD) {
+                        showAlert('Incorrect password. Please verify your administrator credentials.', 'error');
+                        return;
+                    }
+
                     setSubmitLoading(true);
 
                     try {
-                        let authSuccess = false;
-
-                        // 1. Attempt Supabase Auth login
+                        // Attempt to sync with Supabase Auth session if available
                         if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.signInWithPassword === 'function') {
                             try {
-                                const { data, error } = await window.GDG_SUPABASE.signInWithPassword(email, password);
-                                if (!error && data && data.user) {
-                                    if (data.user.email && data.user.email.toLowerCase() === ALLOWED_ADMIN_EMAIL.toLowerCase()) {
-                                        authSuccess = true;
-                                    }
-                                } else if (error) {
-                                    // If user does not exist in Supabase Auth yet, try auto-signing up or checking credentials
-                                    if (error.message && error.message.toLowerCase().includes('invalid login credentials')) {
-                                        // Attempt auto-registration if this is the first time setting up
-                                        const { data: upData, error: upError } = await window.GDG_SUPABASE.signUp(email, password);
-                                        if (!upError && upData && upData.user) {
-                                            authSuccess = true;
-                                            showAlert('Account initialized in Supabase Auth. Redirecting...', 'success');
-                                        }
-                                    }
-                                }
+                                await window.GDG_SUPABASE.signInWithPassword(email, password);
                             } catch (sbErr) {
-                                console.warn('[Supabase Auth Attempt]', sbErr);
+                                if (window.GDG_SUPABASE.signUp) {
+                                    try {
+                                        await window.GDG_SUPABASE.signUp(email, password);
+                                    } catch (ign) {}
+                                }
                             }
                         }
 
-                        // 2. Seamless Admin Master Passcode fallback (in case offline or Supabase Auth email confirm is pending)
-                        if (!authSuccess) {
-                            // Standard administrative fallback for first-run or offline maintenance
-                            if (password.length >= 6) {
-                                authSuccess = true;
-                            } else {
-                                showAlert('Invalid password. Password must be at least 6 characters.', 'error');
-                                setSubmitLoading(false);
-                                return;
-                            }
-                        }
-
-                        if (authSuccess) {
-                            saveSuccessfulSession(email);
-                            showAlert('Authentication successful! Opening dashboard...', 'success');
-                            setTimeout(() => {
-                                window.location.href = 'dashboard.html';
-                            }, 600);
-                        } else {
-                            showAlert('Authentication failed. Please verify your password.', 'error');
-                            setSubmitLoading(false);
-                        }
+                        saveSuccessfulSession(email);
+                        showAlert('Authentication successful! Welcome, Nur Hidayat. Opening dashboard...', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.html';
+                        }, 500);
                     } catch (err) {
                         console.error('[Login Error]', err);
-                        showAlert(err.message || 'An error occurred during authentication.', 'error');
-                        setSubmitLoading(false);
-                    }
-                };
-
-                // Handle Magic Link (OTP)
-                window.handleMagicLink = async function (e) {
-                    e.preventDefault();
-                    hideAlert();
-
-                    const emailInput = document.getElementById('loginEmail');
-                    const email = (emailInput?.value || '').trim();
-
-                    if (email.toLowerCase() !== ALLOWED_ADMIN_EMAIL.toLowerCase()) {
-                        showAlert(`Access Denied: Magic links can only be issued to ${ALLOWED_ADMIN_EMAIL}.`, 'error');
-                        return;
-                    }
-
-                    if (!window.GDG_SUPABASE || typeof window.GDG_SUPABASE.signInWithOtp !== 'function') {
-                        showAlert('Supabase service unavailable for Magic Link.', 'error');
-                        return;
-                    }
-
-                    showAlert('Sending Magic Link to ' + ALLOWED_ADMIN_EMAIL + '...', 'info');
-
-                    try {
-                        const { error } = await window.GDG_SUPABASE.signInWithOtp(email);
-                        if (error) throw error;
-                        showAlert(`Magic Login Link sent to ${ALLOWED_ADMIN_EMAIL}! Please check your email inbox.`, 'success');
-                    } catch (err) {
-                        showAlert(err.message || 'Failed to send Magic Link.', 'error');
-                    }
-                };
-
-                // Handle Google OAuth
-                window.handleGoogleSignIn = async function () {
-                    hideAlert();
-                    if (!window.GDG_SUPABASE || typeof window.GDG_SUPABASE.signInWithOAuth !== 'function') {
-                        showAlert('Google Sign-In is currently unavailable.', 'error');
-                        return;
-                    }
-
-                    try {
-                        showAlert('Connecting to Google Sign-In...', 'info');
-                        const { data, error } = await window.GDG_SUPABASE.signInWithOAuth('google');
-                        if (error) {
-                            if (error.message && error.message.toLowerCase().includes('not enabled')) {
-                                showAlert('Google Provider is not enabled in your Supabase project (Auth > Providers > Google). Please sign in using Email & Password above.', 'error');
-                                return;
-                            }
-                            throw error;
-                        }
-                    } catch (err) {
-                        const errMsg = err.message || '';
-                        if (errMsg.toLowerCase().includes('not enabled') || errMsg.toLowerCase().includes('provider')) {
-                            showAlert('Google Provider is not enabled in your Supabase project yet. Please sign in using Email & Password above.', 'error');
-                        } else {
-                            showAlert(errMsg || 'Failed to initiate Google Sign-In. Please use Email & Password above.', 'error');
-                        }
+                        saveSuccessfulSession(email);
+                        window.location.href = 'dashboard.html';
                     }
                 };
             })();
