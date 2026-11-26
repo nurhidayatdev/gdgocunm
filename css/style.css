@@ -4568,10 +4568,10 @@ a {
 }
 
 .login-card {
-    background: linear-gradient(145deg, rgba(24, 27, 36, 0.94) 0%, rgba(17, 19, 27, 0.98) 100%);
+    background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
-    border: 1px solid var(--border-card);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg), 0 0 32px rgba(66, 133, 244, 0.08);
     position: relative;
@@ -4700,8 +4700,10 @@ a {
 
 .login-input {
     width: 100%;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-card);
+    background:
+        linear-gradient(var(--bg-secondary), var(--bg-secondary)) padding-box,
+        linear-gradient(var(--border-card), var(--border-card)) border-box;
+    border: 1.5px solid transparent;
     border-radius: var(--radius-sm);
     padding: 12px 14px 12px 42px;
     color: var(--text-primary);
@@ -4715,13 +4717,25 @@ a {
     color: var(--text-muted);
 }
 
-.login-input:focus {
-    border-color: var(--google-blue);
-    background: var(--bg-tertiary);
-    box-shadow: 0 0 0 3px var(--blue-glow), 0 0 16px rgba(66, 133, 244, 0.12);
+.login-input:hover,
+.login-input-wrap:hover .login-input {
+    background:
+        linear-gradient(var(--bg-secondary), var(--bg-secondary)) padding-box,
+        linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%) border-box;
+    box-shadow: 0 0 16px rgba(66, 133, 244, 0.15);
 }
 
+.login-input:focus,
+.login-input-wrap:focus-within .login-input {
+    background:
+        linear-gradient(var(--bg-tertiary), var(--bg-tertiary)) padding-box,
+        linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%) border-box;
+    box-shadow: 0 0 0 3px var(--blue-glow), 0 0 20px rgba(66, 133, 244, 0.2);
+}
+
+.login-input:hover + .login-input-icon,
 .login-input:focus + .login-input-icon,
+.login-input-wrap:hover .login-input-icon,
 .login-input-wrap:focus-within .login-input-icon {
     color: var(--blue-light);
 }
