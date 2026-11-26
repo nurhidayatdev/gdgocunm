@@ -1255,15 +1255,18 @@ a {
 }
 
 .event-compact-card {
-    background: linear-gradient(145deg, #181a22 0%, #1c1e28 100%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: var(--radius-md);
+    background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-lg);
     overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     cursor: pointer;
     position: relative;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
     transition: transform var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
 }
 
@@ -1281,7 +1284,7 @@ a {
 .event-compact-card:hover {
     transform: translateY(-4px);
     border-color: rgba(66, 133, 244, 0.45);
-    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.5), 0 0 16px rgba(66, 133, 244, 0.12);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(66, 133, 244, 0.15);
 }
 
 .event-compact-poster-wrap {
@@ -1789,9 +1792,10 @@ a {
 }
 
 .event-card {
-    background: var(--bg-card);
-    backdrop-filter: blur(14px);
-    border: 1px solid var(--border-card);
+    background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
     border-radius: var(--radius-lg);
     padding: 32px;
     display: flex;
@@ -1799,6 +1803,7 @@ a {
     gap: 16px;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
     transition: all var(--transition-normal);
 }
 
@@ -2722,29 +2727,44 @@ a {
 
 .events-search-box {
     position: relative;
-    max-width: 480px;
+    max-width: 520px;
     width: 100%;
     margin: 0 auto 36px auto;
 }
 
 .events-search-box input {
     width: 100%;
-    background: rgba(22, 24, 34, 0.85);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background:
+        linear-gradient(var(--bg-secondary), var(--bg-secondary)) padding-box,
+        linear-gradient(var(--border-card), var(--border-card)) border-box;
+    border: 1.5px solid transparent;
     border-radius: var(--radius-pill);
     padding: 13px 20px 13px 46px;
-    color: #ffffff;
+    color: var(--text-primary);
     font-size: 0.94rem;
     font-family: inherit;
     outline: none;
     transition: all var(--transition-fast);
 }
 
-.events-search-box input:focus {
-    border-color: var(--google-blue);
-    background: rgba(26, 30, 44, 0.95);
-    box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2), 0 8px 24px rgba(0, 0, 0, 0.4);
+.events-search-box input::placeholder {
+    color: var(--text-muted);
+}
+
+.events-search-box input:hover,
+.events-search-box:hover input {
+    background:
+        linear-gradient(var(--bg-secondary), var(--bg-secondary)) padding-box,
+        linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%) border-box;
+    box-shadow: 0 0 16px rgba(66, 133, 244, 0.15);
+}
+
+.events-search-box input:focus,
+.events-search-box:focus-within input {
+    background:
+        linear-gradient(var(--bg-tertiary), var(--bg-tertiary)) padding-box,
+        linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%) border-box;
+    box-shadow: 0 0 0 3px var(--blue-glow), 0 0 20px rgba(66, 133, 244, 0.2);
 }
 
 .events-search-icon {
@@ -2754,6 +2774,12 @@ a {
     transform: translateY(-50%);
     color: var(--text-muted);
     pointer-events: none;
+    transition: color var(--transition-fast);
+}
+
+.events-search-box:hover .events-search-icon,
+.events-search-box:focus-within .events-search-icon {
+    color: var(--blue-light);
 }
 
 /* Event Filter Bar */
@@ -2765,7 +2791,7 @@ a {
     gap: 16px;
     margin-bottom: 36px;
     padding-bottom: 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid var(--border-subtle);
 }
 
 .events-filter-tabs {
@@ -2784,22 +2810,25 @@ a {
     font-size: 0.84rem;
     font-weight: 500;
     font-family: var(--font-sans);
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
     color: var(--text-secondary);
     cursor: pointer;
     transition: all var(--transition-fast);
 }
 
 .events-filter-tab:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.2);
+    border: 1.5px solid transparent;
+    background:
+        linear-gradient(55deg, #2a2a2a 0%, #2a2a2a 68%, #484848 100%) padding-box,
+        linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%) border-box;
     color: #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
 }
 
 .events-filter-tab.active {
     background: rgba(66, 133, 244, 0.15);
-    border-color: rgba(66, 133, 244, 0.45);
+    border: 1.5px solid rgba(66, 133, 244, 0.45);
     color: var(--blue-light);
 }
 
@@ -2808,7 +2837,7 @@ a {
     height: 7px;
     border-radius: 50%;
     background: currentColor;
-    opacity: 0.75;
+    opacity: 0.85;
     flex-shrink: 0;
 }
 
@@ -2825,8 +2854,8 @@ a {
     color: var(--text-secondary);
     font-family: var(--font-mono);
     font-weight: 500;
-    background: rgba(22, 24, 34, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-card);
     padding: 6px 16px;
     border-radius: var(--radius-pill);
     display: inline-flex;
@@ -2969,30 +2998,36 @@ a {
     justify-content: center;
     gap: 6px;
     font-size: 0.8rem;
-    font-weight: 600;
+    font-weight: 500;
     padding: 8px 14px;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-pill);
     color: var(--text-primary);
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
     text-decoration: none;
     transition: all var(--transition-fast);
 }
 
 .event-catalog-btn:hover {
-    background: rgba(255, 255, 255, 0.12);
+    border: 1.5px solid transparent;
+    background:
+        linear-gradient(55deg, #2a2a2a 0%, #2a2a2a 68%, #484848 100%) padding-box,
+        linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%) border-box;
     color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35), 0 0 12px rgba(66, 133, 244, 0.2);
 }
 
 .event-catalog-btn.primary {
-    background: var(--google-blue);
-    border-color: var(--google-blue);
-    color: #ffffff;
+    background: linear-gradient(180deg, #ffffff 0%, #a4a4a4 100%);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    color: #111111;
+    font-weight: 700;
 }
 
 .event-catalog-btn.primary:hover {
-    background: #3367d6;
+    background: linear-gradient(180deg, #ffffff 0%, #b8b8b8 100%);
+    color: #000000;
+    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.2);
 }
 
 /* Event Detail Modal */
@@ -3017,8 +3052,10 @@ a {
 }
 
 .event-detail-card {
-    background: linear-gradient(155deg, #181b24 0%, #13151c 100%);
-    border: 1.5px solid rgba(255, 255, 255, 0.14);
+    background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
     border-radius: var(--radius-lg);
     max-width: 960px;
     width: 100%;
@@ -3026,10 +3063,22 @@ a {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 32px rgba(66, 133, 244, 0.08);
     position: relative;
+    overflow: hidden;
     transform: scale(0.96);
     transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.event-detail-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 6;
+    background: linear-gradient(90deg, #ea4335 0%, #fbbc04 34%, #34a853 67%, #4285f4 100%);
 }
 
 .event-detail-backdrop.open .event-detail-card {
@@ -3041,12 +3090,12 @@ a {
     align-items: center;
     justify-content: space-between;
     padding: 20px 28px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(14, 16, 24, 0.4);
+    border-bottom: 1px solid var(--border-subtle);
+    background: rgba(17, 19, 25, 0.6);
     position: sticky;
     top: 0;
     z-index: 5;
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(10px);
 }
 
 .event-detail-close-btn {
@@ -3054,8 +3103,8 @@ a {
     height: 36px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: #ffffff;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3064,9 +3113,9 @@ a {
 }
 
 .event-detail-close-btn:hover {
-    background: rgba(234, 67, 53, 0.2);
-    border-color: var(--google-red);
-    color: #ff6b6b;
+    background: rgba(234, 67, 53, 0.15);
+    border-color: rgba(234, 67, 53, 0.35);
+    color: var(--red-light);
     transform: rotate(90deg);
 }
 
@@ -3136,8 +3185,8 @@ a {
 }
 
 .event-detail-meta-box {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-card);
     border-radius: var(--radius-sm);
     padding: 12px 14px;
     display: flex;
@@ -3162,7 +3211,7 @@ a {
 
 .event-detail-meta-value {
     font-size: 0.88rem;
-    color: #ffffff;
+    color: var(--text-primary);
     font-weight: 500;
 }
 
@@ -3182,8 +3231,8 @@ a {
 }
 
 .event-detail-person-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-card);
     border-radius: var(--radius-sm);
     padding: 10px 12px;
 }
@@ -3199,7 +3248,7 @@ a {
 .event-detail-person-name {
     font-size: 0.86rem;
     font-weight: 600;
-    color: #ffffff;
+    color: var(--text-primary);
     margin-top: 3px;
 }
 

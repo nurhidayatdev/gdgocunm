@@ -397,13 +397,13 @@
 
                     if (filtered.length === 0) {
                         container.innerHTML = `
-                            <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: 16px; color: var(--text-muted);">
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 12px; opacity: 0.6;">
+                            <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: linear-gradient(55deg, #222222 0%, #222222 68%, #404040 100%); border: 1.5px solid rgba(255,255,255,0.12); border-radius: var(--radius-lg); color: var(--text-muted);">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 12px; opacity: 0.7; color: var(--text-secondary);">
                                     <circle cx="11" cy="11" r="8"></circle>
                                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                                 </svg>
-                                <div style="font-size: 1rem; color: #ffffff; font-weight: 600;">No events match your criteria</div>
-                                <div style="font-size: 0.84rem; margin-top: 4px;">Try adjusting your search terms or filter selection.</div>
+                                <div style="font-size: 1rem; color: var(--text-primary); font-weight: 600;">No events match your criteria</div>
+                                <div style="font-size: 0.84rem; color: var(--text-secondary); margin-top: 4px;">Try adjusting your search terms or filter selection.</div>
                             </div>
                         `;
                         return;
