@@ -16,6 +16,39 @@
         <link rel="stylesheet" href="css/style.css" />
         <link rel="stylesheet" href="css/animations.css" />
 
+        <!-- Strict Admin Auth Guard (Synchronous to prevent unauthorized UI flash) -->
+        <script>
+            (function () {
+                const ALLOWED_ADMIN = 'nurhidayatxy@gmail.com';
+
+                // Allow Supabase OAuth callback with tokens in hash
+                if (window.location.hash && (window.location.hash.includes('access_token') || window.location.hash.includes('type=recovery'))) {
+                    return;
+                }
+
+                const sessionRaw = localStorage.getItem('gdgoc_admin_session') || sessionStorage.getItem('gdgoc_admin_session');
+                if (!sessionRaw) {
+                    window.location.replace('login.html?redirect=dashboard.html');
+                    return;
+                }
+
+                try {
+                    const session = JSON.parse(sessionRaw);
+                    if (!session || !session.email || session.email.toLowerCase() !== ALLOWED_ADMIN.toLowerCase()) {
+                        localStorage.removeItem('gdgoc_admin_session');
+                        sessionStorage.removeItem('gdgoc_admin_session');
+                        window.location.replace('login.html?error=unauthorized');
+                        return;
+                    }
+                } catch (e) {
+                    localStorage.removeItem('gdgoc_admin_session');
+                    sessionStorage.removeItem('gdgoc_admin_session');
+                    window.location.replace('login.html?redirect=dashboard.html');
+                    return;
+                }
+            })();
+        </script>
+
         <style>
             /* ========================================================================
                Dashboard Dedicated Styles (Strict Adherence to design.md)
@@ -884,6 +917,21 @@
                                     <span class="dash-status-dot" id="dbStatusDot"></span>
                                     <span id="dbStatusText">Checking Supabase...</span>
                                 </div>
+                                <div class="dash-admin-badge" id="adminHeaderBadge" title="Authenticated as Super Administrator">
+                                    <div class="dash-admin-avatar">NH</div>
+                                    <div class="dash-admin-meta">
+                                        <span class="dash-admin-email" id="headerAdminEmail">nurhidayatxy@gmail.com</span>
+                                        <span class="dash-admin-role">Super Admin</span>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-secondary dash-signout-btn" onclick="handleAdminSignOut()" title="Sign out of Dashboard">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                        <polyline points="16 17 21 12 16 7"></polyline>
+                                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                                    </svg>
+                                    <span>Sign Out</span>
+                                </button>
                                 <a href="index.html" class="btn-secondary" style="font-size: 0.82rem; padding: 7px 16px;">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -3308,8 +3356,74 @@
                     renderCertsTable(filtered);
                 });
 
+                // Strict Auth Verification & Session Handling
+                async function verifyAdminAuth() {
+                    const ALLOWED_ADMIN = 'nurhidayatxy@gmail.com';
+                    let currentEmail = null;
+
+                    // 1. If Supabase client is available, verify Supabase session
+                    if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.getSession === 'function') {
+                        try {
+                            const sbSession = await window.GDG_SUPABASE.getSession();
+                            if (sbSession && sbSession.user && sbSession.user.email) {
+                                currentEmail = sbSession.user.email;
+                                localStorage.setItem('gdgoc_admin_session', JSON.stringify({
+                                    email: currentEmail.toLowerCase(),
+                                    role: 'Super Administrator',
+                                    name: 'Nur Hidayat',
+                                    signedInAt: new Date().toISOString()
+                                }));
+                            }
+                        } catch (e) {
+                            console.warn('[Dashboard Auth Verification]', e);
+                        }
+                    }
+
+                    // 2. Check local admin session
+                    if (!currentEmail) {
+                        const raw = localStorage.getItem('gdgoc_admin_session') || sessionStorage.getItem('gdgoc_admin_session');
+                        if (raw) {
+                            try {
+                                const parsed = JSON.parse(raw);
+                                if (parsed && parsed.email) currentEmail = parsed.email;
+                            } catch (e) {}
+                        }
+                    }
+
+                    // 3. Reject if not nurhidayatxy@gmail.com
+                    if (!currentEmail || currentEmail.toLowerCase() !== ALLOWED_ADMIN.toLowerCase()) {
+                        if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.signOut === 'function') {
+                            await window.GDG_SUPABASE.signOut();
+                        }
+                        localStorage.removeItem('gdgoc_admin_session');
+                        sessionStorage.removeItem('gdgoc_admin_session');
+                        window.location.replace('login.html?error=unauthorized');
+                        return false;
+                    }
+
+                    const emailEl = document.getElementById('headerAdminEmail');
+                    if (emailEl) emailEl.textContent = currentEmail;
+                    return true;
+                }
+
+                window.handleAdminSignOut = async function () {
+                    if (confirm('Sign out from the management dashboard?')) {
+                        if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.signOut === 'function') {
+                            try {
+                                await window.GDG_SUPABASE.signOut();
+                            } catch (e) {}
+                        }
+                        localStorage.removeItem('gdgoc_admin_session');
+                        sessionStorage.removeItem('gdgoc_admin_session');
+                        window.location.replace('login.html?logged_out=1');
+                    }
+                };
+
                 // Initialize dashboard on load
                 async function initDashboard() {
+                    const isAuthorized = await verifyAdminAuth();
+                    if (!isAuthorized) return;
+
                     // Clear stale empty local cache if present
                     try {
                         const ct = localStorage.getItem('GDG_LOCAL_TRACKS');

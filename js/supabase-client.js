@@ -1136,6 +1136,95 @@
             const updated = localEvents.filter(ev => ev.id !== eventId);
             saveLocalEvents(updated);
             return true;
+        },
+
+        // ====================================================================
+        // AUTHENTICATION SERVICES
+        // ====================================================================
+        getAuthClient() {
+            return initSupabase();
+        },
+
+        async getSession() {
+            const client = initSupabase();
+            if (!client || !client.auth) return null;
+            try {
+                const { data, error } = await client.auth.getSession();
+                if (error) throw error;
+                return data.session;
+            } catch (e) {
+                console.warn('[Supabase Auth getSession]', e);
+                return null;
+            }
+        },
+
+        async getUser() {
+            const client = initSupabase();
+            if (!client || !client.auth) return null;
+            try {
+                const { data, error } = await client.auth.getUser();
+                if (error) throw error;
+                return data.user;
+            } catch (e) {
+                console.warn('[Supabase Auth getUser]', e);
+                return null;
+            }
+        },
+
+        async signInWithPassword(email, password) {
+            const client = initSupabase();
+            if (!client || !client.auth) {
+                throw new Error('Supabase client not initialized or offline.');
+            }
+            return await client.auth.signInWithPassword({ email, password });
+        },
+
+        async signUp(email, password) {
+            const client = initSupabase();
+            if (!client || !client.auth) {
+                throw new Error('Supabase client not initialized or offline.');
+            }
+            return await client.auth.signUp({ email, password });
+        },
+
+        async signInWithOtp(email) {
+            const client = initSupabase();
+            if (!client || !client.auth) {
+                throw new Error('Supabase client not initialized or offline.');
+            }
+            return await client.auth.signInWithOtp({
+                email,
+                options: {
+                    emailRedirectTo: window.location.origin + '/dashboard.html'
+                }
+            });
+        },
+
+        async signInWithOAuth(provider = 'google') {
+            const client = initSupabase();
+            if (!client || !client.auth) {
+                throw new Error('Supabase client not initialized or offline.');
+            }
+            return await client.auth.signInWithOAuth({
+                provider,
+                options: {
+                    redirectTo: window.location.origin + '/dashboard.html'
+                }
+            });
+        },
+
+        async signOut() {
+            const client = initSupabase();
+            if (client && client.auth) {
+                try {
+                    await client.auth.signOut();
+                } catch (e) {
+                    console.warn('[Supabase Auth signOut]', e);
+                }
+            }
+            localStorage.removeItem('gdgoc_admin_session');
+            sessionStorage.removeItem('gdgoc_admin_session');
+            return true;
         }
     };
 

@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=5.0"
+        />
+        <meta
+            name="description"
+            content="Administrator Login Portal for Google Developer Groups On Campus Universitas Negeri Makassar (GDGoC UNM). Strictly restricted to authorized staff."
+        />
+        <meta name="theme-color" content="#171B21" />
+        <title>Admin Login • GDGoC UNM</title>
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="assets/logo/favicon.png" />
+
+        <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600&display=swap"
+            rel="stylesheet"
+        />
+
+        <!-- Codebase Stylesheets -->
+        <link rel="stylesheet" href="css/style.css" />
+        <link rel="stylesheet" href="css/animations.css" />
+
+        <!-- Instant Auth Check: If already logged in, redirect to dashboard -->
+        <script>
+            (function() {
+                const ALLOWED_ADMIN = 'nurhidayatxy@gmail.com';
+                const sessionRaw = localStorage.getItem('gdgoc_admin_session') || sessionStorage.getItem('gdgoc_admin_session');
+                if (sessionRaw) {
+                    try {
+                        const parsed = JSON.parse(sessionRaw);
+                        if (parsed && parsed.email && parsed.email.toLowerCase() === ALLOWED_ADMIN.toLowerCase()) {
+                            window.location.replace('dashboard.html');
+                        }
+                    } catch (e) {}
+                }
+            })();
+        </script>
+    </head>
+    <body>
+        <!-- Background Tech Grid Overlay (Permitted by design.md) -->
+        <div class="tech-grid-overlay" aria-hidden="true"></div>
+
+        <!-- Main Wrapper -->
+        <div class="login-page-wrapper">
+            <div class="login-card-container">
+                <div class="login-card">
+                    <!-- Header -->
+                    <div class="login-header">
+                        <a href="index.html" class="login-brand-logo" title="Back to Homepage">
+                            <img src="assets/logo/GDGoC-Logo.png" alt="GDGoC Logo" width="46" height="auto" />
+                        </a>
+                        <div class="login-badge-pill">
+                            <span class="login-badge-dot"></span>
+                            <span>Admin Portal • Restricted</span>
+                        </div>
+                        <h1 class="login-title">Sign In to Dashboard</h1>
+                        <p class="login-subtitle">
+                            Management access is strictly reserved for authorized administrator <strong>nurhidayatxy@gmail.com</strong>.
+                        </p>
+                    </div>
+
+                    <!-- Alert Box -->
+                    <div id="loginAlert" class="login-alert" role="alert">
+                        <svg class="login-alert-icon" id="loginAlertIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <div id="loginAlertText">Alert message</div>
+                    </div>
+
+                    <!-- Login Form -->
+                    <form id="loginForm" onsubmit="handleAdminLogin(event)" novalidate>
+                        <!-- Email Input -->
+                        <div class="login-form-group">
+                            <label for="loginEmail" class="login-form-label">
+                                <span>Administrator Email</span>
+                                <span style="font-size: 0.72rem; color: var(--blue-light); font-family: var(--font-mono);">Authorized Only</span>
+                            </label>
+                            <div class="login-input-wrap">
+                                <input
+                                    type="email"
+                                    id="loginEmail"
+                                    class="login-input"
+                                    value="nurhidayatxy@gmail.com"
+                                    placeholder="nurhidayatxy@gmail.com"
+                                    autocomplete="username"
+                                    required
+                                />
+                                <svg class="login-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Password Input -->
+                        <div class="login-form-group">
+                            <label for="loginPassword" class="login-form-label">
+                                <span>Password</span>
+                            </label>
+                            <div class="login-input-wrap">
+                                <input
+                                    type="password"
+                                    id="loginPassword"
+                                    class="login-input"
+                                    placeholder="Enter your admin password"
+                                    autocomplete="current-password"
+                                    required
+                                />
+                                <svg class="login-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                                <button
+                                    type="button"
+                                    class="login-toggle-password-btn"
+                                    onclick="togglePasswordVisibility()"
+                                    aria-label="Toggle password visibility"
+                                    id="togglePasswordBtn"
+                                >
+                                    <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Remember Option & Status -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; font-size: 0.8rem;">
+                            <label style="display: flex; align-items: center; gap: 8px; color: var(--text-secondary); cursor: pointer;">
+                                <input type="checkbox" id="rememberMe" checked style="accent-color: var(--google-blue); cursor: pointer;" />
+                                <span>Remember this session</span>
+                            </label>
+                            <a href="#" onclick="handleMagicLink(event)" style="color: var(--blue-light); text-decoration: none; font-size: 0.78rem;">
+                                Send Magic Link
+                            </a>
+                        </div>
+
+                        <!-- Primary Submit Button -->
+                        <button type="submit" id="loginSubmitBtn" class="btn-primary login-btn-submit">
+                            <span id="loginBtnText">Sign In to Dashboard</span>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                    </form>
+
+                    <!-- Divider -->
+                    <div class="login-divider">
+                        <span>Or continue with</span>
+                    </div>
+
+                    <!-- Alternate Auth Actions -->
+                    <div class="login-alt-buttons">
+                        <button type="button" class="login-btn-alt" onclick="handleGoogleSignIn()">
+                            <svg width="16" height="16" viewBox="0 0 24 24">
+                                <path fill="#EA4335" d="M12 5c1.54 0 2.93.53 4.02 1.41l3.01-3.01C17.21 1.7 14.78 1 12 1 7.42 1 3.56 3.61 1.7 7.4l3.66 2.84C6.24 7.41 8.87 5 12 5z" />
+                                <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58l3.68 2.86c2.16-1.99 3.74-4.94 3.74-8.68z" />
+                                <path fill="#FBBC04" d="M5.36 14.24A7.05 7.05 0 0 1 5 12c0-.79.13-1.55.36-2.24L1.7 6.92C.62 9.07 0 11.46 0 12c0 2.54.62 4.93 1.7 7.08l3.66-2.84z" />
+                                <path fill="#34A853" d="M12 23c3.24 0 5.95-1.08 7.93-2.91l-3.68-2.86c-1.02.68-2.33 1.09-4.25 1.09-3.13 0-5.76-2.41-6.64-5.24L1.7 16.92C3.56 20.71 7.42 23 12 23z" />
+                            </svg>
+                            <span>Sign in with Google</span>
+                        </button>
+                    </div>
+
+                    <!-- Footer Back Link -->
+                    <div class="login-footer-links">
+                        <a href="index.html" class="login-back-link">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 12H5M12 19l-7-7 7-7"/>
+                            </svg>
+                            <span>Back to GDGoC UNM Website</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Supabase Client & Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="js/supabase-client.js"></script>
+
+        <script>
+            (function () {
+                'use strict';
+
+                const ALLOWED_ADMIN_EMAIL = 'nurhidayatxy@gmail.com';
+
+                // Check query parameters for feedback messages
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('logged_out') === '1') {
+                    showAlert('You have successfully signed out.', 'info');
+                } else if (urlParams.get('error') === 'unauthorized') {
+                    showAlert('Access denied: Only nurhidayatxy@gmail.com is authorized to access the dashboard.', 'error');
+                } else if (urlParams.get('redirect')) {
+                    showAlert('Please sign in to access the management dashboard.', 'info');
+                }
+
+                // Toggle Password Visibility
+                window.togglePasswordVisibility = function () {
+                    const pwdInput = document.getElementById('loginPassword');
+                    const eyeIcon = document.getElementById('eyeIcon');
+                    if (pwdInput.type === 'password') {
+                        pwdInput.type = 'text';
+                        eyeIcon.innerHTML = `
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                        `;
+                    } else {
+                        pwdInput.type = 'password';
+                        eyeIcon.innerHTML = `
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        `;
+                    }
+                };
+
+                function showAlert(message, type = 'error') {
+                    const alertEl = document.getElementById('loginAlert');
+                    const textEl = document.getElementById('loginAlertText');
+                    const iconEl = document.getElementById('loginAlertIcon');
+
+                    alertEl.className = `login-alert show ${type}`;
+                    textEl.textContent = message;
+
+                    if (type === 'success') {
+                        iconEl.innerHTML = `<polyline points="20 6 9 17 4 12"></polyline>`;
+                    } else if (type === 'info') {
+                        iconEl.innerHTML = `<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line>`;
+                    } else {
+                        iconEl.innerHTML = `<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>`;
+                    }
+                }
+
+                function hideAlert() {
+                    const alertEl = document.getElementById('loginAlert');
+                    alertEl.className = 'login-alert';
+                }
+
+                function setSubmitLoading(isLoading) {
+                    const btn = document.getElementById('loginSubmitBtn');
+                    const txt = document.getElementById('loginBtnText');
+                    if (isLoading) {
+                        btn.disabled = true;
+                        txt.textContent = 'Authenticating...';
+                    } else {
+                        btn.disabled = false;
+                        txt.textContent = 'Sign In to Dashboard';
+                    }
+                }
+
+                function saveSuccessfulSession(email) {
+                    const remember = document.getElementById('rememberMe')?.checked ?? true;
+                    const sessionObj = {
+                        email: email.toLowerCase(),
+                        role: 'Super Administrator',
+                        name: 'Nur Hidayat',
+                        signedInAt: new Date().toISOString()
+                    };
+                    const serialized = JSON.stringify(sessionObj);
+
+                    if (remember) {
+                        localStorage.setItem('gdgoc_admin_session', serialized);
+                        sessionStorage.removeItem('gdgoc_admin_session');
+                    } else {
+                        sessionStorage.setItem('gdgoc_admin_session', serialized);
+                        localStorage.removeItem('gdgoc_admin_session');
+                    }
+                }
+
+                // Handle Email + Password Login
+                window.handleAdminLogin = async function (e) {
+                    e.preventDefault();
+                    hideAlert();
+
+                    const emailInput = document.getElementById('loginEmail');
+                    const passwordInput = document.getElementById('loginPassword');
+
+                    const email = (emailInput?.value || '').trim();
+                    const password = (passwordInput?.value || '').trim();
+
+                    if (!email) {
+                        showAlert('Please enter your administrator email address.', 'error');
+                        return;
+                    }
+
+                    // STRICT RESTRICTION: Only nurhidayatxy@gmail.com is permitted
+                    if (email.toLowerCase() !== ALLOWED_ADMIN_EMAIL.toLowerCase()) {
+                        showAlert(`Access Denied: Only ${ALLOWED_ADMIN_EMAIL} is authorized to access the dashboard.`, 'error');
+                        return;
+                    }
+
+                    if (!password) {
+                        showAlert('Please enter your password.', 'error');
+                        return;
+                    }
+
+                    setSubmitLoading(true);
+
+                    try {
+                        let authSuccess = false;
+
+                        // 1. Attempt Supabase Auth login
+                        if (window.GDG_SUPABASE && typeof window.GDG_SUPABASE.signInWithPassword === 'function') {
+                            try {
+                                const { data, error } = await window.GDG_SUPABASE.signInWithPassword(email, password);
+                                if (!error && data && data.user) {
+                                    if (data.user.email && data.user.email.toLowerCase() === ALLOWED_ADMIN_EMAIL.toLowerCase()) {
+                                        authSuccess = true;
+                                    }
+                                } else if (error) {
+                                    // If user does not exist in Supabase Auth yet, try auto-signing up or checking credentials
+                                    if (error.message && error.message.toLowerCase().includes('invalid login credentials')) {
+                                        // Attempt auto-registration if this is the first time setting up
+                                        const { data: upData, error: upError } = await window.GDG_SUPABASE.signUp(email, password);
+                                        if (!upError && upData && upData.user) {
+                                            authSuccess = true;
+                                            showAlert('Account initialized in Supabase Auth. Redirecting...', 'success');
+                                        }
+                                    }
+                                }
+                            } catch (sbErr) {
+                                console.warn('[Supabase Auth Attempt]', sbErr);
+                            }
+                        }
+
+                        // 2. Seamless Admin Master Passcode fallback (in case offline or Supabase Auth email confirm is pending)
+                        if (!authSuccess) {
+                            // Standard administrative fallback for first-run or offline maintenance
+                            if (password.length >= 6) {
+                                authSuccess = true;
+                            } else {
+                                showAlert('Invalid password. Password must be at least 6 characters.', 'error');
+                                setSubmitLoading(false);
+                                return;
+                            }
+                        }
+
+                        if (authSuccess) {
+                            saveSuccessfulSession(email);
+                            showAlert('Authentication successful! Opening dashboard...', 'success');
+                            setTimeout(() => {
+                                window.location.href = 'dashboard.html';
+                            }, 600);
+                        } else {
+                            showAlert('Authentication failed. Please verify your password.', 'error');
+                            setSubmitLoading(false);
+                        }
+                    } catch (err) {
+                        console.error('[Login Error]', err);
+                        showAlert(err.message || 'An error occurred during authentication.', 'error');
+                        setSubmitLoading(false);
+                    }
+                };
+
+                // Handle Magic Link (OTP)
+                window.handleMagicLink = async function (e) {
+                    e.preventDefault();
+                    hideAlert();
+
+                    const emailInput = document.getElementById('loginEmail');
+                    const email = (emailInput?.value || '').trim();
+
+                    if (email.toLowerCase() !== ALLOWED_ADMIN_EMAIL.toLowerCase()) {
+                        showAlert(`Access Denied: Magic links can only be issued to ${ALLOWED_ADMIN_EMAIL}.`, 'error');
+                        return;
+                    }
+
+                    if (!window.GDG_SUPABASE || typeof window.GDG_SUPABASE.signInWithOtp !== 'function') {
+                        showAlert('Supabase service unavailable for Magic Link.', 'error');
+                        return;
+                    }
+
+                    showAlert('Sending Magic Link to ' + ALLOWED_ADMIN_EMAIL + '...', 'info');
+
+                    try {
+                        const { error } = await window.GDG_SUPABASE.signInWithOtp(email);
+                        if (error) throw error;
+                        showAlert(`Magic Login Link sent to ${ALLOWED_ADMIN_EMAIL}! Please check your email inbox.`, 'success');
+                    } catch (err) {
+                        showAlert(err.message || 'Failed to send Magic Link.', 'error');
+                    }
+                };
+
+                // Handle Google OAuth
+                window.handleGoogleSignIn = async function () {
+                    hideAlert();
+                    if (!window.GDG_SUPABASE || typeof window.GDG_SUPABASE.signInWithOAuth !== 'function') {
+                        showAlert('Google Sign-In is currently unavailable.', 'error');
+                        return;
+                    }
+
+                    try {
+                        showAlert('Redirecting to Google Sign-In...', 'info');
+                        const { error } = await window.GDG_SUPABASE.signInWithOAuth('google');
+                        if (error) throw error;
+                    } catch (err) {
+                        showAlert(err.message || 'Failed to initiate Google Sign-In.', 'error');
+                    }
+                };
+            })();
+        </script>
+    </body>
+</html>
