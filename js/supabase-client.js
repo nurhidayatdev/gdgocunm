@@ -1011,8 +1011,10 @@
                 ? eventData.speakers
                 : (eventData.speaker ? [{ name: eventData.speaker, role: eventData.speakerRole || 'Speaker' }] : []);
 
-            const primarySpeaker = speakers[0]?.name || eventData.speaker || '';
-            const primarySpeakerRole = speakers[0]?.role || eventData.speakerRole || 'Speaker';
+            const primarySpeaker = (speakers[0]?.name || eventData.speaker || '').trim() || 'Speaker GDGoC UNM';
+            const primarySpeakerRole = (speakers[0]?.role || eventData.speakerRole || '').trim() || 'Speaker';
+            const moderatorName = (eventData.moderator || '').trim() || '-';
+            const moderatorRole = (eventData.moderatorRole || '').trim() || 'Moderator';
 
             const payload = {
                 title: eventData.title,
@@ -1025,8 +1027,8 @@
                 speaker: primarySpeaker,
                 speaker_role: primarySpeakerRole,
                 speakers: speakers,
-                moderator: eventData.moderator,
-                moderator_role: eventData.moderatorRole || 'Moderator',
+                moderator: moderatorName,
+                moderator_role: moderatorRole,
                 registration_url: eventData.registrationUrl || '#',
                 status: autoStatus,
                 badge_color: eventData.color || 'blue'
@@ -1051,30 +1053,47 @@
             if (client) {
                 try {
                     let res;
-                    if (eventData.id && !String(eventData.id).startsWith('temp-')) {
-                        res = await client.from('events').update(payload).eq('id', eventData.id).select().single();
-                    } else if (originalId && !String(originalId).startsWith('temp-')) {
-                        res = await client.from('events').update(payload).eq('id', originalId).select().single();
+                    const isUpdate = (eventData.id && !String(eventData.id).startsWith('temp-')) ||
+                                     (originalId && !String(originalId).startsWith('temp-'));
+                    const targetId = (eventData.id && !String(eventData.id).startsWith('temp-')) ? eventData.id : originalId;
+
+                    if (isUpdate) {
+                        res = await client.from('events').update(payload).eq('id', targetId).select().single();
                     } else {
                         res = await client.from('events').insert(payload).select().single();
                     }
 
-                    // Fallback if 'speakers' column does not exist yet in DB
-                    if (res && res.error && (res.error.message?.includes('speakers') || res.error.code === 'PGRST204')) {
+                    // Robust Schema Fallback: If DB table lacks raw_date, raw_time, or speakers columns,
+                    // retry automatically with only standard columns so data is NEVER lost!
+                    if (res && res.error && (
+                        res.error.code === 'PGRST204' || 
+                        res.error.message?.includes('raw_date') || 
+                        res.error.message?.includes('raw_time') || 
+                        res.error.message?.includes('speakers') ||
+                        res.error.message?.includes('column')
+                    )) {
+                        console.warn('[GDG Supabase Event Save] Schema mismatch detected, stripping raw_date, raw_time, speakers and retrying...', res.error.message);
                         const fallbackPayload = { ...payload };
+                        delete fallbackPayload.raw_date;
+                        delete fallbackPayload.raw_time;
                         delete fallbackPayload.speakers;
-                        if (eventData.id && !String(eventData.id).startsWith('temp-')) {
-                            res = await client.from('events').update(fallbackPayload).eq('id', eventData.id).select().single();
-                        } else if (originalId && !String(originalId).startsWith('temp-')) {
-                            res = await client.from('events').update(fallbackPayload).eq('id', originalId).select().single();
+
+                        if (isUpdate) {
+                            res = await client.from('events').update(fallbackPayload).eq('id', targetId).select().single();
                         } else {
                             res = await client.from('events').insert(fallbackPayload).select().single();
                         }
                     }
 
+                    if (res && res.error) {
+                        console.error('[GDG Supabase Event Save Error]', res.error);
+                        throw new Error(res.error.message || 'Failed to save event to Supabase');
+                    }
+
                     if (res && res.data) savedId = res.data.id;
                 } catch (err) {
-                    console.warn('[Supabase Event Save]', err);
+                    console.error('[Supabase Event Save Exception]', err);
+                    throw err;
                 }
             }
 
